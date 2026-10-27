@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openkb-s4"
+version = "0.1.0"
+description = "Independent OpenKB-Eval S4 blind annotation and quality control"
+requires-python = ">=3.11,<3.12"
+license = "Apache-2.0"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn>=0.34,<1", "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3", "sqlalchemy[asyncio]>=2.0.38,<2.1",
+  "asyncpg>=0.30,<1", "alembic>=1.14,<2", "argon2-cffi>=23.1,<26",
+  "scikit-learn>=1.6,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "pytest-asyncio>=0.25,<2", "pytest-cov>=6,<8", "httpx>=0.28,<1", "ruff>=0.11,<1", "mypy>=1.15,<2"]
+
+[project.scripts]
+s4-admin = "openkb_s4.cli:main"
+s4-worker = "openkb_s4.worker:main"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501", "B008"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["openkb_s4"]
+mypy_path = "src"
+
+[tool.coverage.run]
+source = ["openkb_s4"]
+omit = ["*/cli.py"]
+concurrency = ["greenlet"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/openkb_s4"]

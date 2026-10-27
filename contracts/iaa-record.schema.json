@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "$id": "urn:openkb:s4-s5:iaa-record:v1",
+  "title": "One sampled-unit IAA record; kappa belongs to the batch",
+  "additionalProperties": false,
+  "required": [
+    "unit_id",
+    "annotator_a",
+    "annotator_b",
+    "grades_a",
+    "grades_b",
+    "κ",
+    "verdict",
+    "agreement_id",
+    "annotation_batch_id",
+    "round",
+    "arbitrator",
+    "decided_at"
+  ],
+  "properties": {
+    "unit_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "annotator_a": {
+      "type": "string",
+      "minLength": 1
+    },
+    "annotator_b": {
+      "type": "string",
+      "minLength": 1
+    },
+    "grades_a": {
+      "type": "object"
+    },
+    "grades_b": {
+      "type": "object"
+    },
+    "κ": {
+      "type": "number",
+      "minimum": 0.6,
+      "maximum": 1
+    },
+    "verdict": {
+      "enum": [
+        "ACCEPT",
+        "ARBITRATE"
+      ]
+    },
+    "agreement_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "annotation_batch_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "arbitrator": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "decided_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "$id": "urn:openkb:s4-s5:arbitration-record:v1",
+  "title": "Closed S4 arbitration record",
+  "additionalProperties": false,
+  "required": [
+    "unit_id",
+    "batch_id",
+    "arbitrator_id",
+    "reason",
+    "final_gold",
+    "confirmed",
+    "confirmed_by"
+  ],
+  "properties": {
+    "unit_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "batch_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "arbitrator_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "final_gold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "answer_points",
+        "gold_doc_ids",
+        "answerable"
+      ],
+      "properties": {
+        "answer_points": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30000
+          }
+        },
+        "gold_doc_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+          },
+          "uniqueItems": true
+        },
+        "gold_spans": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/span"
+          }
+        },
+        "answerable": {
+          "enum": [
+            "answerable",
+            "no_answer",
+            "expired",
+            "out_of_scope"
+          ]
+        },
+        "relevance_grades": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "enum": [
+              2,
+              1,
+              0
+            ]
+          }
+        },
+        "key_facts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30000
+          }
+        }
+      }
+    },
+    "confirmed": {
+      "const": true
+    },
+    "confirmed_by": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "doc_id"
+      ],
+      "properties": {
+        "doc_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        },
+        "span": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "span"
+          ]
+        },
+        {
+          "required": [
+            "start",
+            "end"
+          ]
+        }
+      ]
+    }
+  }
+}

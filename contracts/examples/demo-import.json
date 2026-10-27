@@ -1,0 +1,500 @@
+{
+  "contract_version": "openkb.s3-s4.v1",
+  "mode": "demo",
+  "batch_id": "SYNTHETIC-DEMO-12",
+  "source_revision": "synthetic-r1",
+  "units": [
+    {
+      "unit_id": "QA-D1-DEMO-0001",
+      "dataset": "QA-D1",
+      "difficulty": "简单",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0001",
+      "question": "合成服务1的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0001"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0001",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0001",
+          "title": "合成服务1办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务1须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0002",
+      "dataset": "QA-D1",
+      "difficulty": "中等",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0002",
+      "question": "合成服务2的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0002"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0002",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0002",
+          "title": "合成服务2办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务2须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0003",
+      "dataset": "QA-D1",
+      "difficulty": "困难",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0003",
+      "question": "合成服务3的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0003"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0003",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0003",
+          "title": "合成服务3办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务3须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0004",
+      "dataset": "QA-D1",
+      "difficulty": "简单",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0004",
+      "question": "合成服务4的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0004"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0004",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0004",
+          "title": "合成服务4办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务4须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0005",
+      "dataset": "QA-D1",
+      "difficulty": "中等",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0005",
+      "question": "合成服务5的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0005"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0005",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0005",
+          "title": "合成服务5办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务5须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0006",
+      "dataset": "QA-D1",
+      "difficulty": "困难",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0006",
+      "question": "合成服务6的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0006"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0006",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0006",
+          "title": "合成服务6办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务6须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0007",
+      "dataset": "QA-D1",
+      "difficulty": "简单",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0007",
+      "question": "合成服务7的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0007"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0007",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0007",
+          "title": "合成服务7办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务7须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0008",
+      "dataset": "QA-D1",
+      "difficulty": "中等",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0008",
+      "question": "合成服务8的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0008"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0008",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0008",
+          "title": "合成服务8办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务8须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0009",
+      "dataset": "QA-D1",
+      "difficulty": "困难",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0009",
+      "question": "合成服务9的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0009"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0009",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0009",
+          "title": "合成服务9办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务9须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0010",
+      "dataset": "QA-D1",
+      "difficulty": "简单",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0010",
+      "question": "合成服务10的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0010"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0010",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0010",
+          "title": "合成服务10办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务10须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0011",
+      "dataset": "QA-D1",
+      "difficulty": "中等",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0011",
+      "question": "合成服务11的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0011"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0011",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0011",
+          "title": "合成服务11办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务11须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "unit_id": "QA-D1-DEMO-0012",
+      "dataset": "QA-D1",
+      "difficulty": "困难",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0012",
+      "question": "合成服务12的办理期限、渠道和凭证要求是什么？",
+      "gold": {
+        "answer_points": [
+          "须在五个工作日内办理。",
+          "可以通过表单办理，也可使用邮件。",
+          "不需要保留办理凭证。"
+        ],
+        "gold_doc_ids": [
+          "synthetic-policy-0012"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "synthetic-policy-0012",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "synthetic-policy-0012",
+          "title": "合成服务12办理规则（教学材料）",
+          "text": "【合成教学材料，无真实业务效力】服务12须在五个工作日内办理。申请仅能通过指定表单提交，不接受邮件。办理后必须保留凭证。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "demo-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成教学",
+        "generation_model": "synthetic-fixture-no-model",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "contract_version": "openkb.s3-s4.v1",
+  "mode": "formal",
+  "batch_id": "SYNTHETIC-DEMO-001",
+  "source_revision": "synthetic-r1",
+  "units": [
+    {
+      "unit_id": "QA-D1-0000",
+      "dataset": "QA-D1",
+      "difficulty": "简单",
+      "source_type": "生产流量采样",
+      "seed_id": "SYNTHETIC-0000",
+      "question": "合成规则0包含哪些步骤？",
+      "gold": {
+        "answer_points": [
+          "合成步骤0A",
+          "合成步骤0B"
+        ],
+        "gold_doc_ids": [
+          "doc-0"
+        ],
+        "gold_spans": [
+          {
+            "doc_id": "doc-0",
+            "span": "§1"
+          }
+        ],
+        "answerable": "answerable"
+      },
+      "contexts": [
+        {
+          "doc_id": "doc-0",
+          "text": "仅用于测试：合成规则0包括步骤A和步骤B。",
+          "license": "CC0-1.0",
+          "source_url": "https://example.org/synthetic-fixture",
+          "version": "fixture-v1"
+        }
+      ],
+      "metadata": {
+        "lang": "zh",
+        "domain": "合成测试",
+        "generation_model": "synthetic-generator-v1",
+        "created_at": "2026-10-27T00:00:00Z"
+      }
+    }
+  ],
+  "s3_report": {
+    "passed": true
+  }
+}

@@ -1,0 +1,512 @@
+[
+  {
+    "dataset": "QA-D1",
+    "quota": 500,
+    "title": "同域检索",
+    "name": "同域检索",
+    "kind": "qa_points",
+    "version": "s4-profile.v1",
+    "formal_enabled": true,
+    "blocked_reasons": [],
+    "point_labels": [
+      "correct",
+      "partial",
+      "wrong"
+    ],
+    "evidence_labels": [
+      2,
+      1,
+      0
+    ],
+    "answerability_labels": [
+      "answerable",
+      "no_answer",
+      "expired",
+      "out_of_scope"
+    ],
+    "pairing_unit": "original_point_key",
+    "kappa_strategy": "cohen_nominal_original_points.v1",
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "QA-D2",
+    "quota": 200,
+    "title": "跨域联合检索",
+    "name": "跨域联合检索",
+    "kind": "qa_points",
+    "version": "s4-profile.v1",
+    "formal_enabled": true,
+    "blocked_reasons": [],
+    "point_labels": [
+      "correct",
+      "partial",
+      "wrong"
+    ],
+    "evidence_labels": [
+      2,
+      1,
+      0
+    ],
+    "answerability_labels": [
+      "answerable",
+      "no_answer",
+      "expired",
+      "out_of_scope"
+    ],
+    "pairing_unit": "original_point_key",
+    "kappa_strategy": "cohen_nominal_original_points.v1",
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "QA-D3",
+    "quota": 100,
+    "title": "2—4跳检索",
+    "name": "2—4跳检索",
+    "kind": "qa_points",
+    "version": "s4-profile.v1",
+    "formal_enabled": true,
+    "blocked_reasons": [],
+    "point_labels": [
+      "correct",
+      "partial",
+      "wrong"
+    ],
+    "evidence_labels": [
+      2,
+      1,
+      0
+    ],
+    "answerability_labels": [
+      "answerable",
+      "no_answer",
+      "expired",
+      "out_of_scope"
+    ],
+    "pairing_unit": "original_point_key",
+    "kappa_strategy": "cohen_nominal_original_points.v1",
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "QA-D4",
+    "quota": 100,
+    "title": "不可答专项",
+    "name": "不可答专项",
+    "kind": "qa_unanswerable",
+    "version": "s4-profile.v1",
+    "formal_enabled": false,
+    "blocked_reasons": [
+      "SPECIALIZED_STATISTICS_NOT_APPROVED:QA-D4"
+    ],
+    "point_labels": [],
+    "evidence_labels": [
+      2,
+      1,
+      0
+    ],
+    "answerability_labels": [
+      "answerable",
+      "no_answer",
+      "expired",
+      "out_of_scope"
+    ],
+    "pairing_unit": "UNAPPROVED_SPECIALIZED_UNIT",
+    "kappa_strategy": null,
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "QA-D5",
+    "quota": 300,
+    "title": "端到端问答",
+    "name": "端到端问答",
+    "kind": "qa_points",
+    "version": "s4-profile.v1",
+    "formal_enabled": true,
+    "blocked_reasons": [],
+    "point_labels": [
+      "correct",
+      "partial",
+      "wrong"
+    ],
+    "evidence_labels": [
+      2,
+      1,
+      0
+    ],
+    "answerability_labels": [
+      "answerable",
+      "no_answer",
+      "expired",
+      "out_of_scope"
+    ],
+    "pairing_unit": "original_point_key",
+    "kappa_strategy": "cohen_nominal_original_points.v1",
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "QA-D6",
+    "quota": 200,
+    "title": "chunk质量专项",
+    "name": "chunk质量专项",
+    "kind": "chunk_quality",
+    "version": "s4-profile.v1",
+    "formal_enabled": false,
+    "blocked_reasons": [
+      "SPECIALIZED_STATISTICS_NOT_APPROVED:QA-D6"
+    ],
+    "point_labels": [],
+    "evidence_labels": [],
+    "answerability_labels": [],
+    "pairing_unit": "UNAPPROVED_SPECIALIZED_UNIT",
+    "kappa_strategy": null,
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "QA-D7",
+    "quota": 200,
+    "title": "源题派生汇总",
+    "name": "源题派生汇总",
+    "kind": "qa_points",
+    "version": "s4-profile.v1",
+    "formal_enabled": true,
+    "blocked_reasons": [],
+    "point_labels": [
+      "correct",
+      "partial",
+      "wrong"
+    ],
+    "evidence_labels": [
+      2,
+      1,
+      0
+    ],
+    "answerability_labels": [
+      "answerable",
+      "no_answer",
+      "expired",
+      "out_of_scope"
+    ],
+    "pairing_unit": "original_point_key",
+    "kappa_strategy": "cohen_nominal_original_points.v1",
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [
+      "D7_K_RULE_REQUIRES_APPROVAL"
+    ],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "SEC-D1",
+    "quota": 120,
+    "title": "ACL越权",
+    "name": "ACL越权",
+    "kind": "security",
+    "version": "s4-profile.v1",
+    "formal_enabled": false,
+    "blocked_reasons": [
+      "SPECIALIZED_STATISTICS_NOT_APPROVED:SEC-D1"
+    ],
+    "point_labels": [],
+    "evidence_labels": [],
+    "answerability_labels": [],
+    "pairing_unit": "UNAPPROVED_SPECIALIZED_UNIT",
+    "kappa_strategy": null,
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "SEC-D2",
+    "quota": 150,
+    "title": "提示注入",
+    "name": "提示注入",
+    "kind": "security",
+    "version": "s4-profile.v1",
+    "formal_enabled": false,
+    "blocked_reasons": [
+      "SPECIALIZED_STATISTICS_NOT_APPROVED:SEC-D2"
+    ],
+    "point_labels": [],
+    "evidence_labels": [],
+    "answerability_labels": [],
+    "pairing_unit": "UNAPPROVED_SPECIALIZED_UNIT",
+    "kappa_strategy": null,
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "SEC-D3",
+    "quota": 120,
+    "title": "投毒及rollback",
+    "name": "投毒及rollback",
+    "kind": "security",
+    "version": "s4-profile.v1",
+    "formal_enabled": false,
+    "blocked_reasons": [
+      "SPECIALIZED_STATISTICS_NOT_APPROVED:SEC-D3"
+    ],
+    "point_labels": [],
+    "evidence_labels": [],
+    "answerability_labels": [],
+    "pairing_unit": "UNAPPROVED_SPECIALIZED_UNIT",
+    "kappa_strategy": null,
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "SEC-D4",
+    "quota": 100,
+    "title": "MIA同分布配对",
+    "name": "MIA同分布配对",
+    "kind": "security",
+    "version": "s4-profile.v1",
+    "formal_enabled": false,
+    "blocked_reasons": [
+      "SPECIALIZED_STATISTICS_NOT_APPROVED:SEC-D4"
+    ],
+    "point_labels": [],
+    "evidence_labels": [],
+    "answerability_labels": [],
+    "pairing_unit": "UNAPPROVED_SPECIALIZED_UNIT",
+    "kappa_strategy": null,
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  },
+  {
+    "dataset": "SEC-D5",
+    "quota": 110,
+    "title": "合成PII防泄露",
+    "name": "合成PII防泄露",
+    "kind": "security",
+    "version": "s4-profile.v1",
+    "formal_enabled": false,
+    "blocked_reasons": [
+      "SPECIALIZED_STATISTICS_NOT_APPROVED:SEC-D5"
+    ],
+    "point_labels": [],
+    "evidence_labels": [],
+    "answerability_labels": [],
+    "pairing_unit": "UNAPPROVED_SPECIALIZED_UNIT",
+    "kappa_strategy": null,
+    "blind_fields": [
+      "unit_id",
+      "dataset",
+      "difficulty",
+      "question",
+      "payload",
+      "contexts",
+      "acl_context",
+      "time_context"
+    ],
+    "review_fields": [
+      "own_blind_submission",
+      "original_draft",
+      "contexts"
+    ],
+    "conditional_checks": [],
+    "approval": {
+      "basis": "08/07/流水线v1.1",
+      "specialized_approval": null
+    }
+  }
+]

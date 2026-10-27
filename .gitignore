@@ -9,6 +9,7 @@ dist/
 __pycache__/
 *.pyc
 *.egg-info/
+*.tsbuildinfo
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
@@ -18,3 +19,4 @@ coverage/
 playwright-report/
 test-results/
 .buddy/
+backups/

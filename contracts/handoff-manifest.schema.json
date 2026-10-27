@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "$id": "urn:openkb:s4-s5:manifest:v1",
+  "title": "Local S4 handoff manifest; external contract NOT ALIGNED",
+  "description": "Structural schema only; verify_snapshot recomputes file digests, counts and exact unit sets. The manifest does not hash itself. A valid manifest is not an external acceptance receipt.",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "handoff_id",
+    "mode",
+    "batch_id",
+    "source_revision",
+    "snapshot_hash",
+    "unit_count",
+    "sample_count",
+    "unit_ids_sha256",
+    "files"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "openkb.s4-s5.v1"
+    },
+    "handoff_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "enum": [
+        "demo",
+        "formal"
+      ]
+    },
+    "batch_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "snapshot_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "unit_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sample_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unit_ids_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "files": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "units_for_s5.jsonl",
+        "labeled.jsonl",
+        "iaa_records.jsonl",
+        "arbitration_log.jsonl",
+        "s4_report.json"
+      ],
+      "properties": {
+        "units_for_s5.jsonl": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sha256",
+            "line_count"
+          ],
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "line_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "labeled.jsonl": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sha256",
+            "line_count"
+          ],
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "line_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "iaa_records.jsonl": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sha256",
+            "line_count"
+          ],
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "line_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "arbitration_log.jsonl": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sha256",
+            "line_count"
+          ],
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "line_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "s4_report.json": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sha256",
+            "line_count"
+          ],
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "line_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}

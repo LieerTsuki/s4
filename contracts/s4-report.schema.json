@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "$id": "urn:openkb:s4-s5:report:v1",
+  "title": "Local S4 report v1",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "mode",
+    "import_id",
+    "unit_count",
+    "sample_count",
+    "gates",
+    "source_hash",
+    "external_status",
+    "unsampled_status",
+    "production_acceptance"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "openkb.s4-s5.v1"
+    },
+    "mode": {
+      "enum": [
+        "demo",
+        "formal"
+      ]
+    },
+    "import_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "unit_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sample_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "batch_id",
+          "dataset",
+          "round",
+          "kappa",
+          "po",
+          "pe",
+          "n",
+          "verdict",
+          "blocked_reasons",
+          "sample_ledger"
+        ],
+        "properties": {
+          "batch_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "dataset": {
+            "type": "string",
+            "minLength": 1
+          },
+          "round": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "kappa": {
+            "type": "number",
+            "minimum": 0.6,
+            "maximum": 1
+          },
+          "po": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "pe": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMaximum": 1
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "verdict": {
+            "enum": [
+              "ACCEPT",
+              "ARBITRATE"
+            ]
+          },
+          "blocked_reasons": {
+            "type": "array",
+            "maxItems": 0
+          },
+          "sample_ledger": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "source_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "external_status": {
+      "const": "NOT_ALIGNED"
+    },
+    "unsampled_status": {
+      "const": "not_human_reviewed"
+    },
+    "production_acceptance": {
+      "const": false
+    }
+  }
+}

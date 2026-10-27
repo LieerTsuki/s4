@@ -1,0 +1,834 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "$id": "urn:openkb:s4-s5:export-unit:v1",
+  "title": "Full or labeled S4 export row",
+  "description": "labeled.jsonl rows require annotation_batch_id and round; full units_for_s5 rows omit them. Reviewed content includes metadata.s4_revision linking the original digest. Unsampled rows preserve input material and do not gain labels.",
+  "$ref": "#/$defs/unit",
+  "$defs": {
+    "unit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit_id",
+        "dataset",
+        "difficulty"
+      ],
+      "properties": {
+        "unit_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        },
+        "dataset": {
+          "enum": [
+            "QA-D1",
+            "QA-D2",
+            "QA-D3",
+            "QA-D4",
+            "QA-D5",
+            "QA-D6",
+            "QA-D7",
+            "SEC-D1",
+            "SEC-D2",
+            "SEC-D3",
+            "SEC-D4",
+            "SEC-D5"
+          ]
+        },
+        "difficulty": {
+          "enum": [
+            "简单",
+            "中等",
+            "困难"
+          ]
+        },
+        "source_type": {
+          "enum": [
+            "生产流量采样",
+            "BEIR基线",
+            "红队载荷源"
+          ]
+        },
+        "seed_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "gold": {
+          "$ref": "#/$defs/gold"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "contexts": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/context"
+          }
+        },
+        "payload": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30000
+            },
+            {
+              "type": "object",
+              "minProperties": 1
+            }
+          ]
+        },
+        "expected_behavior": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30000
+            },
+            {
+              "type": "object",
+              "minProperties": 1
+            }
+          ]
+        },
+        "acl_context": {
+          "type": "object",
+          "minProperties": 1
+        },
+        "inject_plan": {
+          "type": "object"
+        },
+        "chunk": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500000
+        },
+        "quality_metrics": {
+          "type": "object"
+        },
+        "key_facts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30000
+          }
+        },
+        "source_case_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+          },
+          "uniqueItems": true
+        },
+        "evaluation_k": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "time_context": {
+          "type": "object"
+        },
+        "access_context": {
+          "type": "object"
+        },
+        "annotation_batch_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "dataset": {
+                "pattern": "^SEC-"
+              }
+            },
+            "required": [
+              "dataset"
+            ]
+          },
+          "then": {
+            "required": [
+              "payload",
+              "expected_behavior",
+              "acl_context"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "gold"
+                  ]
+                },
+                {
+                  "required": [
+                    "question"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "dataset": {
+                "const": "SEC-D3"
+              }
+            },
+            "required": [
+              "dataset"
+            ]
+          },
+          "then": {
+            "required": [
+              "inject_plan"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "dataset": {
+                "const": "QA-D6"
+              }
+            },
+            "required": [
+              "dataset"
+            ]
+          },
+          "then": {
+            "required": [
+              "chunk",
+              "quality_metrics"
+            ],
+            "not": {
+              "required": [
+                "gold"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "dataset": {
+                "enum": [
+                  "QA-D1",
+                  "QA-D2",
+                  "QA-D3",
+                  "QA-D4",
+                  "QA-D5",
+                  "QA-D7"
+                ]
+              }
+            },
+            "required": [
+              "dataset"
+            ]
+          },
+          "then": {
+            "required": [
+              "question",
+              "gold",
+              "contexts"
+            ],
+            "properties": {
+              "contexts": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "dataset": {
+                "const": "QA-D4"
+              }
+            },
+            "required": [
+              "dataset"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gold": {
+                "properties": {
+                  "answer_points": {
+                    "maxItems": 0
+                  },
+                  "answerable": {
+                    "enum": [
+                      "no_answer",
+                      "expired",
+                      "out_of_scope"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "dataset": {
+                "enum": [
+                  "QA-D1",
+                  "QA-D2",
+                  "QA-D3",
+                  "QA-D5",
+                  "QA-D7"
+                ]
+              }
+            },
+            "required": [
+              "dataset"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gold": {
+                "properties": {
+                  "answer_points": {
+                    "minItems": 1
+                  },
+                  "gold_doc_ids": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "dataset": {
+                "const": "QA-D7"
+              }
+            },
+            "required": [
+              "dataset"
+            ]
+          },
+          "then": {
+            "required": [
+              "source_case_ids",
+              "evaluation_k"
+            ],
+            "properties": {
+              "source_case_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ],
+      "dependentRequired": {
+        "annotation_batch_id": [
+          "round"
+        ],
+        "round": [
+          "annotation_batch_id"
+        ]
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "doc_id",
+        "text"
+      ],
+      "properties": {
+        "doc_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500000
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "valid_from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "acl_context": {
+          "type": "object"
+        }
+      }
+    },
+    "gold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "answer_points",
+        "gold_doc_ids",
+        "answerable"
+      ],
+      "properties": {
+        "answer_points": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30000
+          }
+        },
+        "gold_doc_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+          },
+          "uniqueItems": true
+        },
+        "gold_spans": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/span"
+          }
+        },
+        "answerable": {
+          "enum": [
+            "answerable",
+            "no_answer",
+            "expired",
+            "out_of_scope"
+          ]
+        },
+        "relevance_grades": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "enum": [
+              2,
+              1,
+              0
+            ]
+          }
+        },
+        "key_facts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30000
+          }
+        }
+      }
+    },
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "doc_id"
+      ],
+      "properties": {
+        "doc_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        },
+        "span": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "span"
+          ]
+        },
+        {
+          "required": [
+            "start",
+            "end"
+          ]
+        }
+      ]
+    },
+    "original_result": {
+      "type": "object",
+      "required": [
+        "unit_id",
+        "status"
+      ],
+      "properties": {
+        "unit_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL"
+          ]
+        },
+        "seed_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        }
+      }
+    },
+    "unit_result": {
+      "type": "object",
+      "required": [
+        "unit_id",
+        "status",
+        "content_sha256",
+        "reverse_validation",
+        "nli"
+      ],
+      "properties": {
+        "unit_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        },
+        "status": {
+          "const": "PASS"
+        },
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "reverse_validation": {
+          "type": "object",
+          "required": [
+            "status",
+            "model"
+          ],
+          "properties": {
+            "status": {
+              "const": "PASS"
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30000
+            }
+          }
+        },
+        "nli": {
+          "type": "object",
+          "required": [
+            "score",
+            "model",
+            "version"
+          ],
+          "properties": {
+            "score": {
+              "type": "number",
+              "minimum": 0.45,
+              "maximum": 1
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30000
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30000
+            }
+          }
+        },
+        "fallback": {
+          "type": "object",
+          "required": [
+            "status",
+            "model",
+            "version"
+          ],
+          "properties": {
+            "status": {
+              "const": "PASS"
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30000
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30000
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "nli": {
+                "properties": {
+                  "score": {
+                    "minimum": 0.45,
+                    "maximum": 0.65
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "fallback"
+            ]
+          }
+        }
+      ]
+    },
+    "report": {
+      "type": "object",
+      "required": [
+        "checked_count",
+        "passed_count",
+        "failed_count",
+        "unresolved_failure_count",
+        "generation_model",
+        "validator_model",
+        "validator_version",
+        "nli_model",
+        "nli_version",
+        "original_results",
+        "unit_results",
+        "archived_failures",
+        "replacement_lineage"
+      ],
+      "properties": {
+        "checked_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "passed_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved_failure_count": {
+          "const": 0
+        },
+        "generation_model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "validator_model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "validator_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "nli_model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "nli_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "fallback_model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "fallback_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "original_results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/original_result"
+          }
+        },
+        "unit_results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/unit_result"
+          }
+        },
+        "archived_failures": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+          },
+          "uniqueItems": true
+        },
+        "replacement_lineage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "failed_unit_id",
+              "replacement_unit_id",
+              "seed_id",
+              "validation_revision"
+            ],
+            "properties": {
+              "failed_unit_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+              },
+              "replacement_unit_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+              },
+              "seed_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+              },
+              "validation_revision": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 30000
+              }
+            }
+          }
+        }
+      }
+    },
+    "checksums": {
+      "type": "object",
+      "required": [
+        "units_sha256",
+        "contexts_sha256"
+      ],
+      "properties": {
+        "units_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "contexts_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "required": [
+        "batch_id",
+        "source_revision",
+        "selected_count",
+        "units_sha256",
+        "contexts_sha256",
+        "generated_at",
+        "code_version"
+      ],
+      "properties": {
+        "batch_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        },
+        "source_revision": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        },
+        "selected_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "units_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "contexts_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "code_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        }
+      }
+    }
+  }
+}
