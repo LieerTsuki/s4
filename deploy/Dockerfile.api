@@ -1,0 +1,12 @@
+FROM python:3.11-slim@sha256:0a19f628b6a9a96b0a0df9e0d3a327e8d51cd857804b04efcf1495879c97326b
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/app/backend/src
+WORKDIR /app/backend
+COPY backend/requirements.lock /tmp/requirements.lock
+RUN pip install --no-cache-dir --require-hashes -r /tmp/requirements.lock \
+    && useradd --create-home --uid 10001 s4 \
+    && mkdir -p /var/lib/s4 && chown s4:s4 /var/lib/s4
+COPY backend/ /app/backend/
+USER s4
+ENV S4_DATA_DIR=/var/lib/s4
+EXPOSE 8000
+CMD ["python", "-m", "uvicorn", "openkb_s4.main:app", "--host", "0.0.0.0", "--port", "8000"]

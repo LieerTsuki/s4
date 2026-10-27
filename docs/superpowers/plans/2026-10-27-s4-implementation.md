@@ -1,6 +1,8 @@
 # OpenKB-Eval S4 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
+
+2026-10-27完成记录：五个工作包已实现并完成本地验证，证据见`docs/acceptance.md`。任务1—3按共同后端/契约依赖合并为受验证的组件提交9faf057，前端为f83138d；部署、E2E与手册单独提交。外部联调、专项规则与真人验收不在已完成项内。下列复选框表示工程活动已完成，不代表生产验收。
 
 **Goal:** 在用户指定s4目录交付可运行、可测试的独立双盲标注系统，并如实区分本地验证与外部/生产验收。
 
@@ -16,11 +18,11 @@
 
 **Files:** `backend/src/openkb_s4/domain/{errors,profiles,contracts,sampling,statistics}.py`；`backend/tests/test_domain.py`；`contracts/`。
 
-- [ ] 先写行为测试：缺正式证据拒绝、原始95/100不被清洗、分层抽样≥8且不漏层、pe=1不填1、0.6/0.7门正确、缺配对阻塞。
-- [ ] 运行 `..\.venv\Scripts\python -m pytest tests/test_domain.py -q`，记录缺实现失败。
-- [ ] 实现纯函数 `validate_import(payload)->dict`、`sample_units(units, seed)->dict`、`calculate_agreement(a,b)->dict`、`list_profiles()->list[dict]`，错误统一`DomainError(code,message)`。输入输出详见接口协作约定。
-- [ ] 重新运行上述测试并核对独立推导期望值。
-- [ ] 只提交该任务文件，Conventional Commit与实际作者sign-off；不生成或提交真实题目和凭据。
+- [x] 先写行为测试：缺正式证据拒绝、原始95/100不被清洗、分层抽样≥8且不漏层、pe=1不填1、0.6/0.7门正确、缺配对阻塞。
+- [x] 运行 `..\.venv\Scripts\python -m pytest tests/test_domain.py -q`，记录缺实现失败。
+- [x] 实现纯函数 `validate_import(payload)->dict`、`sample_units(units, seed)->dict`、`calculate_agreement(a,b)->dict`、`list_profiles()->list[dict]`，错误统一`DomainError(code,message)`。输入输出详见接口协作约定。
+- [x] 重新运行上述测试并核对独立推导期望值。
+- [x] 只提交该任务文件，Conventional Commit与实际作者sign-off；不生成或提交真实题目和凭据。
 
 最小统计回归示例：
 ```python
@@ -34,45 +36,45 @@ def test_constant_labels_are_undefined():
 
 **Files:** `backend/pyproject.toml`、`backend/src/openkb_s4/{config,db,models,schemas,security,cli,main}.py`、`backend/src/openkb_s4/api/`、`backend/src/openkb_s4/services/`、`backend/alembic/`、`backend/tests/test_api.py`。
 
-- [ ] 测试先覆盖401、失效会话、CSRF、管理员非业务超管、同人双席拒绝、A不可读B详情、BLIND不含草案、未齐禁止解锁、重复提交幂等和草稿版本冲突。
-- [ ] 在真实PostgreSQL运行 `..\.venv\Scripts\python -m pytest tests/test_api.py -q`，确认失败由能力缺失引起。
-- [ ] Alembic迁移建表，应用不自动create_all；API按协作约定实现，身份从会话取；所有提交和解锁锁定批次，写审计，禁止覆盖封存。
-- [ ] 账号通过交互式CLI初始化，密码由getpass/环境输入，存Argon2id，数据库仅存会话令牌摘要；Cookie与CSRF保护写请求。
-- [ ] 重跑迁移、认证和权限测试，再测试参与者权限收缩、停用账号撤销会话、阶段越权与正文枚举验证。
-- [ ] 只提交后端此工作包文件，记录验证命令与结果。
+- [x] 测试先覆盖401、失效会话、CSRF、管理员非业务超管、同人双席拒绝、A不可读B详情、BLIND不含草案、未齐禁止解锁、重复提交幂等和草稿版本冲突。
+- [x] 在真实PostgreSQL运行 `..\.venv\Scripts\python -m pytest tests/test_api.py -q`，确认失败由能力缺失引起。
+- [x] Alembic迁移建表，应用不自动create_all；API按协作约定实现，身份从会话取；所有提交和解锁锁定批次，写审计，禁止覆盖封存。
+- [x] 账号通过交互式CLI初始化，密码由getpass/环境输入，存Argon2id，数据库仅存会话令牌摘要；Cookie与CSRF保护写请求。
+- [x] 重跑迁移、认证和权限测试，再测试参与者权限收缩、停用账号撤销会话、阶段越权与正文枚举验证。
+- [x] 只提交后端此工作包文件，记录验证命令与结果。
 
 ## Task 3: 持久任务、质量、人工闭环与导出
 
 **Files:** `backend/src/openkb_s4/{worker,services/{jobs,workflow,handoffs}}.py`、`backend/tests/test_workflow.py`、`backend/tests/test_handoffs.py`。
 
-- [ ] 先测试缺配对/规则未确认不能算有效κ；灰区未闭环拒绝导出；低κ新轮保留旧结果；未抽检N−n不丢失；导出篡改拒绝；worker重启不重复发布。
-- [ ] 运行对应pytest，保存预期失败摘要。
-- [ ] worker用PostgreSQL SKIP LOCKED、租约、有限重试和幂等业务键；导入、统计、导出在事务内登记任务，文件全部核对才发布manifest。
-- [ ] 实现第三人裁决与独立负责人确认；ACCEPT也需逐单元内容定稿；全量与抽检分离，demo导出明确标识，外部回执默认未对齐。
-- [ ] 重跑测试及并发提交/解锁/重复领取测试，核对原始标签和κ未被仲裁覆盖。
-- [ ] 只提交该任务文件及证据。
+- [x] 先测试缺配对/规则未确认不能算有效κ；灰区未闭环拒绝导出；低κ新轮保留旧结果；未抽检N−n不丢失；导出篡改拒绝；worker重启不重复发布。
+- [x] 运行对应pytest，保存预期失败摘要。
+- [x] worker用PostgreSQL SKIP LOCKED、租约、有限重试和幂等业务键；导入、统计、导出在事务内登记任务，文件全部核对才发布manifest。
+- [x] 实现第三人裁决与独立负责人确认；ACCEPT也需逐单元内容定稿；全量与抽检分离，demo导出明确标识，外部回执默认未对齐。
+- [x] 重跑测试及并发提交/解锁/重复领取测试，核对原始标签和κ未被仲裁覆盖。
+- [x] 只提交该任务文件及证据。
 
 ## Task 4: React工作台
 
 **Files:** `frontend/package.json`及锁文件、`frontend/src/{api,types,App,main}.tsx/ts`、`frontend/src/pages/`、`frontend/src/components/`、`frontend/src/styles.css`、`frontend/src/tests/`。
 
-- [ ] 先写登录错误、未登录不读业务、阶段表单、字典2/1/0和退出清缓存的组件行为测试。
-- [ ] 运行 `npm test -- --run`，确认缺能力失败。
-- [ ] 实现中文导航与错误/等待/空状态；所有页面调用真实API；轮询202任务，不用静态假数据替代持久化。BLIND只展示阶段投影，REVIEW按point_key/doc_id绑定多项。
-- [ ] 接通账号、profile、导入、批次排班、我的任务、质量仲裁、轮次、导出、审计与健康页，角色仅控制展示，最终权限由API决定。
-- [ ] 运行 `npm test -- --run`、`npm run build`、`npm run lint`。
-- [ ] 只提交前端此任务文件。
+- [x] 先写登录错误、未登录不读业务、阶段表单、字典2/1/0和退出清缓存的组件行为测试。
+- [x] 运行 `npm test -- --run`，确认缺能力失败。
+- [x] 实现中文导航与错误/等待/空状态；所有页面调用真实API；轮询202任务，不用静态假数据替代持久化。BLIND只展示阶段投影，REVIEW按point_key/doc_id绑定多项。
+- [x] 接通账号、profile、导入、批次排班、我的任务、质量仲裁、轮次、导出、审计与健康页，角色仅控制展示，最终权限由API决定。
+- [x] 运行 `npm test -- --run`、`npm run build`、`npm run lint`。
+- [x] 只提交前端此任务文件。
 
 ## Task 5: 部署、整体验证与操作手册
 
 **Files:** `deploy/`、`scripts/`、`.github/workflows/ci.yml`、`tests/e2e/`、`README.md`、`docs/{OPERATIONS,ACCEPTANCE,API_ALIGNMENT}.md`。
 
-- [ ] 在合成demo及专用测试库写E2E：运营导入/派发→A/B分别盲答→拒绝提前解锁→统一解锁→复核→批次κ→定稿或人工仲裁→N/n导出。
-- [ ] 首次运行真实API/浏览器流程，记录尚未接通的失败并逐项修复。
-- [ ] 提供Compose四类服务、迁移命令、环境示例、备份恢复脚本、依赖锁和CI；服务不含预置通用凭据。
-- [ ] 执行pytest覆盖率≥80%、ruff、mypy strict、前端测试/构建/lint、浏览器E2E、备份恢复核对；各项仅据实际输出登记。
-- [ ] 更新手册真实启动入口和已验证范围，外部联调、专项确认及真人演练保留未完成状态，不伪造生产验收。
-- [ ] 审查所有改动和忽略规则，提交本工程变更，不推送未知远端。
+- [x] 在合成demo及专用测试库写E2E：运营导入/派发→A/B分别盲答→拒绝提前解锁→统一解锁→复核→批次κ→定稿或人工仲裁→N/n导出。
+- [x] 首次运行真实API/浏览器流程，记录尚未接通的失败并逐项修复。
+- [x] 提供Compose四类服务、迁移命令、环境示例、备份恢复脚本、依赖锁和CI；服务不含预置通用凭据。
+- [x] 执行pytest覆盖率≥80%、ruff、mypy strict、前端测试/构建/lint、浏览器E2E、备份恢复核对；各项仅据实际输出登记。
+- [x] 更新手册真实启动入口和已验证范围，外部联调、专项确认及真人演练保留未完成状态，不伪造生产验收。
+- [x] 审查所有改动和忽略规则，提交本工程变更，不推送未知远端。
 
 ## 协作接口约定
 

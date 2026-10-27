@@ -1,0 +1,83 @@
+name: verify-s4
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install locked dependencies and provision isolated PostgreSQL
+        run: |
+          pip install uv==0.13.6
+          python - <<'PY'
+          from pathlib import Path
+          import secrets
+          owner, app = secrets.token_hex(32), secrets.token_hex(32)
+          Path('.env').write_text(f'S4_DB_OWNER_PASSWORD={owner}\nS4_DB_APP_PASSWORD={app}\nS4_DATABASE_URL=postgresql+asyncpg://s4_app:{app}@127.0.0.1:55434/s4_dev\nS4_MIGRATION_DATABASE_URL=postgresql+asyncpg://s4_owner:{owner}@127.0.0.1:55434/s4_dev\nS4_TEST_DATABASE_URL=postgresql+asyncpg://s4_owner:{owner}@127.0.0.1:55434/s4_test\nS4_DATA_DIR=../var\nS4_COOKIE_SECURE=false\nS4_ALLOWED_ORIGIN=http://localhost:5174\nS4_EXTERNAL_ALIGNMENT_CONFIRMED=false\n')
+          PY
+          docker compose --env-file .env -f deploy/compose.yml -f deploy/compose.dev.yml up -d --wait db
+          UV_PROJECT_ENVIRONMENT="$PWD/.venv" uv sync --project backend --extra dev --locked
+          npm ci --prefix frontend
+          npm ci --prefix tests/e2e
+      - name: Migrations, backend and frontend checks
+        run: |
+          mkdir -p var/evidence
+          export PATH="$PWD/.venv/bin:$PATH"
+          cd backend
+          python -m alembic upgrade head
+          python - <<'PY'
+          import os, subprocess
+          from dotenv import dotenv_values
+          env = dict(os.environ, S4_MIGRATION_DATABASE_URL=dotenv_values('../.env')['S4_TEST_DATABASE_URL'])
+          subprocess.run(['python', '-m', 'alembic', 'upgrade', 'head'], env=env, check=True)
+          PY
+          python -m pytest --cov=openkb_s4 --cov-report=xml:../var/evidence/coverage.xml --cov-fail-under=80
+          python -m ruff check src tests
+          python -m mypy
+          cd ../frontend
+          npm test -- --run
+          npm run lint
+          npm run build
+          npm audit --registry=https://registry.npmjs.org --audit-level=high
+          npm sbom --sbom-format cyclonedx > ../var/evidence/frontend-sbom.cdx.json
+          cd ..
+          uv run --no-project --with jsonschema python scripts/check_contracts.py
+          .venv/bin/python scripts/dependency_audit.py
+          uv export --project backend --frozen --no-dev --no-emit-project --format cyclonedx1.5 --output-file var/evidence/backend-sbom.cdx.json > /dev/null
+      - name: Browser workflow and isolated restore
+        env:
+          S4_E2E_BROWSER: chromium
+        run: |
+          mkdir -p var/evidence
+          .venv/bin/python tests/e2e/prepare.py
+          set -a
+          source .env.e2e
+          set +a
+          .venv/bin/python -m uvicorn openkb_s4.main:app --host 127.0.0.1 --port 8004 >var/api.log 2>&1 &
+          .venv/bin/python -m openkb_s4.worker >var/worker.log 2>&1 &
+          npm run dev --prefix frontend -- --host 127.0.0.1 --port 5174 >var/web.log 2>&1 &
+          cd tests/e2e
+          npx playwright install --with-deps chromium
+          npm test
+          cd ../..
+          uv run --no-project --with jsonschema python scripts/check_contracts.py --exports var/e2e/exports
+          .venv/bin/python scripts/backup_restore.py backup --env-file .env.e2e --database s4_e2e --data-dir var/e2e --output backups/ci-rehearsal
+          .venv/bin/python scripts/backup_restore.py restore --env-file .env.e2e --backup backups/ci-rehearsal
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: s4-verification-evidence
+          path: |
+            var/evidence/
+            var/s4_restore_*/restore-verification.json
+          retention-days: 7

@@ -1,0 +1,76 @@
+name: openkb-s4
+services:
+  db:
+    image: postgres:17@sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe
+    environment:
+      POSTGRES_USER: s4_owner
+      POSTGRES_DB: s4_dev
+      POSTGRES_PASSWORD: ${S4_DB_OWNER_PASSWORD:?Set a random owner password}
+      S4_DB_APP_PASSWORD: ${S4_DB_APP_PASSWORD:?Set a different random app password}
+    volumes:
+      - database:/var/lib/postgresql/data
+      - ./db-init.sh:/docker-entrypoint-initdb.d/10-s4-init.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U s4_owner -d s4_dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  migrate:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.api
+    environment:
+      S4_MIGRATION_DATABASE_URL: postgresql+asyncpg://s4_owner:${S4_DB_OWNER_PASSWORD}@db:5432/s4_dev
+      S4_DATABASE_URL: postgresql+asyncpg://s4_app:${S4_DB_APP_PASSWORD}@db:5432/s4_dev
+    command: [python, -m, alembic, upgrade, head]
+    depends_on:
+      db:
+        condition: service_healthy
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.api
+    environment: &service_environment
+      S4_DATABASE_URL: postgresql+asyncpg://s4_app:${S4_DB_APP_PASSWORD}@db:5432/s4_dev
+      S4_DATA_DIR: /var/lib/s4
+      S4_COOKIE_SECURE: ${S4_COOKIE_SECURE:-true}
+      S4_ALLOWED_ORIGIN: ${S4_PUBLIC_ORIGIN:-}
+      S4_RECEIPT_TOKEN: ${S4_RECEIPT_TOKEN:-}
+      S4_EXTERNAL_ALIGNMENT_CONFIRMED: "false"
+    volumes:
+      - artifacts:/var/lib/s4
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/s4/v1/health/ready')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+  worker:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.api
+    environment: *service_environment
+    command: [python, -m, openkb_s4.worker]
+    volumes:
+      - artifacts:/var/lib/s4
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+  gateway:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.web
+    ports:
+      - 127.0.0.1:8084:80
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  database:
+  artifacts:
