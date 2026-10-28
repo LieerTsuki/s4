@@ -77,18 +77,20 @@ try {
                     if ($LASTEXITCODE -ne 0) { throw 'Test database migration failed.' }
                 }
                 finally { $env:S4_MIGRATION_DATABASE_URL = $taskOriginalMigrationUrl }
-                & '..\.venv\Scripts\python.exe' -m pytest --cov=openkb_s4 --cov-report=term-missing --cov-fail-under=80; if ($LASTEXITCODE -ne 0) { throw 'Backend verification failed.' }
+                & '..\.venv\Scripts\python.exe' -m pytest --cov=openkb_s4 --cov-report=term-missing --cov-report=json:../var/evidence/backend-coverage.json --cov-fail-under=80; if ($LASTEXITCODE -ne 0) { throw 'Backend verification failed.' }
                 & '..\.venv\Scripts\python.exe' -m ruff check src tests; if ($LASTEXITCODE -ne 0) { throw 'Backend lint failed.' }
                 & '..\.venv\Scripts\python.exe' -m mypy; if ($LASTEXITCODE -ne 0) { throw 'Backend type check failed.' }
             }
             finally { Pop-Location }
             Push-Location frontend
             try {
-                & npm.cmd test -- --run; if ($LASTEXITCODE -ne 0) { throw 'Frontend tests failed.' }
+                & npm.cmd run coverage; if ($LASTEXITCODE -ne 0) { throw 'Frontend coverage failed.' }
                 & npm.cmd run build; if ($LASTEXITCODE -ne 0) { throw 'Frontend build failed.' }
                 & npm.cmd run lint; if ($LASTEXITCODE -ne 0) { throw 'Frontend lint failed.' }
             }
             finally { Pop-Location }
+            & '.\.venv\Scripts\python.exe' scripts/coverage_gate.py --base 00ef5c1
+            if ($LASTEXITCODE -ne 0) { throw 'Incremental coverage failed.' }
         }
         bootstrap {
             if (-not $Username -or -not $DisplayName -or -not $PersonId) { throw 'Supply -Username, -DisplayName and -PersonId; password is prompted securely.' }

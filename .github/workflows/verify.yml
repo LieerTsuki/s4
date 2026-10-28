@@ -5,9 +5,11 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -16,6 +18,14 @@ jobs:
           node-version: '24'
           cache: npm
           cache-dependency-path: frontend/package-lock.json
+      - name: Scan committed secrets with verified Gitleaks release
+        run: |
+          curl --fail --location --retry 3 https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -o /tmp/gitleaks_8.30.1_linux_x64.tar.gz
+          curl --fail --location --retry 3 https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_checksums.txt -o /tmp/gitleaks_checksums.txt
+          (cd /tmp && grep 'gitleaks_8.30.1_linux_x64.tar.gz$' gitleaks_checksums.txt | sha256sum --check -)
+          tar -xzf /tmp/gitleaks_8.30.1_linux_x64.tar.gz -C /tmp gitleaks
+          mkdir -p var/evidence
+          /tmp/gitleaks git --redact --no-banner --report-format json --report-path var/evidence/gitleaks-ci.json
       - name: Install locked dependencies and provision isolated PostgreSQL
         run: |
           pip install uv==0.13.6
@@ -23,7 +33,7 @@ jobs:
           from pathlib import Path
           import secrets
           owner, app = secrets.token_hex(32), secrets.token_hex(32)
-          Path('.env').write_text(f'S4_DB_OWNER_PASSWORD={owner}\nS4_DB_APP_PASSWORD={app}\nS4_DATABASE_URL=postgresql+asyncpg://s4_app:{app}@127.0.0.1:55434/s4_dev\nS4_MIGRATION_DATABASE_URL=postgresql+asyncpg://s4_owner:{owner}@127.0.0.1:55434/s4_dev\nS4_TEST_DATABASE_URL=postgresql+asyncpg://s4_owner:{owner}@127.0.0.1:55434/s4_test\nS4_DATA_DIR=../var\nS4_COOKIE_SECURE=false\nS4_ALLOWED_ORIGIN=http://localhost:5174\nS4_EXTERNAL_ALIGNMENT_CONFIRMED=false\n')
+          Path('.env').write_text(f'S4_DB_OWNER_PASSWORD={owner}\nS4_DB_APP_PASSWORD={app}\nS4_DATABASE_URL=postgresql+asyncpg://s4_app:{app}@127.0.0.1:55434/s4_dev\nS4_MIGRATION_DATABASE_URL=postgresql+asyncpg://s4_owner:{owner}@127.0.0.1:55434/s4_dev\nS4_TEST_DATABASE_URL=postgresql+asyncpg://s4_owner:{owner}@127.0.0.1:55434/s4_test\nS4_DATA_DIR=./var\nS4_COOKIE_SECURE=false\nS4_ALLOWED_ORIGIN=http://localhost:5174\nS4_EXTERNAL_ALIGNMENT_CONFIRMED=false\n')
           PY
           docker compose --env-file .env -f deploy/compose.yml -f deploy/compose.dev.yml up -d --wait db
           UV_PROJECT_ENVIRONMENT="$PWD/.venv" uv sync --project backend --extra dev --locked
@@ -41,11 +51,17 @@ jobs:
           env = dict(os.environ, S4_MIGRATION_DATABASE_URL=dotenv_values('../.env')['S4_TEST_DATABASE_URL'])
           subprocess.run(['python', '-m', 'alembic', 'upgrade', 'head'], env=env, check=True)
           PY
-          python -m pytest --cov=openkb_s4 --cov-report=xml:../var/evidence/coverage.xml --cov-fail-under=80
+          python -m pytest --cov=openkb_s4 --cov-report=xml:../var/evidence/coverage.xml --cov-report=json:../var/evidence/backend-coverage.json --cov-fail-under=80
           python -m ruff check src tests
           python -m mypy
-          cd ../frontend
-          npm test -- --run
+          cd ..
+          python scripts/export_contracts.py
+          python scripts/extend_evidence_contracts.py
+          git diff --exit-code -- contracts
+          cd frontend
+          npm run generate-types
+          git diff --exit-code -- src/generated/openapi.d.ts
+          npm run coverage
           npm run lint
           npm run build
           npm audit --registry=https://registry.npmjs.org --audit-level=high
@@ -53,6 +69,7 @@ jobs:
           cd ..
           uv run --no-project --with jsonschema python scripts/check_contracts.py
           .venv/bin/python scripts/dependency_audit.py
+          .venv/bin/python scripts/coverage_gate.py --base 00ef5c1
           uv export --project backend --frozen --no-dev --no-emit-project --format cyclonedx1.5 --output-file var/evidence/backend-sbom.cdx.json > /dev/null
       - name: Browser workflow and isolated restore
         env:
@@ -70,6 +87,7 @@ jobs:
           npx playwright install --with-deps chromium
           npm test
           cd ../..
+          .venv/bin/python tests/e2e/load_smoke.py
           uv run --no-project --with jsonschema python scripts/check_contracts.py --exports var/e2e/exports
           .venv/bin/python scripts/backup_restore.py backup --env-file .env.e2e --database s4_e2e --data-dir var/e2e --output backups/ci-rehearsal
           .venv/bin/python scripts/backup_restore.py restore --env-file .env.e2e --backup backups/ci-rehearsal

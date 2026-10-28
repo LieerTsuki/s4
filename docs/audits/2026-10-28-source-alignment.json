@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-28",
+  "timezone": "Asia/Shanghai",
+  "source_priority": "explicit user instructions; latest aligned 01/02/07/08; pipeline business v1.1 retained",
+  "files": [
+    {
+      "path": "D:\\openkb-eval\\liyue\\00_当前执行口径与文档索引.md",
+      "sha256": "7626643e7bc765410960752f9402190345f16057b30060296614b5648977de67",
+      "version": null,
+      "modified_by_this_completion": true
+    },
+    {
+      "path": "D:\\openkb-eval\\liyue\\OpenKB-Eval数据集生产流水线与HuggingFace发布技术方案.md",
+      "sha256": "56a2db5a80d407d28a3eccf29fc2602f9c42298312e578390b0488e9cc0c9cae",
+      "version": "v1.1",
+      "modified_by_this_completion": false
+    },
+    {
+      "path": "D:\\openkb-eval\\liyue\\document\\01_标注需求梳理_三栏与盲标规则.md",
+      "sha256": "d28c6b172478df8c11c579258447ffcd3d2418e162ce707e42a514eb1b7a325e",
+      "version": "V0.6",
+      "modified_by_this_completion": true
+    },
+    {
+      "path": "D:\\openkb-eval\\liyue\\document\\02_标注手册_V0大纲.md",
+      "sha256": "d53402f02233862c82e4ed0d6418fc2a22b6bb47b6db5d9be9986efbb9c986b0",
+      "version": "V0.4",
+      "modified_by_this_completion": true
+    },
+    {
+      "path": "D:\\openkb-eval\\liyue\\document\\07_双盲分发队列方案设计.md",
+      "sha256": "1df9908f19640c66e3d924483978e8580018ae0f9f156fe4cc101a34bc0e2a64",
+      "version": "V2.1",
+      "modified_by_this_completion": true
+    },
+    {
+      "path": "D:\\openkb-eval\\liyue\\document\\08_OpenKB-Eval_S4双盲标注与质量控制系统_自研实现方案.md",
+      "sha256": "bbfd6a634288dab577b7bffe41babbdb81ac2c3d2cf8d1d10108acf22386ef55",
+      "version": "V1.1",
+      "modified_by_this_completion": true
+    }
+  ],
+  "pipeline_hash_unchanged_from_original_audit": true
+}
