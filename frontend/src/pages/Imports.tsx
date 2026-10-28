@@ -1,18 +1,193 @@
-import { formatTime } from '../format';
-import { useState } from 'react';
-import { FileUp, UploadCloud } from 'lucide-react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCommand, useList } from '../hooks';
-import type { ImportRecord } from '../types';
-import { Badge, BlockedReasons, Empty, ErrorNotice, JobProgress, PageHeader, Panel, QueryState, RefreshButton } from '../components/Common';
+import { formatTime } from "../format";
+import { ControlledImport } from "../components/ControlledImport";
+import { useState } from "react";
+import { FileUp, UploadCloud } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCommand, useList } from "../hooks";
+import type { ImportRecord } from "../types";
+import {
+  Badge,
+  BlockedReasons,
+  Empty,
+  ErrorNotice,
+  JobProgress,
+  PageHeader,
+  Panel,
+  QueryState,
+  RefreshButton,
+} from "../components/Common";
 
 export function ImportsPage({ canWrite }: { canWrite: boolean }) {
-  const query = useList<ImportRecord>('/imports'); const command = useCommand(); const client = useQueryClient(); const [text, setText] = useState(''); const [fileName, setFileName] = useState(''); const [jobId, setJobId] = useState(''); const [localError, setLocalError] = useState<Error | null>(null); const [expanded, setExpanded] = useState<string | null>(null);
-  async function send() { setLocalError(null); let payload: unknown; try { payload = JSON.parse(text); if (!payload || typeof payload !== 'object' || Array.isArray(payload)) throw new Error('输入须为完整JSON对象。'); } catch (error) { setLocalError(error instanceof Error ? error : new Error('JSON格式无效')); return; } const result = await command.run<{ job_id: string }>('/imports', payload); if (result) setJobId(result.job_id); }
-  return <><PageHeader eyebrow="SOURCE IMPORTS" title="候选接入中心" description="导入版本化材料、报告及原文快照。接入校验通过后，才能冻结抽样与排班。" action={<RefreshButton onClick={() => void query.refetch()} />} />
-    <div className="notice warning"><div><strong>外部S3接口尚未对齐</strong><p>演示材料与正式证据分开记录。声明passed或formal不等于验证通过；正式材料需要原始分母、逐单元PASS、摘要与原文证据。</p></div></div>
-    {canWrite && <Panel title="导入候选材料" description="使用完整openkb.s3-s4.v1 JSON契约；合成教学材料请选择demo模式。"><form className="import-form" onSubmit={event => { event.preventDefault(); void send(); }}><label className="upload-zone"><UploadCloud size={26} /><strong>{fileName || '选择本地契约文件'}</strong><span>JSON · UTF-8 · 材料以静态文本处理</span><input type="file" accept="application/json,.json" aria-label="选择候选契约文件" onChange={async event => { const file = event.target.files?.[0]; if (!file) return; if (file.size > 20 * 1024 * 1024) { setLocalError(new Error('文件超过20MB，请按批次拆分。')); return; } try { setText(await file.text()); setFileName(file.name); setLocalError(null); } catch { setLocalError(new Error('读取文件失败。')); } }} /></label><label htmlFor="import-json">契约JSON内容</label><textarea id="import-json" className="code-input" value={text} onChange={event => setText(event.target.value)} rows={9} required spellCheck={false} placeholder={'{\n  "contract_version": "openkb.s3-s4.v1",\n  "mode": "demo",\n  "batch_id": "your-batch-id",\n  "source_revision": "r1",\n  "units": []\n}'} /><ErrorNotice error={localError ?? command.error} /><div className="form-footer"><span className="muted">后台校验会返回逐项错误；创建任务不代表接入完成。</span><button className="button primary" disabled={command.pending || !text.trim()}><FileUp size={17} />{command.pending ? '正在登记…' : '提交接入校验'}</button></div></form></Panel>}
-    {jobId && <JobProgress id={jobId} onComplete={() => void client.invalidateQueries()} />}
-    <Panel title="接入记录" description="来源、模式与阻塞原因随批次保存。"><QueryState pending={query.isPending} error={query.error}>{query.data?.items.length ? <div className="table-scroll"><table><thead><tr><th>生产批次</th><th>模式</th><th>有效单元</th><th>状态</th><th>登记时间</th><th>检查</th></tr></thead><tbody>{query.data.items.map(item => <tr key={item.id}><td><strong>{item.batch_id}</strong><div className="tiny muted mono">{item.id}</div></td><td><Badge value={item.mode} /></td><td>{item.unit_count}</td><td><Badge value={item.status} /></td><td>{formatTime(item.created_at)}</td><td><button className="text-button" onClick={() => setExpanded(expanded === item.id ? null : item.id)}>查看阻塞</button>{expanded === item.id && (item.blocked_reasons.length ? <BlockedReasons reasons={item.blocked_reasons} /> : <p className="tiny muted">无已登记的接入阻塞。</p>)}</td></tr>)}</tbody></table></div> : <Empty title="尚未导入候选批次" description="接入校验完成后，记录会在这里出现。" />}</QueryState></Panel>
-  </>;
+  const query = useList<ImportRecord>("/imports");
+  const command = useCommand();
+  const client = useQueryClient();
+  const [text, setText] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [jobId, setJobId] = useState("");
+  const [localError, setLocalError] = useState<Error | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  async function send() {
+    setLocalError(null);
+    let payload: unknown;
+    try {
+      payload = JSON.parse(text);
+      if (!payload || typeof payload !== "object" || Array.isArray(payload))
+        throw new Error("输入须为完整JSON对象。");
+    } catch (error) {
+      setLocalError(error instanceof Error ? error : new Error("JSON格式无效"));
+      return;
+    }
+    const result = await command.run<{ job_id: string }>("/imports", payload);
+    if (result) setJobId(result.job_id);
+  }
+  return (
+    <>
+      <PageHeader
+        eyebrow="SOURCE IMPORTS"
+        title="候选接入中心"
+        description="导入版本化材料、报告及原文快照。接入校验通过后，才能冻结抽样与排班。"
+        action={<RefreshButton onClick={() => void query.refetch()} />}
+      />
+      <div className="notice warning">
+        <div>
+          <strong>外部S3接口尚未对齐</strong>
+          <p>
+            演示材料与正式证据分开记录。声明passed或formal不等于验证通过；正式材料需要原始分母、逐单元PASS、摘要与原文证据。
+          </p>
+        </div>
+      </div>
+      {canWrite && (
+        <Panel
+          title="导入候选材料"
+          description="使用完整openkb.s3-s4.v1 JSON契约；合成教学材料请选择demo模式。"
+        >
+          <form
+            className="import-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void send();
+            }}
+          >
+            <label className="upload-zone">
+              <UploadCloud size={26} />
+              <strong>{fileName || "选择本地契约文件"}</strong>
+              <span>JSON · UTF-8 · 材料以静态文本处理</span>
+              <input
+                type="file"
+                accept="application/json,.json"
+                aria-label="选择候选契约文件"
+                onChange={async (event) => {
+                  const file = event.target.files?.[0];
+                  if (!file) return;
+                  if (file.size > 20 * 1024 * 1024) {
+                    setLocalError(new Error("文件超过20MB，请按批次拆分。"));
+                    return;
+                  }
+                  try {
+                    setText(await file.text());
+                    setFileName(file.name);
+                    setLocalError(null);
+                  } catch {
+                    setLocalError(new Error("读取文件失败。"));
+                  }
+                }}
+              />
+            </label>
+            <label htmlFor="import-json">契约JSON内容</label>
+            <textarea
+              id="import-json"
+              className="code-input"
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              rows={9}
+              required
+              spellCheck={false}
+              placeholder={
+                '{\n  "contract_version": "openkb.s3-s4.v1",\n  "mode": "demo",\n  "batch_id": "your-batch-id",\n  "source_revision": "r1",\n  "units": []\n}'
+              }
+            />
+            <ErrorNotice error={localError ?? command.error} />
+            <div className="form-footer">
+              <span className="muted">
+                后台校验会返回逐项错误；创建任务不代表接入完成。
+              </span>
+              <button
+                className="button primary"
+                disabled={command.pending || !text.trim()}
+              >
+                <FileUp size={17} />
+                {command.pending ? "正在登记…" : "提交接入校验"}
+              </button>
+            </div>
+          </form>
+        </Panel>
+      )}
+      {canWrite && <ControlledImport onCreated={setJobId} />}
+      {jobId && (
+        <JobProgress
+          id={jobId}
+          onComplete={() => void client.invalidateQueries()}
+        />
+      )}
+      <Panel title="接入记录" description="来源、模式与阻塞原因随批次保存。">
+        <QueryState pending={query.isPending} error={query.error}>
+          {query.data?.items.length ? (
+            <div className="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>生产批次</th>
+                    <th>模式</th>
+                    <th>有效单元</th>
+                    <th>状态</th>
+                    <th>登记时间</th>
+                    <th>检查</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {query.data.items.map((item) => (
+                    <tr key={item.id}>
+                      <td>
+                        <strong>{item.batch_id}</strong>
+                        <div className="tiny muted mono">{item.id}</div>
+                      </td>
+                      <td>
+                        <Badge value={item.mode} />
+                      </td>
+                      <td>{item.unit_count}</td>
+                      <td>
+                        <Badge value={item.status} />
+                      </td>
+                      <td>{formatTime(item.created_at)}</td>
+                      <td>
+                        <button
+                          className="text-button"
+                          onClick={() =>
+                            setExpanded(expanded === item.id ? null : item.id)
+                          }
+                        >
+                          查看阻塞
+                        </button>
+                        {expanded === item.id &&
+                          (item.blocked_reasons.length ? (
+                            <BlockedReasons reasons={item.blocked_reasons} />
+                          ) : (
+                            <p className="tiny muted">无已登记的接入阻塞。</p>
+                          ))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <Empty
+              title="尚未导入候选批次"
+              description="接入校验完成后，记录会在这里出现。"
+            />
+          )}
+        </QueryState>
+      </Panel>
+    </>
+  );
 }

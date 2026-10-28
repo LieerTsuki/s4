@@ -1,28 +1,394 @@
-import { SourceDocument } from '../components/SourceDocument';
-import { safeText } from '../format';
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { CheckCheck, Scale } from 'lucide-react';
-import { api } from '../api';
-import { useCommand, useList } from '../hooks';
-import type { Agreement, AnnotationBatch, Arbitration, Gold, User } from '../types';
-import { Badge, BlockedReasons, Empty, ErrorNotice, PageHeader, PageLink, Panel, QueryState, RefreshButton } from '../components/Common';
-import { GoldEditor } from '../components/GoldEditor';
+import { SourceDocument } from "../components/SourceDocument";
+import { safeText } from "../format";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { CheckCheck, Scale } from "lucide-react";
+import { api } from "../api";
+import { useCommand, useList } from "../hooks";
+import type {
+  Agreement,
+  AnnotationBatch,
+  Arbitration,
+  Gold,
+  User,
+} from "../types";
+import {
+  Badge,
+  BlockedReasons,
+  Empty,
+  ErrorNotice,
+  PageHeader,
+  PageLink,
+  Panel,
+  QueryState,
+  RefreshButton,
+} from "../components/Common";
+import { GoldEditor } from "../components/GoldEditor";
 
 export function QualityPage() {
-  const query = useList<Agreement>('/agreements');
-  return <><PageHeader eyebrow="AGREEMENT & QUALITY" title="质量与内容定稿" description="统计基于冻结的原始双人标签。仲裁修订保留原κ与原结论；统计通过后仍需逐单元确认内容。" action={<RefreshButton onClick={() => void query.refetch()} />} /><div className="quality-rules"><div><span className="rule-number">κ ≥ 0.7</span><Badge value="ACCEPT" /><p>完成完整性核对与内容定稿</p></div><div><span className="rule-number">0.6 ≤ κ &lt; 0.7</span><Badge value="ARBITRATE" /><p>第三人裁决与独立负责人复核</p></div><div><span className="rule-number">κ &lt; 0.6</span><Badge value="REJECT_BATCH" /><p>校准后全批新轮重标</p></div></div><Panel title="原始批次一致性" description="判门使用未舍入值；空向量、缺配对或pe=1保留未定义与阻塞原因。"><QueryState pending={query.isPending} error={query.error}>{query.data?.items.length ? <div className="table-scroll"><table><thead><tr><th>统计批次</th><th>标签对数 N</th><th>κ</th><th>po / pe</th><th>原始结论</th><th>处理</th></tr></thead><tbody>{query.data.items.map(item => <tr key={item.id}><td><span className="mono tiny">{item.batch_id}</span><BlockedReasons reasons={item.blocked_reasons} /></td><td>{item.n}</td><td><strong className="kappa-value">{item.kappa == null ? '未定义' : item.kappa.toFixed(4)}</strong></td><td>{item.po?.toFixed(4) ?? '—'} / {item.pe?.toFixed(4) ?? '—'}</td><td><Badge value={item.verdict} /></td><td><PageLink to={`/batches/${item.batch_id}`}>核对与定稿</PageLink></td></tr>)}</tbody></table></div> : <Empty title="尚无一致性结果" description="双方全部复核封存后，由运营在批次中发起统计任务。" />}</QueryState></Panel></>;
+  const query = useList<Agreement>("/agreements");
+  return (
+    <>
+      <PageHeader
+        eyebrow="AGREEMENT & QUALITY"
+        title="质量与内容定稿"
+        description="统计基于冻结的原始双人标签。仲裁修订保留原κ与原结论；统计通过后仍需逐单元确认内容。"
+        action={<RefreshButton onClick={() => void query.refetch()} />}
+      />
+      <div className="quality-rules">
+        <div>
+          <span className="rule-number">κ ≥ 0.7</span>
+          <Badge value="ACCEPT" />
+          <p>完成完整性核对与内容定稿</p>
+        </div>
+        <div>
+          <span className="rule-number">0.6 ≤ κ &lt; 0.7</span>
+          <Badge value="ARBITRATE" />
+          <p>第三人裁决与独立负责人复核</p>
+        </div>
+        <div>
+          <span className="rule-number">κ &lt; 0.6</span>
+          <Badge value="REJECT_BATCH" />
+          <p>校准后全批新轮重标</p>
+        </div>
+      </div>
+      <Panel
+        title="原始批次一致性"
+        description="判门使用未舍入值；空向量、缺配对或pe=1保留未定义与阻塞原因。"
+      >
+        <QueryState pending={query.isPending} error={query.error}>
+          {query.data?.items.length ? (
+            <div className="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>统计批次</th>
+                    <th>标签对数 N</th>
+                    <th>κ</th>
+                    <th>po / pe</th>
+                    <th>原始结论</th>
+                    <th>处理</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {query.data.items.map((item) => (
+                    <tr key={item.id}>
+                      <td>
+                        <span className="mono tiny">{item.batch_id}</span>
+                        <BlockedReasons reasons={item.blocked_reasons} />
+                      </td>
+                      <td>{item.n}</td>
+                      <td>
+                        <strong className="kappa-value">
+                          {item.kappa == null
+                            ? "未定义"
+                            : item.kappa.toFixed(4)}
+                        </strong>
+                      </td>
+                      <td>
+                        {item.po?.toFixed(4) ?? "—"} /{" "}
+                        {item.pe?.toFixed(4) ?? "—"}
+                      </td>
+                      <td>
+                        <Badge value={item.verdict} />
+                      </td>
+                      <td>
+                        <PageLink to={`/batches/${item.batch_id}`}>
+                          核对与定稿
+                        </PageLink>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <Empty
+              title="尚无一致性结果"
+              description="双方全部复核封存后，由运营在批次中发起统计任务。"
+            />
+          )}
+        </QueryState>
+      </Panel>
+    </>
+  );
 }
 
-function ArbitrationEditor({ batchId, agreement }: { batchId: string; agreement?: Agreement }) {
-  const query = useQuery({ queryKey: [`/annotation-batches/${batchId}`], queryFn: () => api<AnnotationBatch>(`/annotation-batches/${batchId}`) });
-  const command = useCommand(); const [unitId, setUnitId] = useState(''); const [gold, setGold] = useState<Gold>({}); const [reason, setReason] = useState('');
-  const units = query.data?.units ?? []; const allowed = agreement?.disagreement_unit_ids ?? []; const unit = units.find(item => item.unit_id === unitId);
-  return <Panel title="第三人内容裁决" description="须由本批A/B之外的仲裁员依据原文裁决。"><QueryState pending={query.isPending} error={query.error}><form className="form-stack" onSubmit={async event => { event.preventDefault(); const result = await command.run('/arbitrations', { batch_id: batchId, unit_id: unitId, final_gold: { ...gold, answer_points: (gold.answer_points ?? []).map(point => point.trim()).filter(Boolean), gold_doc_ids: (gold.gold_doc_ids ?? []).map(doc => doc.trim()).filter(Boolean) }, reason }); if (result) { setReason(''); command.setSuccess('裁决已记录，等待独立负责人确认。'); } }}><label>分歧单元<select value={unitId} required onChange={event => { const id = event.target.value; setUnitId(id); setGold(structuredClone(units.find(item => item.unit_id === id)?.gold ?? {})); }}><option value="">选择需要裁决的单元</option>{units.filter(item => !allowed.length || allowed.includes(item.unit_id)).map(item => <option key={item.unit_id} value={item.unit_id}>{item.unit_id}</option>)}</select></label>{unit && <><h3>{unit.question ?? '专项材料'}</h3><GoldEditor idPrefix="arbitration" value={gold} onChange={setGold} unanswerable={query.data?.dataset === 'QA-D4'} /><label>裁决理由<textarea required rows={4} value={reason} onChange={event => setReason(event.target.value)} placeholder="说明每项修订的原文依据" /></label><div className="final-contexts">{unit.contexts.map(doc => <SourceDocument key={doc.doc_id} document={doc} />)}</div><details><summary>授权双方原始记录</summary>{query.data?.submissions?.filter(item => item.phase === 'REVIEW').map((item, index) => <pre className="source-text" key={item.id ?? index}>{safeText(item.payload)}</pre>)}</details></>}<ErrorNotice error={command.error} />{command.success && <div className="notice success" role="status">{command.success}</div>}<button className="button primary align-start" disabled={command.pending || !unitId}><Scale size={16} />记录内容裁决</button></form></QueryState></Panel>;
+function ArbitrationEditor({
+  batchId,
+  agreement,
+}: {
+  batchId: string;
+  agreement?: Agreement;
+}) {
+  const query = useQuery({
+    queryKey: [`/annotation-batches/${batchId}`],
+    queryFn: () => api<AnnotationBatch>(`/annotation-batches/${batchId}`),
+  });
+  const command = useCommand();
+  const [unitId, setUnitId] = useState("");
+  const [gold, setGold] = useState<Gold>({});
+  const [reason, setReason] = useState("");
+  const units = query.data?.units ?? [];
+  const allowed = agreement?.disagreement_unit_ids ?? [];
+  const unit = units.find((item) => item.unit_id === unitId);
+  return (
+    <Panel
+      title="第三人内容裁决"
+      description="须由本批A/B之外的仲裁员依据原文裁决。"
+    >
+      <QueryState pending={query.isPending} error={query.error}>
+        <form
+          className="form-stack"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            const result = await command.run("/arbitrations", {
+              batch_id: batchId,
+              unit_id: unitId,
+              final_gold: {
+                ...gold,
+                answer_points: (gold.answer_points ?? [])
+                  .map((point) => point.trim())
+                  .filter(Boolean),
+                gold_doc_ids: (gold.gold_doc_ids ?? [])
+                  .map((doc) => doc.trim())
+                  .filter(Boolean),
+              },
+              reason,
+            });
+            if (result) {
+              setReason("");
+              command.setSuccess("裁决已记录，等待独立负责人确认。");
+            }
+          }}
+        >
+          <label>
+            分歧单元
+            <select
+              value={unitId}
+              required
+              onChange={(event) => {
+                const id = event.target.value;
+                setUnitId(id);
+                setGold(
+                  structuredClone(
+                    units.find((item) => item.unit_id === id)?.gold ?? {},
+                  ),
+                );
+              }}
+            >
+              <option value="">选择需要裁决的单元</option>
+              {units
+                .filter(
+                  (item) => !allowed.length || allowed.includes(item.unit_id),
+                )
+                .map((item) => (
+                  <option key={item.unit_id} value={item.unit_id}>
+                    {item.unit_id}
+                  </option>
+                ))}
+            </select>
+          </label>
+          {unit && (
+            <>
+              <h3>{unit.question ?? "专项材料"}</h3>
+              <GoldEditor
+                contexts={unit.contexts}
+                keyFacts={unit.key_facts}
+                idPrefix="arbitration"
+                value={gold}
+                onChange={setGold}
+                unanswerable={query.data?.dataset === "QA-D4"}
+              />
+              <label>
+                裁决理由
+                <textarea
+                  required
+                  rows={4}
+                  value={reason}
+                  onChange={(event) => setReason(event.target.value)}
+                  placeholder="说明每项修订的原文依据"
+                />
+              </label>
+              <div className="final-contexts">
+                {unit.contexts.map((doc) => (
+                  <SourceDocument key={doc.doc_id} document={doc} />
+                ))}
+              </div>
+              <details>
+                <summary>授权双方原始记录</summary>
+                {query.data?.submissions
+                  ?.filter((item) => item.phase === "REVIEW")
+                  .map((item, index) => (
+                    <pre className="source-text" key={item.id ?? index}>
+                      {safeText(item.payload)}
+                    </pre>
+                  ))}
+              </details>
+            </>
+          )}
+          <ErrorNotice error={command.error} />
+          {command.success && (
+            <div className="notice success" role="status">
+              {command.success}
+            </div>
+          )}
+          <button
+            className="button primary align-start"
+            disabled={command.pending || !unitId}
+          >
+            <Scale size={16} />
+            记录内容裁决
+          </button>
+        </form>
+      </QueryState>
+    </Panel>
+  );
 }
 
 export function ArbitrationPage({ user }: { user: User }) {
-  const query = useList<Arbitration>('/arbitrations'); const agreements = useList<Agreement>('/agreements'); const command = useCommand(); const [batchId, setBatchId] = useState(''); const [confirmId, setConfirmId] = useState(''); const [reason, setReason] = useState('');
-  const canArbitrate = user.roles.includes('arbitrator'); const canConfirm = user.roles.includes('lead');
-  return <><PageHeader eyebrow="ACCOUNTABLE HUMAN REVIEW" title="人工仲裁" description="灰区统计保留原始结论；第三人裁决与负责人确认由不同实际人员完成。" action={<RefreshButton onClick={() => void query.refetch()} />} /><div className="notice info"><Scale size={19} /><div><strong>内容分歧须逐单元闭环</strong><p>仲裁不会改写原始双人标签和κ。完成负责人复核后，仍需在批次中确认全部抽检单元。</p></div></div>{canArbitrate && <Panel title="选择待仲裁批次"><label>统计批次<select value={batchId} onChange={event => setBatchId(event.target.value)}><option value="">选择原始结论为ARBITRATE的批次</option>{agreements.data?.items.filter(item => item.verdict === 'ARBITRATE').map(item => <option key={item.id} value={item.batch_id}>{item.batch_id} · κ={item.kappa?.toFixed(4)}</option>)}</select></label><ErrorNotice error={agreements.error} /></Panel>}{canArbitrate && batchId && <ArbitrationEditor key={batchId} batchId={batchId} agreement={agreements.data?.items.find(item => item.batch_id === batchId)} />}<ErrorNotice error={command.error} /><Panel title="裁决与确认记录"><QueryState pending={query.isPending} error={query.error}>{query.data?.items.length ? <div className="list-rows">{query.data.items.map(item => <article className="arbitration-record" key={item.id}><div className="record-heading"><div><strong>{item.unit_id}</strong><p className="mono tiny muted">{item.batch_id}</p></div><Badge value={item.confirmed ? 'READY' : 'PENDING'} label={item.confirmed ? '负责人已确认' : '等待负责人确认'} /></div><p className="preserve-lines">{item.reason}</p><details><summary>查看最终内容</summary><pre className="source-text">{safeText(item.final_gold)}</pre></details>{canConfirm && !item.confirmed && item.arbitrator_id !== user.id && <button className="button small" onClick={() => { setConfirmId(item.id); setReason(''); }}>独立复核并确认</button>}{confirmId === item.id && <form className="form-stack" onSubmit={async event => { event.preventDefault(); const result = await command.run(`/arbitrations/${item.id}/confirm`, { reason }); if (result) setConfirmId(''); }}><label>负责人复核理由<textarea required rows={3} value={reason} onChange={event => setReason(event.target.value)} /></label><div className="button-row"><button className="button primary" disabled={command.pending}><CheckCheck size={16} />确认该项裁决</button><button type="button" className="button" onClick={() => setConfirmId('')}>取消</button></div></form>}</article>)}</div> : <Empty title="尚无仲裁记录" description="灰区批次的原始分歧将交由第三人裁决。" />}</QueryState></Panel></>;
+  const query = useList<Arbitration>("/arbitrations");
+  const agreements = useList<Agreement>("/agreements");
+  const command = useCommand();
+  const [batchId, setBatchId] = useState("");
+  const [confirmId, setConfirmId] = useState("");
+  const [reason, setReason] = useState("");
+  const canArbitrate = user.roles.includes("arbitrator");
+  const canConfirm = user.roles.includes("lead");
+  return (
+    <>
+      <PageHeader
+        eyebrow="ACCOUNTABLE HUMAN REVIEW"
+        title="人工仲裁"
+        description="灰区统计保留原始结论；第三人裁决与负责人确认由不同实际人员完成。"
+        action={<RefreshButton onClick={() => void query.refetch()} />}
+      />
+      <div className="notice info">
+        <Scale size={19} />
+        <div>
+          <strong>内容分歧须逐单元闭环</strong>
+          <p>
+            仲裁不会改写原始双人标签和κ。完成负责人复核后，仍需在批次中确认全部抽检单元。
+          </p>
+        </div>
+      </div>
+      {canArbitrate && (
+        <Panel title="选择待仲裁批次">
+          <label>
+            统计批次
+            <select
+              value={batchId}
+              onChange={(event) => setBatchId(event.target.value)}
+            >
+              <option value="">选择原始结论为ARBITRATE的批次</option>
+              {agreements.data?.items
+                .filter((item) => item.verdict === "ARBITRATE")
+                .map((item) => (
+                  <option key={item.id} value={item.batch_id}>
+                    {item.batch_id} · κ={item.kappa?.toFixed(4)}
+                  </option>
+                ))}
+            </select>
+          </label>
+          <ErrorNotice error={agreements.error} />
+        </Panel>
+      )}
+      {canArbitrate && batchId && (
+        <ArbitrationEditor
+          key={batchId}
+          batchId={batchId}
+          agreement={agreements.data?.items.find(
+            (item) => item.batch_id === batchId,
+          )}
+        />
+      )}
+      <ErrorNotice error={command.error} />
+      <Panel title="裁决与确认记录">
+        <QueryState pending={query.isPending} error={query.error}>
+          {query.data?.items.length ? (
+            <div className="list-rows">
+              {query.data.items.map((item) => (
+                <article className="arbitration-record" key={item.id}>
+                  <div className="record-heading">
+                    <div>
+                      <strong>{item.unit_id}</strong>
+                      <p className="mono tiny muted">{item.batch_id}</p>
+                    </div>
+                    <Badge
+                      value={item.confirmed ? "READY" : "PENDING"}
+                      label={item.confirmed ? "负责人已确认" : "等待负责人确认"}
+                    />
+                  </div>
+                  <p className="preserve-lines">{item.reason}</p>
+                  <details>
+                    <summary>查看最终内容</summary>
+                    <pre className="source-text">
+                      {safeText(item.final_gold)}
+                    </pre>
+                  </details>
+                  {canConfirm &&
+                    !item.confirmed &&
+                    item.arbitrator_id !== user.id && (
+                      <button
+                        className="button small"
+                        onClick={() => {
+                          setConfirmId(item.id);
+                          setReason("");
+                        }}
+                      >
+                        独立复核并确认
+                      </button>
+                    )}
+                  {confirmId === item.id && (
+                    <form
+                      className="form-stack"
+                      onSubmit={async (event) => {
+                        event.preventDefault();
+                        const result = await command.run(
+                          `/arbitrations/${item.id}/confirm`,
+                          { reason },
+                        );
+                        if (result) setConfirmId("");
+                      }}
+                    >
+                      <label>
+                        负责人复核理由
+                        <textarea
+                          required
+                          rows={3}
+                          value={reason}
+                          onChange={(event) => setReason(event.target.value)}
+                        />
+                      </label>
+                      <div className="button-row">
+                        <button
+                          className="button primary"
+                          disabled={command.pending}
+                        >
+                          <CheckCheck size={16} />
+                          确认该项裁决
+                        </button>
+                        <button
+                          type="button"
+                          className="button"
+                          onClick={() => setConfirmId("")}
+                        >
+                          取消
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </article>
+              ))}
+            </div>
+          ) : (
+            <Empty
+              title="尚无仲裁记录"
+              description="灰区批次的原始分歧将交由第三人裁决。"
+            />
+          )}
+        </QueryState>
+      </Panel>
+    </>
+  );
 }
