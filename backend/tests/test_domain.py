@@ -88,6 +88,10 @@ def formal_payload() -> dict[str, Any]:
         }
         for item in selected
     ]
+    for item,result in zip(selected,final_results,strict=True):
+        result['point_results']=[{'point_key':f'P{index+1:03d}','point_sha256':digest(point),'content_sha256':digest(item),
+            'reverse_validation':{'status':'PASS','model':'validator-v1','version':'fixture-v1','coverage':1},
+            'nli':{'score':0.9,'model':'bart-large-mnli','version':'fixture-v1'}} for index,point in enumerate(item['gold']['answer_points'])]
     payload["s3_report"] = {
         "checked_count": 100,
         "passed_count": 95,

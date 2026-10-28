@@ -1,0 +1,44 @@
+{
+  "review_version": "openkb.s4-review.v2",
+  "point_labels": {
+    "P001": "correct",
+    "P002": "partial",
+    "P003": "wrong"
+  },
+  "point_reasons": {
+    "P001": "原文规定五个工作日。",
+    "P002": "表单正确，邮件渠道不符。",
+    "P003": "全文未支持不留凭证的说法。"
+  },
+  "point_evidence": {
+    "P001": [
+      {
+        "doc_id": "synthetic-policy-0001",
+        "span": "办理期限"
+      }
+    ],
+    "P002": [
+      {
+        "doc_id": "synthetic-policy-0001",
+        "span": "提交渠道"
+      }
+    ],
+    "P003": []
+  },
+  "point_search_scope": {
+    "P003": [
+      "synthetic-policy-0001"
+    ]
+  },
+  "evidence_labels": {
+    "synthetic-policy-0001": 2
+  },
+  "evidence_reasons": {
+    "synthetic-policy-0001": "同一授权原文包含期限、渠道和凭证要求。"
+  },
+  "answerable": "answerable",
+  "answerable_reason": "授权原文足以回答本题。",
+  "reason": "仅为合成协议样例。",
+  "suggested_points": [],
+  "evidence_changes": []
+}

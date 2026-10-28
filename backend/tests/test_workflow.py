@@ -2,7 +2,7 @@
 from typing import Any
 
 import httpx
-from helpers import demo_payload, login, seed_user
+from helpers import calibration, demo_payload, login, seed_user
 
 
 async def setup_batch(app: Any, client: httpx.AsyncClient) -> tuple[dict[str, str], dict[str, Any], dict[str, str]]:
@@ -90,7 +90,8 @@ async def test_business_reader_exposure_prevents_future_blind_assignment(api: tu
     fresh = await seed_user(app, "fresh", ["annotator"])
     headers = await login(client, "reader")
     assert (await client.get(f"/api/s4/v1/annotation-batches/{batch['id']}")).status_code == 200
-    response = await client.post("/api/s4/v1/rounds", headers=headers, json={"batch_id": batch["id"], "annotator_a": reader, "annotator_b": fresh, "seed": 55, "reason": "全批校准重标"})
+    calibration_id=await calibration(client,headers,batch)
+    response = await client.post("/api/s4/v1/rounds", headers=headers, json={"calibration_id":calibration_id,"batch_id": batch["id"], "annotator_a": reader, "annotator_b": fresh, "seed": 55, "reason": "全批校准重标"})
     assert response.status_code == 409
     assert response.json()["error_code"] == "PREVIOUS_EXPOSURE"
 
@@ -100,7 +101,8 @@ async def test_relabel_resamples_entire_frozen_population_with_registered_seed(a
     headers, batch, _ = await setup_batch(app, client)
     a = await seed_user(app, "newa", ["annotator"])
     b = await seed_user(app, "newb", ["annotator"])
-    response = await client.post("/api/s4/v1/rounds", headers=headers, json={"batch_id": batch["id"], "annotator_a": a, "annotator_b": b, "seed": 999, "reason": "冻结全批重标"})
+    calibration_id=await calibration(client,headers,batch)
+    response = await client.post("/api/s4/v1/rounds", headers=headers, json={"calibration_id":calibration_id,"batch_id": batch["id"], "annotator_a": a, "annotator_b": b, "seed": 999, "reason": "冻结全批重标"})
     assert response.status_code == 201, response.text
     from openkb_s4.domain.sampling import sample_units
     assert response.json()["selected_ids"] == sample_units(demo_payload()["units"], 999)["selected_ids"]

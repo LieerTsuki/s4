@@ -115,6 +115,696 @@
     },
     "production_acceptance": {
       "const": false
+    },
+    "evidence_bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "audit_cutoff_at",
+        "handoff_id",
+        "snapshot_hash",
+        "source_import_id",
+        "source_hash",
+        "raw_source",
+        "assignments",
+        "submissions",
+        "agreements",
+        "validations",
+        "calibrations",
+        "final_decisions",
+        "arbitrations",
+        "audit_events"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "openkb.s4-evidence.v1"
+        },
+        "audit_cutoff_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "handoff_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "snapshot_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_import_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "raw_source": {
+          "type": "object"
+        },
+        "assignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "unit_id",
+              "batch_id",
+              "user_id",
+              "seat",
+              "active",
+              "content_revision",
+              "unit_revision_id",
+              "gold_revision_id",
+              "replacement_id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "batch_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "user_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "seat": {
+                "enum": [
+                  "A",
+                  "B"
+                ]
+              },
+              "active": {
+                "type": "boolean"
+              },
+              "content_revision": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit_revision_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gold_revision_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "replacement_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "submissions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "assignment_id",
+              "phase",
+              "payload",
+              "payload_hash",
+              "created_at"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "assignment_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "phase": {
+                "enum": [
+                  "BLIND",
+                  "REVIEW"
+                ]
+              },
+              "payload": {
+                "type": "object"
+              },
+              "payload_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "agreements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "batch_id",
+              "input_hash",
+              "vectors",
+              "result",
+              "profile_snapshot",
+              "profile_hash",
+              "manual_version",
+              "review_version",
+              "legacy"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "batch_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "input_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "vectors": {
+                "type": "object"
+              },
+              "result": {
+                "type": "object"
+              },
+              "profile_snapshot": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "profile_hash": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "manual_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "review_version": {
+                "enum": [
+                  "openkb.s4-review.v1",
+                  "openkb.s4-review.v2"
+                ]
+              },
+              "legacy": {
+                "type": "boolean"
+              }
+            },
+            "if": {
+              "properties": {
+                "review_version": {
+                  "const": "openkb.s4-review.v2"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "profile_snapshot": {
+                  "type": "object"
+                },
+                "profile_hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "manual_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "legacy": {
+                  "const": false
+                }
+              }
+            }
+          }
+        },
+        "validations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "batch_id",
+              "unit_id",
+              "content_hash",
+              "profile_hash",
+              "status",
+              "change_kind",
+              "validation_revision",
+              "verifier_id",
+              "editor_id",
+              "evidence",
+              "evidence_hash",
+              "reason",
+              "created_at"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "batch_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "content_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "profile_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "status": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "PENDING",
+                  "NOT_REQUIRED"
+                ]
+              },
+              "change_kind": {
+                "enum": [
+                  "UNCHANGED",
+                  "LOCATOR_ONLY",
+                  "SUBSTANTIVE"
+                ]
+              },
+              "validation_revision": {
+                "type": "string",
+                "minLength": 1
+              },
+              "verifier_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "editor_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "evidence": {
+                "type": "object"
+              },
+              "evidence_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "calibrations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "batch_id",
+              "original_agreement",
+              "case_refs",
+              "meeting_at",
+              "participant_ids",
+              "decisions",
+              "manual_version",
+              "training_refs",
+              "reason"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "batch_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "original_agreement": {
+                "type": "object"
+              },
+              "case_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "meeting_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "participant_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "decisions": {
+                "type": "string",
+                "minLength": 1
+              },
+              "manual_version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "training_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "final_decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "batch_id",
+              "unit_id",
+              "final_gold",
+              "reason",
+              "actor_id",
+              "created_at"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "batch_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "final_gold": {
+                "type": "object"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "actor_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "arbitrations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "title": "Closed S4 arbitration record",
+            "additionalProperties": false,
+            "required": [
+              "unit_id",
+              "batch_id",
+              "arbitrator_id",
+              "reason",
+              "final_gold",
+              "confirmed",
+              "confirmed_by"
+            ],
+            "properties": {
+              "unit_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "batch_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "arbitrator_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "final_gold": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "answer_points",
+                  "gold_doc_ids",
+                  "answerable"
+                ],
+                "properties": {
+                  "answer_points": {
+                    "type": "array",
+                    "maxItems": 200,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 30000
+                    }
+                  },
+                  "gold_doc_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+                    },
+                    "uniqueItems": true
+                  },
+                  "gold_spans": {
+                    "type": "array",
+                    "maxItems": 500,
+                    "items": {
+                      "$ref": "#/$defs/span"
+                    }
+                  },
+                  "answerable": {
+                    "enum": [
+                      "answerable",
+                      "no_answer",
+                      "expired",
+                      "out_of_scope"
+                    ]
+                  },
+                  "relevance_grades": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "integer",
+                      "enum": [
+                        2,
+                        1,
+                        0
+                      ]
+                    }
+                  },
+                  "key_facts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 30000
+                    }
+                  }
+                }
+              },
+              "confirmed": {
+                "const": true
+              },
+              "confirmed_by": {
+                "type": "string",
+                "minLength": 1
+              },
+              "confirmation_reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "confirmed_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "audit_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "actor_id",
+              "action",
+              "object_id",
+              "request_id",
+              "details",
+              "created_at"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "actor_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1
+              },
+              "object_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "request_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "details": {
+                "type": "object"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      }
+    },
+    "evidence_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "dependentRequired": {
+    "evidence_bundle": [
+      "evidence_sha256"
+    ],
+    "evidence_sha256": [
+      "evidence_bundle"
+    ]
+  },
+  "$defs": {
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "doc_id"
+      ],
+      "properties": {
+        "doc_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$"
+        },
+        "span": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "span"
+          ]
+        },
+        {
+          "required": [
+            "start",
+            "end"
+          ]
+        }
+      ]
     }
   }
 }

@@ -1,10 +1,11 @@
 """Local account sessions, password hashing and persisted login throttling."""
+
 import secrets
 from datetime import timedelta
 from typing import Any
 
-from fastapi import APIRouter, Request, Response
-from sqlalchemy import select, update
+from fastapi import APIRouter, Query, Request, Response
+from sqlalchemy import func, select, update
 from sqlalchemy.dialects.postgresql import insert
 
 from ..models import LoginRate, Session, User, now
@@ -31,8 +32,12 @@ async def login(body: Login, request: Request, response: Response, db: Db) -> di
     allowed = request.app.state.settings.allowed_origin or str(request.base_url).rstrip("/")
     if origin and origin != allowed:
         raise ApiError(403, "ORIGIN_REJECTED", "请求来源不允许")
-    key = digest(f"{request.client.host if request.client else 'unknown'}:{body.username.casefold()}")
-    await db.execute(insert(LoginRate).values(key=key, count=0, window_start=now()).on_conflict_do_nothing())
+    key = digest(
+        f"{request.client.host if request.client else 'unknown'}:{body.username.casefold()}"
+    )
+    await db.execute(
+        insert(LoginRate).values(key=key, count=0, window_start=now()).on_conflict_do_nothing()
+    )
     rate = await db.scalar(select(LoginRate).where(LoginRate.key == key).with_for_update())
     assert rate is not None
     if now() - rate.window_start > timedelta(minutes=15):
@@ -47,10 +52,24 @@ async def login(body: Login, request: Request, response: Response, db: Db) -> di
         raise ApiError(401, "INVALID_CREDENTIALS", "账号或密码不正确")
     rate.count = 0
     token, csrf = secrets.token_urlsafe(48), secrets.token_urlsafe(32)
-    db.add(Session(user_id=user.id, token_hash=digest(token), csrf_hash=digest(csrf), csrf_token=csrf,
-                   expires_at=expiry(request.app.state.settings.session_hours)))
-    response.set_cookie("s4_session", token, httponly=True, secure=request.app.state.settings.cookie_secure,
-                        samesite="strict", max_age=request.app.state.settings.session_hours * 3600, path="/")
+    db.add(
+        Session(
+            user_id=user.id,
+            token_hash=digest(token),
+            csrf_hash=digest(csrf),
+            csrf_token=csrf,
+            expires_at=expiry(request.app.state.settings.session_hours),
+        )
+    )
+    response.set_cookie(
+        "s4_session",
+        token,
+        httponly=True,
+        secure=request.app.state.settings.cookie_secure,
+        samesite="strict",
+        max_age=request.app.state.settings.session_hours * 3600,
+        path="/",
+    )
     audit(db, request, user.id, "LOGIN_SUCCESS", user.id)
     return {"user": user_view(user), "csrf_token": csrf}
 
@@ -69,17 +88,33 @@ async def logout(request: Request, response: Response, actor: Actor, db: Db) -> 
 
 
 @router.get("/users")
-async def users(actor: Actor, db: Db) -> dict[str, Any]:
+async def users(
+    actor: Actor, db: Db, offset: int = Query(0, ge=0), limit: int = Query(500, ge=1, le=500)
+) -> dict[str, Any]:
     require_role(actor, "admin", "lead")
-    rows = (await db.scalars(select(User).order_by(User.created_at).limit(500))).all()
-    return {"items": [user_view(user) for user in rows], "total": len(rows)}
+    rows = (
+        await db.scalars(
+            select(User).order_by(User.created_at, User.id).offset(offset).limit(limit)
+        )
+    ).all()
+    return {
+        "items": [user_view(user) for user in rows],
+        "total": await db.scalar(select(func.count()).select_from(User)),
+        "offset": offset,
+        "limit": limit,
+    }
 
 
 @router.post("/users", status_code=201)
 async def create_user(body: UserCreate, request: Request, actor: Actor, db: Db) -> dict[str, Any]:
     require_role(actor, "admin")
-    user = User(username=body.username, display_name=body.display_name, person_id=body.person_id,
-                roles=list(dict.fromkeys(body.roles)), password_hash=hash_password(body.password))
+    user = User(
+        username=body.username,
+        display_name=body.display_name,
+        person_id=body.person_id,
+        roles=list(dict.fromkeys(body.roles)),
+        password_hash=hash_password(body.password),
+    )
     db.add(user)
     await db.flush()
     audit(db, request, actor.id, "USER_CREATED", user.id, {"roles": user.roles})
@@ -87,12 +122,16 @@ async def create_user(body: UserCreate, request: Request, actor: Actor, db: Db) 
 
 
 @router.patch("/users/{user_id}")
-async def update_user(user_id: str, body: UserUpdate, request: Request, actor: Actor, db: Db) -> dict[str, Any]:
+async def update_user(
+    user_id: str, body: UserUpdate, request: Request, actor: Actor, db: Db
+) -> dict[str, Any]:
     require_role(actor, "admin")
     user = await db.get(User, user_id)
     if not user:
         raise ApiError(404, "NOT_FOUND", "账号不存在")
-    if user.id == actor.id and (body.active is False or (body.roles is not None and "admin" not in body.roles)):
+    if user.id == actor.id and (
+        body.active is False or (body.roles is not None and "admin" not in body.roles)
+    ):
         raise ApiError(409, "SELF_ADMIN_LOCKOUT", "不能移除当前管理员本人的管理权限")
     if body.active is not None:
         user.active = body.active
@@ -101,5 +140,7 @@ async def update_user(user_id: str, body: UserUpdate, request: Request, actor: A
     if body.password:
         user.password_hash = hash_password(body.password)
     await db.execute(update(Session).where(Session.user_id == user.id).values(revoked=True))
-    audit(db, request, actor.id, "USER_UPDATED", user.id, {"active": user.active, "roles": user.roles})
+    audit(
+        db, request, actor.id, "USER_UPDATED", user.id, {"active": user.active, "roles": user.roles}
+    )
     return user_view(user)

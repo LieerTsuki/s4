@@ -92,7 +92,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 revision = await db.scalar(text("SELECT version_num FROM alembic_version"))
                 heartbeat = await db.get(Heartbeat, "worker")
                 worker_ready = heartbeat is not None and now() - heartbeat.at < timedelta(seconds=90)
-                db_ready = revision == "0002_s4"
+                db_ready = revision == "0003_s4"
                 data = {"status": "ready" if db_ready and worker_ready else "not_ready", "database": db_ready,
                         "migration": revision, "worker": worker_ready, "external_alignment": "NOT_ALIGNED"}
                 return JSONResponse(status_code=200 if db_ready and worker_ready else 503, content=data)
@@ -100,8 +100,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             return JSONResponse(status_code=503, content={"status": "not_ready", "database": False, "worker": False})
 
     # Resource routers are imported here so tools can import configuration independently.
-    from .api import auth, exports, quality, workflow
-    for router in (auth.router, workflow.router, quality.router, exports.router):
+    from .api import auth, exports, governance, operations, quality, workflow
+    for router in (auth.router, workflow.router, quality.router, exports.router, governance.router, operations.router):
         application.include_router(router, prefix=PREFIX)
     return application
 

@@ -230,6 +230,23 @@ def _validate_gold(unit: dict[str, Any], context_ids: set[str]) -> None:
                 _fail("INVALID_SOURCE_RANGE", "gold.gold_spans.start/end")
         if "page" in span:
             _integer(span["page"], "gold.gold_spans.page", minimum=1)
+    from ..security import ApiError
+    from .review import validate_locator
+
+    for index, span in enumerate(gold.get("gold_spans", [])):
+        try:
+            validate_locator(unit, span, f"gold.gold_spans.{index}")
+        except ApiError as exc:
+            raise DomainError(exc.code, exc.message) from exc
+    if "key_facts" in gold:
+        facts = _array(
+            gold["key_facts"],
+            "gold.key_facts",
+            minimum=3 if dataset == "QA-D5" else 0,
+            maximum=5 if dataset == "QA-D5" else 200,
+        )
+        for fact in facts:
+            _string(fact, "gold.key_facts")
     if "relevance_grades" in gold:
         grades = _mapping(gold["relevance_grades"], "gold.relevance_grades")
         if not set(grades) <= set(doc_ids):
@@ -424,6 +441,55 @@ def _validate_formal(payload: dict[str, Any], units: list[dict[str, Any]]) -> No
         if unit["metadata"]["generation_model"] != generator:
             _fail("GENERATION_MODEL_MISMATCH", "metadata.generation_model")
         _validate_nli(item, report)
+        if unit.get("gold", {}).get("answer_points"):
+            point_results = _array(
+                item.get("point_results"),
+                "unit_results.point_results",
+                minimum=len(unit["gold"]["answer_points"]),
+                maximum=len(unit["gold"]["answer_points"]),
+            )
+            expected_points = {
+                f"P{index + 1:03d}": point
+                for index, point in enumerate(unit["gold"]["answer_points"])
+            }
+            seen_points: set[str] = set()
+            for raw_point in point_results:
+                evidence = _mapping(raw_point, "unit_results.point_results")
+                _only_fields(
+                    evidence,
+                    {
+                        "point_key",
+                        "point_sha256",
+                        "content_sha256",
+                        "reverse_validation",
+                        "nli",
+                        "fallback",
+                    },
+                    "unit_results.point_results",
+                )
+                key = _identifier(evidence.get("point_key"), "unit_results.point_results.point_key")
+                if key not in expected_points or key in seen_points:
+                    _fail("S3_POINT_COVERAGE_MISMATCH", "unit_results.point_results.point_key")
+                seen_points.add(key)
+                if evidence.get("point_sha256") != canonical_sha256(
+                    expected_points[key]
+                ) or evidence.get("content_sha256") != canonical_sha256(unit):
+                    _fail("S3_POINT_DIGEST_MISMATCH", "unit_results.point_results")
+                reverse = _mapping(
+                    evidence.get("reverse_validation"),
+                    "unit_results.point_results.reverse_validation",
+                )
+                if (
+                    reverse.get("version") != report["validator_version"]
+                    or type(reverse.get("coverage")) is not int
+                    or reverse["coverage"] != 1
+                ):
+                    _fail(
+                        "S3_POINT_REVERSE_COVERAGE_MISSING",
+                        "unit_results.point_results.reverse_validation",
+                    )
+                _validate_nli(evidence, report)
+
     contexts = [context for unit in units for context in unit.get("contexts", [])]
     checksums = _mapping(payload.get("checksums"), "checksums")
     manifest = _mapping(payload.get("source_manifest"), "source_manifest")
@@ -488,3 +554,17 @@ def validate_import(payload: dict[str, Any]) -> dict[str, Any]:
     result = deepcopy(data)
     result["blocked_reasons"] = sorted(set(blockers))
     return result
+
+
+def validate_candidate(unit: dict[str, Any]) -> None:
+    """Validate a complete final candidate using the same import cross checks."""
+    _validate_unit(unit, False)
+    if unit["dataset"] == "QA-D5":
+        facts = _array(
+            unit.get("key_facts", unit.get("gold", {}).get("key_facts")),
+            "key_facts",
+            minimum=3,
+            maximum=5,
+        )
+        for fact in facts:
+            _string(fact, "key_facts")

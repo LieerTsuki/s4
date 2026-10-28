@@ -750,7 +750,41 @@
           "score": 0.9,
           "model": "bart-large-mnli",
           "version": "fixture-v1"
-        }
+        },
+        "point_results": [
+          {
+            "point_key": "P001",
+            "point_sha256": "84004606b92493484c071922dbdfa5f981590282f7223b1761c9cd49b181121d",
+            "content_sha256": "348cfae202f71042631a0eec6445ef2f2243b5f3dc19a80219eaf8996a3ada8b",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          },
+          {
+            "point_key": "P002",
+            "point_sha256": "515f5481f45ab9c8d3735e45775fd72e4f5052e8bee08570ddb19c3e8b8d24aa",
+            "content_sha256": "348cfae202f71042631a0eec6445ef2f2243b5f3dc19a80219eaf8996a3ada8b",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          }
+        ]
       },
       {
         "unit_id": "QA-D1-0001",
@@ -764,7 +798,41 @@
           "score": 0.9,
           "model": "bart-large-mnli",
           "version": "fixture-v1"
-        }
+        },
+        "point_results": [
+          {
+            "point_key": "P001",
+            "point_sha256": "ded1b296950cba73d1ef6c552cac3a454b5ecb403a995d83eeaf2bb20d3c43d0",
+            "content_sha256": "fa65f0fb4616477a24cc63ccc7e4098702d78fd25280915edbb9f6d02eedc30b",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          },
+          {
+            "point_key": "P002",
+            "point_sha256": "e5cb80cd8f4a6e54f59315ae92fb2d914bfc82f685f61034153d3e1735fc077f",
+            "content_sha256": "fa65f0fb4616477a24cc63ccc7e4098702d78fd25280915edbb9f6d02eedc30b",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          }
+        ]
       },
       {
         "unit_id": "QA-D1-0002",
@@ -778,7 +846,41 @@
           "score": 0.9,
           "model": "bart-large-mnli",
           "version": "fixture-v1"
-        }
+        },
+        "point_results": [
+          {
+            "point_key": "P001",
+            "point_sha256": "e36d60c90d83340bb00d2e52be42048506d06f4549e4fdeb5d847259ebfab793",
+            "content_sha256": "ba8a4cebcee9dcc6df1937f21af5463a4086f5f0cf3d31aeb141c9395502e153",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          },
+          {
+            "point_key": "P002",
+            "point_sha256": "6ec7351c746068519223ec2f0cbb40f01e6dea032a30cf4c7a4bc8fc5f440880",
+            "content_sha256": "ba8a4cebcee9dcc6df1937f21af5463a4086f5f0cf3d31aeb141c9395502e153",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          }
+        ]
       },
       {
         "unit_id": "QA-D1-0003",
@@ -792,7 +894,41 @@
           "score": 0.9,
           "model": "bart-large-mnli",
           "version": "fixture-v1"
-        }
+        },
+        "point_results": [
+          {
+            "point_key": "P001",
+            "point_sha256": "9a180d86fe0d936480b65f18135274aa5b0afe63af2c574b71481968e10a9dea",
+            "content_sha256": "0c8edab8243f9d100d674bac6de1a302c10821d71f9925a8d2e187927c27ba15",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          },
+          {
+            "point_key": "P002",
+            "point_sha256": "4d04625caf0fc4dd3ccf62fcad0ed879ac6f461ad0829dd398375f35e807e929",
+            "content_sha256": "0c8edab8243f9d100d674bac6de1a302c10821d71f9925a8d2e187927c27ba15",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          }
+        ]
       },
       {
         "unit_id": "QA-D1-0004",
@@ -806,7 +942,41 @@
           "score": 0.9,
           "model": "bart-large-mnli",
           "version": "fixture-v1"
-        }
+        },
+        "point_results": [
+          {
+            "point_key": "P001",
+            "point_sha256": "9d792b30f38ab794961ab50ef0179abbc2a281527170bf3aa1cd1ff51cda5e40",
+            "content_sha256": "cc79885e17e3c3c9bee96261ed51bed37bb57eb2581416965961b0ae3c6911c3",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          },
+          {
+            "point_key": "P002",
+            "point_sha256": "9e819c9c8ef9baf21b7371fe56b36a639a1cd4bcd3074cce8b576127c0b2433a",
+            "content_sha256": "cc79885e17e3c3c9bee96261ed51bed37bb57eb2581416965961b0ae3c6911c3",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          }
+        ]
       },
       {
         "unit_id": "QA-D1-0005",
@@ -820,7 +990,41 @@
           "score": 0.9,
           "model": "bart-large-mnli",
           "version": "fixture-v1"
-        }
+        },
+        "point_results": [
+          {
+            "point_key": "P001",
+            "point_sha256": "7158bf009124034ffd18e0c56101e503cbac63e79ec5f83da71f4ff027a2c77c",
+            "content_sha256": "63b772ad1435f741bd8a2c3e5d56486ec24b5d97e9f54ab3f861370916868aa6",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          },
+          {
+            "point_key": "P002",
+            "point_sha256": "d87b7c338979b19a9faca8b59b244ed26934bb7683bcc0085fa065a1e854ab3d",
+            "content_sha256": "63b772ad1435f741bd8a2c3e5d56486ec24b5d97e9f54ab3f861370916868aa6",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          }
+        ]
       },
       {
         "unit_id": "QA-D1-0006",
@@ -834,7 +1038,41 @@
           "score": 0.9,
           "model": "bart-large-mnli",
           "version": "fixture-v1"
-        }
+        },
+        "point_results": [
+          {
+            "point_key": "P001",
+            "point_sha256": "d2db0494129e574e7037e79165e97c4c0b508f71962f8854fc0163da9c72ab36",
+            "content_sha256": "6162d3bd48a051edfe47933df506777425d49298a6f8bbfa77718c31980a89fb",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          },
+          {
+            "point_key": "P002",
+            "point_sha256": "f762fe9d3a9f45d8ffe8e246ef9d75b34776f9231539b8cad2160285a42b8c01",
+            "content_sha256": "6162d3bd48a051edfe47933df506777425d49298a6f8bbfa77718c31980a89fb",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          }
+        ]
       },
       {
         "unit_id": "QA-D1-0007",
@@ -848,7 +1086,41 @@
           "score": 0.9,
           "model": "bart-large-mnli",
           "version": "fixture-v1"
-        }
+        },
+        "point_results": [
+          {
+            "point_key": "P001",
+            "point_sha256": "08ce33106607e86b82134cc452901eaf3401595ad21b2e90bda434e6679f5596",
+            "content_sha256": "770c0b11a548ca190306d4c67e667e95974325a09ae6a0050b85f55feee4217b",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          },
+          {
+            "point_key": "P002",
+            "point_sha256": "fb739fb187dad294aa85ebccd7910f968ac4f2c25795ec059cf55cbf8e5d32aa",
+            "content_sha256": "770c0b11a548ca190306d4c67e667e95974325a09ae6a0050b85f55feee4217b",
+            "reverse_validation": {
+              "status": "PASS",
+              "model": "validator-v1",
+              "version": "fixture-v1",
+              "coverage": 1
+            },
+            "nli": {
+              "score": 0.9,
+              "model": "bart-large-mnli",
+              "version": "fixture-v1"
+            }
+          }
+        ]
       }
     ],
     "archived_failures": [

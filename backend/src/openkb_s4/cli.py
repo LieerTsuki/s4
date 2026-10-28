@@ -3,6 +3,10 @@ import argparse
 import asyncio
 import getpass
 import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
 
 from sqlalchemy import select, text
 
@@ -37,7 +41,32 @@ def main() -> None:
     command.add_argument("--username", required=True)
     command.add_argument("--display-name", required=True)
     command.add_argument("--person-id", required=True)
+    for action in ("backup", "restore"):
+        operation = commands.add_parser(action, help="受控本机管理：一致性备份或隔离恢复验证")
+        operation.add_argument("--env-file", type=Path)
+        operation.add_argument("--container")
+        operation.add_argument("--database")
+        operation.add_argument("--data-dir", type=Path)
+        operation.add_argument("--api-container")
+        operation.add_argument("--output", type=Path)
+        operation.add_argument("--backup", type=Path, required=action == "restore")
     args = parser.parse_args()
+    if args.command in {"backup", "restore"}:
+        script = Path(__file__).resolve().parents[3] / "scripts" / "backup_restore.py"
+        if not script.is_file():
+            parser.error("备份/恢复仅支持受控本机管理环境，需要完整S4运维目录；API容器不提供此入口")
+        if not shutil.which("docker"):
+            parser.error("受控本机备份/恢复需要已安装并配置的Docker CLI")
+        arguments = [sys.executable, str(script), args.command]
+        for option in ("env_file", "container", "database", "data_dir", "api_container", "output", "backup"):
+            value = getattr(args, option)
+            if value is not None:
+                arguments.extend(["--" + option.replace("_", "-"), str(value)])
+        try:
+            subprocess.run(arguments, check=True)
+        except subprocess.CalledProcessError:
+            raise SystemExit("本机备份/恢复未完成；请核对保留的运维记录与安全错误类别") from None
+        return
     password = os.environ.get("S4_BOOTSTRAP_PASSWORD") or getpass.getpass("管理员密码（至少12位）：")
     asyncio.run(bootstrap(args.username, args.display_name, args.person_id, password))
 

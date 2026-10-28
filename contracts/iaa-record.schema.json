@@ -32,10 +32,314 @@
       "minLength": 1
     },
     "grades_a": {
-      "type": "object"
+      "type": "object",
+      "if": {
+        "required": [
+          "review_version"
+        ],
+        "properties": {
+          "review_version": {
+            "const": "openkb.s4-review.v2"
+          }
+        }
+      },
+      "then": {
+        "additionalProperties": false,
+        "properties": {
+          "review_version": {
+            "const": "openkb.s4-review.v2",
+            "title": "Review Version",
+            "type": "string"
+          },
+          "point_labels": {
+            "additionalProperties": {
+              "enum": [
+                "correct",
+                "partial",
+                "wrong"
+              ],
+              "type": "string"
+            },
+            "title": "Point Labels",
+            "type": "object"
+          },
+          "point_reasons": {
+            "additionalProperties": {
+              "maxLength": 5000,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Point Reasons",
+            "type": "object"
+          },
+          "point_evidence": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/$defs/Locator"
+              },
+              "type": "array"
+            },
+            "title": "Point Evidence",
+            "type": "object"
+          },
+          "point_search_scope": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Point Search Scope",
+            "type": "object"
+          },
+          "evidence_labels": {
+            "additionalProperties": {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "title": "Evidence Labels",
+            "type": "object"
+          },
+          "evidence_reasons": {
+            "additionalProperties": {
+              "maxLength": 5000,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Evidence Reasons",
+            "type": "object"
+          },
+          "answerable": {
+            "anyOf": [
+              {
+                "enum": [
+                  "answerable",
+                  "no_answer",
+                  "expired",
+                  "out_of_scope"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Answerable"
+          },
+          "answerable_reason": {
+            "anyOf": [
+              {
+                "maxLength": 5000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Answerable Reason"
+          },
+          "reason": {
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "suggested_points": {
+            "items": {
+              "$ref": "#/$defs/SuggestedPoint"
+            },
+            "maxItems": 200,
+            "title": "Suggested Points",
+            "type": "array"
+          },
+          "evidence_changes": {
+            "items": {
+              "$ref": "#/$defs/EvidenceChange"
+            },
+            "maxItems": 200,
+            "title": "Evidence Changes",
+            "type": "array"
+          },
+          "specialized_review": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Specialized Review"
+          }
+        },
+        "required": [
+          "review_version",
+          "reason"
+        ],
+        "title": "ReviewV2",
+        "type": "object"
+      }
     },
     "grades_b": {
-      "type": "object"
+      "type": "object",
+      "if": {
+        "required": [
+          "review_version"
+        ],
+        "properties": {
+          "review_version": {
+            "const": "openkb.s4-review.v2"
+          }
+        }
+      },
+      "then": {
+        "additionalProperties": false,
+        "properties": {
+          "review_version": {
+            "const": "openkb.s4-review.v2",
+            "title": "Review Version",
+            "type": "string"
+          },
+          "point_labels": {
+            "additionalProperties": {
+              "enum": [
+                "correct",
+                "partial",
+                "wrong"
+              ],
+              "type": "string"
+            },
+            "title": "Point Labels",
+            "type": "object"
+          },
+          "point_reasons": {
+            "additionalProperties": {
+              "maxLength": 5000,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Point Reasons",
+            "type": "object"
+          },
+          "point_evidence": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/$defs/Locator"
+              },
+              "type": "array"
+            },
+            "title": "Point Evidence",
+            "type": "object"
+          },
+          "point_search_scope": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Point Search Scope",
+            "type": "object"
+          },
+          "evidence_labels": {
+            "additionalProperties": {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "title": "Evidence Labels",
+            "type": "object"
+          },
+          "evidence_reasons": {
+            "additionalProperties": {
+              "maxLength": 5000,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Evidence Reasons",
+            "type": "object"
+          },
+          "answerable": {
+            "anyOf": [
+              {
+                "enum": [
+                  "answerable",
+                  "no_answer",
+                  "expired",
+                  "out_of_scope"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Answerable"
+          },
+          "answerable_reason": {
+            "anyOf": [
+              {
+                "maxLength": 5000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Answerable Reason"
+          },
+          "reason": {
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "suggested_points": {
+            "items": {
+              "$ref": "#/$defs/SuggestedPoint"
+            },
+            "maxItems": 200,
+            "title": "Suggested Points",
+            "type": "array"
+          },
+          "evidence_changes": {
+            "items": {
+              "$ref": "#/$defs/EvidenceChange"
+            },
+            "maxItems": 200,
+            "title": "Evidence Changes",
+            "type": "array"
+          },
+          "specialized_review": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Specialized Review"
+          }
+        },
+        "required": [
+          "review_version",
+          "reason"
+        ],
+        "title": "ReviewV2",
+        "type": "object"
+      }
     },
     "κ": {
       "type": "number",
@@ -69,6 +373,191 @@
     "decided_at": {
       "type": "string",
       "format": "date-time"
+    }
+  },
+  "$defs": {
+    "EvidenceChange": {
+      "additionalProperties": false,
+      "properties": {
+        "change_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Change Id",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "add",
+            "remove"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "doc_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "locators": {
+          "items": {
+            "$ref": "#/$defs/Locator"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Locators",
+          "type": "array"
+        }
+      },
+      "required": [
+        "change_id",
+        "action",
+        "doc_id",
+        "reason",
+        "locators"
+      ],
+      "title": "EvidenceChange",
+      "type": "object"
+    },
+    "Locator": {
+      "additionalProperties": false,
+      "properties": {
+        "doc_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "context_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Version"
+        },
+        "context_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Sha256"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "maxLength": 30000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Span"
+        }
+      },
+      "required": [
+        "doc_id"
+      ],
+      "title": "Locator",
+      "type": "object"
+    },
+    "SuggestedPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "suggestion_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Suggestion Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 30000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Locator"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "suggestion_id",
+        "text",
+        "reason",
+        "evidence"
+      ],
+      "title": "SuggestedPoint",
+      "type": "object"
     }
   }
 }

@@ -39,6 +39,14 @@ async def api(tmp_path: Path) -> AsyncIterator[tuple[Any, httpx.AsyncClient]]:
         await connection.execute(text("TRUNCATE users CASCADE"))
         await connection.execute(text("TRUNCATE login_rates, audit_events, heartbeats"))
     await owner_engine.dispose()
+    # TRUNCATE users CASCADE also clears the nullable signer FK baseline table.
+    from openkb_s4.domain.contracts import canonical_sha256
+    from openkb_s4.domain.profiles import baseline_snapshot, list_profiles
+    from openkb_s4.models import ProfileRevision
+    async with app.state.sessions() as db, db.begin():
+        for profile in list_profiles():
+            snapshot = baseline_snapshot(profile['dataset'])
+            db.add(ProfileRevision(dataset=profile['dataset'],version=snapshot['version'],manual_version=snapshot['manual_version'],snapshot=snapshot,canonical_hash=canonical_sha256(snapshot),state='APPROVED',approval=snapshot['approval']))
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
         yield app, client
     await app.state.engine.dispose()

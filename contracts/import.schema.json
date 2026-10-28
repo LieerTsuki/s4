@@ -704,6 +704,148 @@
               "maxLength": 30000
             }
           }
+        },
+        "point_results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "point_key",
+              "point_sha256",
+              "content_sha256",
+              "reverse_validation",
+              "nli"
+            ],
+            "properties": {
+              "point_key": {
+                "type": "string",
+                "pattern": "^P[0-9]{3,}$"
+              },
+              "point_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "content_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "reverse_validation": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "model",
+                  "version",
+                  "coverage"
+                ],
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  },
+                  "model": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "version": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "coverage": {
+                    "const": 1,
+                    "type": "integer"
+                  }
+                }
+              },
+              "nli": {
+                "type": "object",
+                "required": [
+                  "score",
+                  "model",
+                  "version"
+                ],
+                "properties": {
+                  "score": {
+                    "type": "number",
+                    "minimum": 0.45,
+                    "maximum": 1
+                  },
+                  "model": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 30000
+                  },
+                  "version": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 30000
+                  }
+                }
+              },
+              "fallback": {
+                "type": "object",
+                "required": [
+                  "status",
+                  "model",
+                  "version"
+                ],
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  },
+                  "model": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 30000
+                  },
+                  "version": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 30000
+                  }
+                }
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "nli": {
+                      "properties": {
+                        "score": {
+                          "minimum": 0.45,
+                          "maximum": 0.65
+                        }
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "fallback"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "unit_id"
+                  ],
+                  "properties": {
+                    "unit_id": {
+                      "pattern": "^QA-D[12357]-"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "point_results"
+                  ]
+                }
+              }
+            ]
+          },
+          "minItems": 1
         }
       },
       "allOf": [
@@ -723,6 +865,23 @@
           "then": {
             "required": [
               "fallback"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "unit_id"
+            ],
+            "properties": {
+              "unit_id": {
+                "pattern": "^QA-D[12357]-"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "point_results"
             ]
           }
         }

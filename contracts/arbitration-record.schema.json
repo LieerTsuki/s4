@@ -98,6 +98,21 @@
     "confirmed_by": {
       "type": "string",
       "minLength": 1
+    },
+    "confirmation_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "confirmed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
     }
   },
   "$defs": {

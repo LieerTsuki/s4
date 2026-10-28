@@ -43,7 +43,6 @@ mypy_path = "src"
 
 [tool.coverage.run]
 source = ["openkb_s4"]
-omit = ["*/cli.py"]
 concurrency = ["greenlet"]
 
 [tool.hatch.build.targets.wheel]

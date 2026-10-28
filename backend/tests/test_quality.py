@@ -3,7 +3,7 @@ from typing import Any
 
 import httpx
 import pytest
-from helpers import demo_payload, finish_reviews, login, seed_user
+from helpers import calibration, demo_payload, finish_reviews, login, seed_user
 from test_workflow import setup_batch
 
 
@@ -30,9 +30,10 @@ async def test_quality_requires_human_finalization_and_preserves_original_result
         assert (await client.post(url, headers=headers, json=body)).status_code == 409
         fresh_a = await seed_user(app, "fresh_a", ["annotator"])
         fresh_b = await seed_user(app, "fresh_b", ["annotator"])
-        invalid = await client.post("/api/s4/v1/rounds", headers=headers, json={"batch_id": batch["id"], "annotator_a": people["a"], "annotator_b": fresh_b, "seed": 7, "reason": "calibration"})
+        calibration_id=await calibration(client,headers,batch)
+        invalid = await client.post("/api/s4/v1/rounds", headers=headers, json={"calibration_id":calibration_id,"batch_id": batch["id"], "annotator_a": people["a"], "annotator_b": fresh_b, "seed": 7, "reason": "calibration"})
         assert invalid.status_code == 409 and invalid.json()["error_code"] == "PREVIOUS_EXPOSURE"
-        valid = await client.post("/api/s4/v1/rounds", headers=headers, json={"batch_id": batch["id"], "annotator_a": fresh_a, "annotator_b": fresh_b, "seed": 7, "reason": "calibration with the whole frozen sample"})
+        valid = await client.post("/api/s4/v1/rounds", headers=headers, json={"calibration_id":calibration_id,"batch_id": batch["id"], "annotator_a": fresh_a, "annotator_b": fresh_b, "seed": 7, "reason": "calibration with the whole frozen sample"})
         assert valid.status_code == 201, valid.text
         assert valid.json()["round"] == 2
         assert valid.json()["sample_count"] == batch["sample_count"]

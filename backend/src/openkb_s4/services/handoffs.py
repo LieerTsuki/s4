@@ -1,4 +1,5 @@
 """All-or-nothing snapshot export and independent local integrity verification."""
+import asyncio
 import copy
 import hashlib
 import json
@@ -7,7 +8,7 @@ from pathlib import Path
 from typing import Any
 from uuid import NAMESPACE_URL, uuid5
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config import Settings
@@ -17,10 +18,13 @@ from ..models import (
     AnnotationBatch,
     Arbitration,
     Assignment,
+    AuditEvent,
+    CalibrationRecord,
     FinalDecision,
     Handoff,
     SourceImport,
     Submission,
+    ValidationRevision,
 )
 from ..security import ApiError
 
@@ -73,9 +77,9 @@ def verify_snapshot(directory: Path, manifest: dict[str, Any], *, allow_missing_
 
 async def export_snapshot(db: AsyncSession, settings: Settings, imported: SourceImport) -> Handoff:
     """Publish only complete quality-approved batches; unsampled units remain present."""
-    if imported.mode == "formal" and (not settings.external_alignment_confirmed or imported.blocked_reasons):
+    if imported.mode == "formal":
         raise ApiError(409, "EXTERNAL_CONTRACT_NOT_ALIGNED", "正式外部证据或接口尚未对齐，不能签发正式交接")
-    batches = (await db.scalars(select(AnnotationBatch).where(AnnotationBatch.import_id == imported.id, AnnotationBatch.state != "SUPERSEDED").with_for_update())).all()
+    batches = (await db.scalars(select(AnnotationBatch).where(AnnotationBatch.import_id == imported.id, AnnotationBatch.state != "SUPERSEDED").order_by(AnnotationBatch.dataset, AnnotationBatch.id).with_for_update())).all()
     datasets = {unit["dataset"] for unit in imported.payload["units"]}
     if {batch.dataset for batch in batches} != datasets or any(batch.state != "S4_READY" or batch.blocked_reasons for batch in batches):
         raise ApiError(409, "ALL_BATCHES_REQUIRED", "全部应完成数据集批次须通过质量门并完成内容定稿")
@@ -86,26 +90,65 @@ async def export_snapshot(db: AsyncSession, settings: Settings, imported: Source
     arbitration_log: list[dict[str, Any]] = []
     gates: list[dict[str, Any]] = []
     snapshot_inputs: list[Any] = []
+    raw_submissions: list[dict[str, Any]] = []
+    raw_assignments: list[dict[str, Any]] = []
+    raw_agreements: list[dict[str, Any]] = []
+    raw_decisions: list[dict[str, Any]] = []
+    validation_records: list[dict[str, Any]] = []
+    calibration_records: list[dict[str, Any]] = []
+    audit_cutoffs = []
     for batch in batches:
         agreement = await db.scalar(select(Agreement).where(Agreement.batch_id == batch.id))
         if not agreement or agreement.result["verdict"] not in {"ACCEPT", "ARBITRATE"} or agreement.result["kappa"] is None:
             raise ApiError(409, "QUALITY_GATE_CLOSED", "有效原始质量结论缺失或拒绝")
-        decisions = (await db.scalars(select(FinalDecision).where(FinalDecision.batch_id == batch.id))).all()
+        decisions = (await db.scalars(select(FinalDecision).where(FinalDecision.batch_id == batch.id).order_by(FinalDecision.unit_id))).all()
         decisions_by_id = {decision.unit_id: decision for decision in decisions}
+        raw_decisions.extend({"id": item.id, "batch_id": batch.id, "unit_id": item.unit_id, "final_gold": item.final_gold,
+                              "reason": item.reason, "actor_id": item.actor_id, "created_at": item.created_at.isoformat()} for item in decisions)
         if set(decisions_by_id) != set(batch.selected_ids):
             raise ApiError(409, "FINAL_SCOPE_MISMATCH", "抽检最终内容不完整")
-        arbiters = (await db.scalars(select(Arbitration).where(Arbitration.batch_id == batch.id))).all()
+        finalized_at = await db.scalar(select(func.max(AuditEvent.created_at)).where(AuditEvent.object_id == batch.id, AuditEvent.action == "CONTENT_FINALIZED"))
+        audit_cutoffs.extend([decision.created_at for decision in decisions])
+        if finalized_at:
+            audit_cutoffs.append(finalized_at)
+        arbiters = (await db.scalars(select(Arbitration).where(Arbitration.batch_id == batch.id).order_by(Arbitration.unit_id))).all()
         arb_by_id = {item.unit_id: item for item in arbiters}
         if agreement.result["verdict"] == "ARBITRATE" and any(unit_id not in arb_by_id or not arb_by_id[unit_id].confirmed for unit_id in agreement.result.get("disagreement_unit_ids", [])):
             raise ApiError(409, "ARBITRATION_INCOMPLETE", "仲裁尚未闭环")
-        assignments = (await db.scalars(select(Assignment).where(Assignment.batch_id == batch.id))).all()
+        all_assignments = (await db.scalars(select(Assignment).where(Assignment.batch_id == batch.id).order_by(Assignment.unit_id, Assignment.seat, Assignment.created_at, Assignment.id))).all()
+        assignments = [item for item in all_assignments if item.active]
         assignments_by_key = {(a.unit_id, a.seat): a for a in assignments}
         submissions = (await db.scalars(select(Submission).where(Submission.assignment_id.in_([a.id for a in assignments]), Submission.phase == "REVIEW"))).all()
         by_assignment = {item.assignment_id: item for item in submissions}
+        history = (await db.scalars(select(Submission).where(Submission.assignment_id.in_([item.id for item in all_assignments])).order_by(Submission.created_at, Submission.id))).all()
+        raw_assignments.extend({"id": item.id, "unit_id": item.unit_id, "batch_id": batch.id, "user_id": item.user_id, "seat": item.seat,
+                                "active": item.active, "content_revision": item.content_revision, "unit_revision_id": item.unit_revision_id, "gold_revision_id": item.gold_revision_id,
+                                "replacement_id": item.replacement_id} for item in all_assignments)
+        raw_submissions.extend({"id": item.id, "assignment_id": item.assignment_id, "phase": item.phase, "payload": item.payload,
+                                "payload_hash": item.payload_hash, "created_at": item.created_at.isoformat()} for item in history)
+        raw_agreements.append({"id": agreement.id, "batch_id": batch.id, "input_hash": agreement.input_hash, "vectors": agreement.vectors,
+                               "result": agreement.result, "profile_snapshot": batch.profile_snapshot, "profile_hash": batch.profile_hash, "manual_version": batch.manual_version,
+                               "review_version": batch.review_version, "legacy": batch.review_version != "openkb.s4-review.v2"})
+        validations = (await db.scalars(select(ValidationRevision).where(ValidationRevision.batch_id == batch.id).order_by(ValidationRevision.created_at, ValidationRevision.id))).all()
+        validation_records.extend({"id": item.id, "batch_id": batch.id, "unit_id": item.unit_id, "content_hash": item.content_hash, "profile_hash": item.profile_hash,
+                                   "status": item.status, "change_kind": item.change_kind, "validation_revision": item.validation_revision, "verifier_id": item.verifier_id, "editor_id": item.editor_id,
+                                   "evidence": item.evidence, "evidence_hash": item.evidence_hash, "reason": item.reason, "created_at": item.created_at.isoformat()} for item in validations)
+        if batch.calibration_id:
+            calibration = await db.get(CalibrationRecord, batch.calibration_id)
+            if calibration:
+                calibration_records.append({"id": calibration.id, "batch_id": calibration.batch_id, "original_agreement": calibration.original_agreement,
+                                            "case_refs": calibration.case_refs, "meeting_at": calibration.meeting_at.isoformat(), "participant_ids": calibration.participant_ids,
+                                            "decisions": calibration.decisions, "manual_version": calibration.manual_version, "training_refs": calibration.training_refs, "reason": calibration.reason})
         for unit_id in batch.selected_ids:
             decision = decisions_by_id[unit_id]
             original_hash = canonical_sha256(by_id[unit_id])
             by_id[unit_id]["gold"] = decision.final_gold
+            if batch.review_version == "openkb.s4-review.v2":
+                candidate_hash = canonical_sha256(by_id[unit_id])
+                closed = [item for item in validations if item.unit_id == unit_id and item.content_hash == candidate_hash and item.profile_hash == batch.profile_hash]
+                latest = max(closed, key=lambda item: item.created_at) if closed else None
+                if latest is None or latest.status not in {"PASS", "NOT_REQUIRED"}:
+                    raise ApiError(409, "VALIDATION_INCOMPLETE", "最终候选复验记录尚未闭环，不能发布交接")
             by_id[unit_id].setdefault("metadata", {})["s4_revision"] = {"source_content_sha256": original_hash, "decision_id": decision.id, "batch_id": batch.id, "round": batch.round}
             labeled.append({**by_id[unit_id], "annotation_batch_id": batch.id, "round": batch.round})
             a, b = assignments_by_key[(unit_id, "A")], assignments_by_key[(unit_id, "B")]
@@ -120,22 +163,48 @@ async def export_snapshot(db: AsyncSession, settings: Settings, imported: Source
         arbitration_log.extend({"unit_id": item.unit_id, "batch_id": batch.id, "arbitrator_id": item.arbitrator_id,
                                 "reason": item.reason, "final_gold": item.final_gold, "confirmed": item.confirmed,
                                 "confirmed_by": item.confirmed_by} for item in arbiters)
-        gates.append({"batch_id": batch.id, "dataset": batch.dataset, "round": batch.round, **agreement.result, "sample_ledger": batch.sample_ledger})
+        for row in arbitration_log:
+            if row["batch_id"] == batch.id:
+                original = arb_by_id[row["unit_id"]]
+                row["confirmation_reason"] = original.confirmation_reason
+                row["confirmed_at"] = original.confirmed_at.isoformat() if original.confirmed_at else None
+                row["created_at"] = original.created_at.isoformat()
+        gates.append({"batch_id": batch.id, "dataset": batch.dataset, "round": batch.round, **agreement.result, "sample_ledger": batch.sample_ledger,
+                      "profile_version": batch.profile_version, "profile_revision_id": batch.profile_revision_id, "profile_hash": batch.profile_hash,
+                      "manual_version": batch.manual_version, "review_version": batch.review_version, "parent_id": batch.parent_id, "calibration_id": batch.calibration_id,
+                      "agreement_id": agreement.id, "agreement_input_hash": agreement.input_hash})
         snapshot_inputs.append({"batch_id": batch.id, "agreement": agreement.input_hash,
                                 "decisions": [{"id": item.id, "gold": item.final_gold} for item in decisions]})
     snapshot_hash = canonical_sha256({"import_hash": imported.content_hash, "scopes": snapshot_inputs})
     existing = await db.scalar(select(Handoff).where(Handoff.snapshot_hash == snapshot_hash))
     if existing:
-        verify_snapshot(settings.data_dir / "exports" / existing.id, existing.manifest)
+        await asyncio.to_thread(verify_snapshot, settings.data_dir / "exports" / existing.id, existing.manifest)
         return existing
     handoff = Handoff(id=str(uuid5(NAMESPACE_URL, "openkb-s4:" + snapshot_hash)), import_id=imported.id, mode=imported.mode, status="DEMO_READY" if imported.mode == "demo" else "S4_READY",
                       manifest={}, blocked_reasons=[], snapshot_hash=snapshot_hash)
     db.add(handoff)
     await db.flush()
+    business_ids = [imported.id, *[batch.id for batch in batches], *[item["id"] for item in raw_assignments],
+                    *[item["id"] for item in raw_submissions], *[item["id"] for item in raw_agreements]]
+    # The quality closure fixes this cutoff. Later download/request audits must
+    # not change a deterministic snapshot when recovering an orphan publication.
+    audit_cutoff = max(audit_cutoffs)
+    audit_events = (await db.scalars(select(AuditEvent).where(AuditEvent.object_id.in_(business_ids), AuditEvent.created_at <= audit_cutoff).order_by(AuditEvent.created_at, AuditEvent.id))).all()
+    evidence_bundle = {"contract_version": "openkb.s4-evidence.v1", "handoff_id": handoff.id, "snapshot_hash": snapshot_hash,
+                       "source_import_id": imported.id, "source_hash": imported.content_hash, "raw_source": imported.payload,
+                       "assignments": raw_assignments, "submissions": raw_submissions, "agreements": raw_agreements,
+                       "final_decisions": raw_decisions,
+                       "validations": validation_records, "calibrations": calibration_records,
+                       "audit_cutoff_at": audit_cutoff.isoformat(),
+                       "arbitrations": arbitration_log,
+                       "audit_events": [{"id": item.id, "actor_id": item.actor_id, "action": item.action, "object_id": item.object_id,
+                                         "request_id": item.request_id, "details": item.details, "created_at": item.created_at.isoformat()} for item in audit_events]}
     report = {"contract_version": "openkb.s4-s5.v1", "mode": imported.mode, "import_id": imported.id,
               "unit_count": len(units), "sample_count": len(labeled), "gates": gates,
               "source_hash": imported.content_hash, "external_status": "NOT_ALIGNED",
               "unsampled_status": "not_human_reviewed", "production_acceptance": False}
+    report["evidence_bundle"] = evidence_bundle
+    report["evidence_sha256"] = canonical_sha256(evidence_bundle)
     contents = {"units_for_s5.jsonl": jsonl(units), "labeled.jsonl": jsonl(labeled),
                 "iaa_records.jsonl": jsonl(records), "arbitration_log.jsonl": jsonl(arbitration_log), "s4_report.json": encoded(report)}
     manifest = {"contract_version": "openkb.s4-s5.v1", "handoff_id": handoff.id, "mode": imported.mode,
@@ -143,10 +212,16 @@ async def export_snapshot(db: AsyncSession, settings: Settings, imported: Source
                 "unit_count": len(units), "sample_count": len(labeled), "unit_ids_sha256": canonical_sha256(sorted(by_id)),
                 "files": {name: {"sha256": hashlib.sha256(data).hexdigest(), "line_count": len(data.splitlines()) if name.endswith(".jsonl") else 1}
                           for name, data in contents.items()}}
-    export_root = settings.data_dir / "exports"
+    await asyncio.to_thread(publish_snapshot, settings.data_dir / "exports", handoff.id, contents, manifest)
+    handoff.manifest = manifest
+    return handoff
+
+
+def publish_snapshot(export_root: Path, handoff_id: str, contents: dict[str, bytes], manifest: dict[str, Any]) -> None:
+    """Synchronous durable I/O runs outside the worker's heartbeat event loop."""
     export_root.mkdir(parents=True, exist_ok=True)
-    temporary = export_root / (handoff.id + ".partial")
-    target = export_root / handoff.id
+    temporary = export_root / (handoff_id + ".partial")
+    target = export_root / handoff_id
     temporary.mkdir(exist_ok=True)
     for name, data in contents.items():
         with (temporary / name).open("wb") as stream:
@@ -166,5 +241,3 @@ async def export_snapshot(db: AsyncSession, settings: Settings, imported: Source
             raise ApiError(409, "EXPORT_PATH_CONFLICT", "已有导出与当前冻结版本不一致，需对账")
     else:
         temporary.rename(target)
-    handoff.manifest = manifest
-    return handoff

@@ -14,7 +14,9 @@ from .db import database
 from .models import AnnotationBatch, Session, User, now
 
 PASSWORDS = PasswordHasher()
-Db = Annotated[AsyncSession, Depends(database)]
+# Commit the request transaction before sending success or exposing cookies/jobs.
+# Request-scoped yield cleanup happens after the response and permits stale reads.
+Db = Annotated[AsyncSession, Depends(database, scope="function")]
 
 
 class ApiError(Exception):
