@@ -1,5 +1,7 @@
 # 启动、权限及运维手册
 
+> 以下内容为0003/REVIEW v2历史记录。2026-10-30起当前流程见 [v1.3运维手册](operations-v13.md)；旧API业务默认只读，不继续按下文旧κ准入和抽检定稿操作。
+
 ## 服务与配置
 
 开发：PowerShell 7运行`./scripts/dev.ps1 setup`、`migrate`、`api`、`worker`、`web`。API8004、Web5174。容器：`docker compose --env-file .env -f deploy/compose.yml up -d --build --wait`，同源入口8084。首次管理员创建见README；不存在预置账号或注册接口。

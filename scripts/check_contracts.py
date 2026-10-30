@@ -17,10 +17,15 @@ def main() -> None:
     parser.add_argument('--exports', type=Path, help='Controlled export root containing handoff directories.')
     args = parser.parse_args()
     validators = {}
-    for path in (ROOT / 'contracts').glob('*.schema.json'):
+    for path in (ROOT / 'contracts').rglob('*.schema.json'):
         schema = json.loads(path.read_text(encoding='utf-8'))
         Draft202012Validator.check_schema(schema)
         validators[path.name] = Draft202012Validator(schema, format_checker=FormatChecker())
+    v13_root = ROOT / 'contracts' / 'v13' / 'examples'
+    current_source = json.loads((v13_root / 'demo-import.json').read_text(encoding='utf-8'))
+    current_review = json.loads((v13_root / 'review-needs-revision.json').read_text(encoding='utf-8'))
+    validators['source-envelope.schema.json'].validate(current_source)
+    validators['review.schema.json'].validate(current_review)
     for name in ('demo-import.json', 'synthetic-formal-contract-test.json'):
         validators['import.schema.json'].validate(json.loads((ROOT / 'contracts/examples' / name).read_text(encoding='utf-8')))
     formal = json.loads((ROOT / 'contracts/examples/synthetic-formal-contract-test.json').read_text(encoding='utf-8'))
@@ -47,6 +52,12 @@ def main() -> None:
     snapshots = 0
     if args.exports:
         for manifest in args.exports.glob('*/s4_handoff_manifest.json'):
+            current_manifest = json.loads(manifest.read_text(encoding='utf-8'))
+            if current_manifest.get('contract_version') == 'openkb.s4-s5.v2':
+                from openkb_s4.services.handoffs_v13 import verify_package
+                verify_package(manifest.parent, current_manifest)
+                snapshots += 1
+                continue
             for filename, schema_name in files.items():
                 content = (manifest.parent / filename).read_text(encoding='utf-8')
                 rows = [json.loads(row) for row in content.splitlines()] if filename.endswith('.jsonl') else [json.loads(content)]

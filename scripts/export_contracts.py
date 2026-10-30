@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 
 from openkb_s4.domain.profiles import list_profiles
+from openkb_s4.domain.v13 import ReviewV3, SourceEnvelope, Unit
 from openkb_s4.main import create_app
 from openkb_s4.schemas import ReviewV2
 
@@ -33,10 +34,18 @@ def main() -> None:
     api_review = ReviewV2.model_json_schema(ref_template='#/components/schemas/{model}')
     components.update(api_review.pop('$defs', {}))
     components['ReviewV2'] = api_review
+    for name, model in (("ReviewV3", ReviewV3), ("SourceEnvelopeV2", SourceEnvelope)):
+        published = model.model_json_schema(ref_template='#/components/schemas/{model}')
+        components.update(published.pop('$defs', {}))
+        components[name] = published
     write('openapi.json', openapi)
     # Human-readable baseline cards are derived from the registered strategies.
     write('profiles.json', list_profiles())
-    print('Generated OpenAPI, REVIEW v2 and baseline profile contracts.')
+    for name, model in (("source-envelope", SourceEnvelope), ("unit", Unit), ("review", ReviewV3)):
+        published_schema = model.model_json_schema()
+        published_schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+        write(f"v13/{name}.schema.json", published_schema)
+    print('Generated OpenAPI, legacy contracts and explicit v1.3 schemas.')
 
 
 if __name__ == '__main__':

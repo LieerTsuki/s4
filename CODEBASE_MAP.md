@@ -1,5 +1,24 @@
 # Codebase Map
 
+当前v1.3调用链：`frontend/src/v13` → `/api/s4/v2` → 共享认证/对象与材料族条件 → 新版领域校验/全量核实及观测服务 → PostgreSQL索引和受控文件引用。旧v1业务默认只读。
+
+| 当前模块 | 职责 |
+|---|---|
+| domain/v13.py、contracts/v13 | 13集、新字段、严格校验、确定性抽样和观测κ |
+| api/v13.py、schemas_v13.py、services/workflow_v13.py | 全量/观测双轨、阶段屏障、传递材料族隔离、版本/补派/新轮、工单/独立复验 |
+| api/ingress_v13.py、services/ingress_v13.py | JSON预检、逐行错误、原始JSONL字节及其摘要 |
+| models_v13.py、models_handoff_v13.py、0004—0006 | 运营索引、引用、追加签名和发送历史 |
+| services/content_store.py、content_inventory.py | 原子内容封存、摘要核验、嵌套引用与原始上传归档图 |
+| api/handoffs_v13.py、services/handoffs_v13.py | N/n过程包、当前签名/快照、独立worker、发送前状态与幂等 |
+| services/reconcile_v13.py、services/operations.py | 定期新版文件/发布包对账、只记录不删除 |
+| frontend/src/v13、相关tests | 新版运营、任务、三栏、专项、治理、预检和交接界面 |
+| tests/e2e/prepare_v13.py、v13.spec.js、load_v13.py | 隔离合成浏览器流程及2300单元/11会话容量检查 |
+| scripts/backup_restore.py、v13_*、.gitlab-ci.yml | 一致性备份恢复、迁移演练、只读对账和本地GitLab runner入口 |
+
+## 历史兼容模块
+
+下表保留0003/REVIEW v2结构；旧量表和旧准入门只用于历史读取及隔离回归。
+
 | 目录/文件 | 职责 |
 |---|---|
 | backend/src/openkb_s4/domain | 严格输入/来源校验、12集profile、抽样、精确κ |

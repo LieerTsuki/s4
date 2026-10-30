@@ -137,6 +137,13 @@ async def run(args: argparse.Namespace) -> None:
                 row_counts = await connection_counts(connection)
                 handoffs = await connection.fetch('SELECT id, manifest FROM handoffs')
                 raw_files = raw_import_manifest(await connection.fetch("SELECT details FROM audit_events WHERE action='IMPORT_FILE_UPLOADED' ORDER BY created_at,id"))
+                from openkb_s4.services.content_inventory import (
+                    database_references,
+                    references_in,
+                    verify_controlled_graph,
+                )
+                from openkb_s4.services.content_store import ContentStore
+                controlled_roots = await database_references(connection)
                 try:
                     docker('exec', args.container, 'pg_dump', '-U', str(owner.username), '-d', database,
                            '--snapshot=' + snapshot, '--format=custom', '--no-owner', '--file=' + temp_dump)
@@ -166,12 +173,41 @@ async def run(args: argparse.Namespace) -> None:
                     else:
                         shutil.copyfile(source / 'imports' / name, destination)
                 verify_raw_import_files(artifacts, raw_files)
+                if controlled_roots:
+                    destination = artifacts / 'controlled'
+                    if args.api_container:
+                        docker('cp', args.api_container + ':/var/lib/s4/controlled', str(destination))
+                    else:
+                        shutil.copytree(source / 'controlled', destination)
+                    verify_controlled_graph(ContentStore(destination), controlled_roots)
+                v13_snapshots = []
+                if await connection.fetchval("SELECT to_regclass('public.v13_handoffs')"):
+                    v13_snapshots = await connection.fetch('SELECT id,manifest_ref FROM v13_handoffs')
+                from openkb_s4.services.handoffs_v13 import verify_package
+                controlled_export_roots = []
+                for row in v13_snapshots:
+                    identity = row['id']
+                    if not re.fullmatch(r'[0-9a-f-]{36}', identity):
+                        raise ValueError('Invalid v1.3 snapshot identity')
+                    destination = artifacts / 'exports-v13' / identity
+                    destination.parent.mkdir(exist_ok=True)
+                    if args.api_container:
+                        docker('cp', args.api_container + ':/var/lib/s4/exports-v13/' + identity, str(destination))
+                    else:
+                        shutil.copytree(source / 'exports-v13' / identity, destination)
+                    ref = json.loads(row['manifest_ref']) if isinstance(row['manifest_ref'], str) else row['manifest_ref']
+                    verify_package(destination, ContentStore(artifacts / 'controlled').read_json(ref))
+                    controlled_export_roots.extend(references_in(json.loads((destination / 's4_report.json').read_bytes())))
+                verify_controlled_graph(ContentStore(artifacts / 'controlled'), controlled_roots + controlled_export_roots)
         finally:
             await connection.close()
         manifest = {'created_at': datetime.now(UTC).isoformat(), 'source_database': database,
                     'row_counts': row_counts,
                     'files': hashes(folder), 'consistency': 'postgres_exported_snapshot_and_immutable_manifest',
                     'raw_import_files': raw_files,
+                    'controlled_roots': controlled_roots,
+                    'controlled_export_roots': controlled_export_roots,
+                    'published_v13_snapshot_ids': sorted(row['id'] for row in v13_snapshots),
                     'published_snapshot_ids': sorted(row['id'] for row in handoffs), 'maintenance_window_required': False}
         (folder / 'backup-manifest.json').write_text(json.dumps(manifest, indent=2), encoding='utf-8')
         await operation_event(target_url.render_as_string(hide_password=False), 'BACKUP_COMPLETED', stamp,
@@ -211,6 +247,32 @@ async def run(args: argparse.Namespace) -> None:
     try:
         snapshots = await connection.fetch('SELECT id, manifest FROM handoffs')
         restored_raw_files = raw_import_manifest(await connection.fetch("SELECT details FROM audit_events WHERE action='IMPORT_FILE_UPLOADED' ORDER BY created_at,id"))
+        from openkb_s4.services.content_inventory import (
+            database_references,
+            references_in,
+            verify_controlled_graph,
+        )
+        from openkb_s4.services.content_store import ContentStore
+        controlled_roots = await database_references(connection)
+        controlled_count = verify_controlled_graph(ContentStore(restored_dir / 'controlled'), controlled_roots)
+        if 'controlled_roots' in manifest and sorted(controlled_roots, key=lambda value: value['object_key']) != sorted(manifest['controlled_roots'], key=lambda value: value['object_key']):
+            raise ValueError('Restored controlled references differ from the source snapshot')
+        from openkb_s4.services.handoffs_v13 import verify_package
+        v13_snapshots = []
+        if await connection.fetchval("SELECT to_regclass('public.v13_handoffs')"):
+            v13_snapshots = await connection.fetch('SELECT id,manifest_ref FROM v13_handoffs')
+        if {row['id'] for row in v13_snapshots} != set(manifest.get('published_v13_snapshot_ids', [])):
+            raise ValueError('Restored v1.3 snapshot index differs')
+        export_roots = []
+        for row in v13_snapshots:
+            if not re.fullmatch(r'[0-9a-f-]{36}', row['id']):
+                raise ValueError('Invalid restored v1.3 snapshot identity')
+            ref = json.loads(row['manifest_ref']) if isinstance(row['manifest_ref'], str) else row['manifest_ref']
+            verify_package(restored_dir / 'exports-v13' / row['id'], ContentStore(restored_dir / 'controlled').read_json(ref))
+            export_roots.extend(references_in(json.loads((restored_dir / 'exports-v13' / row['id'] / 's4_report.json').read_bytes())))
+        controlled_count = verify_controlled_graph(ContentStore(restored_dir / 'controlled'), controlled_roots + export_roots)
+        if 'controlled_export_roots' in manifest and sorted(export_roots, key=lambda value: value['object_key']) != sorted(manifest['controlled_export_roots'], key=lambda value: value['object_key']):
+            raise ValueError('Restored export evidence references differ')
     finally:
         await connection.close()
     expected_ids = {row['id'] for row in snapshots}
@@ -232,6 +294,7 @@ async def run(args: argparse.Namespace) -> None:
     verified = len(snapshots)
     evidence = {'restored_database': restored_name, 'restored_data_dir': str(restored_dir),
                 'row_counts': actual, 'verified_snapshots': verified, 'verified_raw_import_files': len(restored_raw_files), 'source_backup': str(folder),
+                'verified_controlled_objects': controlled_count, 'verified_v13_snapshots': len(v13_snapshots),
                 'verified_at': datetime.now(UTC).isoformat(), 'live_business_data_modified': False,
                 'operations_audit_recorded': True}
     (restored_dir / 'restore-verification.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')

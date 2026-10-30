@@ -1,5 +1,7 @@
-name: verify-s4
-on: [push, pull_request, workflow_dispatch]
+name: historical-verify-s4-v11
+# Historical compatibility workflow; v1.3 uses the local GitLab job.
+# This remains manually accessible for archaeology, not a v1.3 acceptance gate.
+on: [workflow_dispatch]
 permissions:
   contents: read
 jobs:

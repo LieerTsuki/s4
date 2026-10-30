@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-31",
+  "authority": "document/00 v1.3 entry; official v1.3 content governs, not modification time",
+  "source_documents_modified_by_this_implementation": false,
+  "files": [
+    {
+      "path": "document/00_v1.3执行入口与文档索引.md",
+      "sha256": "abb478d540952b3ccca756414eb1afa857344936da515851b7c82ccc91c91bf7"
+    },
+    {
+      "path": "document/01_标注需求梳理_三栏与盲标规则.md",
+      "sha256": "1b285cf44ea98d185105a2ee2de400f167b80524bb0f8881eece0dfa4636b6ba"
+    },
+    {
+      "path": "document/02_标注手册_V0大纲.md",
+      "sha256": "7511704e44176bede28acb135638caa49be27c91db4ef35e34f572968ba070e0"
+    },
+    {
+      "path": "document/07_双盲分发队列方案设计.md",
+      "sha256": "f01427697bd06a3bb832e838210d82e6a4dcb74421a88e12f6c99a72a2cefca0"
+    },
+    {
+      "path": "document/08_OpenKB-Eval_S4双盲标注与质量控制系统_自研实现方案.md",
+      "sha256": "c399e6bfde71c99e206cd314715587d529f7f019a0e188f5fa749de1f087e46f"
+    },
+    {
+      "path": "document/09_v1.3需求变更对齐与李悦工作调整.md",
+      "sha256": "c0b94fd2e6ba3c3407ff3d1b2e5623e842b29c3405d75c227fa9c3f06825bd6b"
+    },
+    {
+      "path": "official/OpenKB-Eval数据集生产流水线与HuggingFace发布技术方案v1.3.md",
+      "sha256": "91c5f5044a7a300ac19ac748f9a2d038706528663099afd57a0ff868d84b4359"
+    },
+    {
+      "path": "official/OpenKB-Eval数据集方案v1.3修订清单.md",
+      "sha256": "d9a394c293a72c6956ab6416992c530dd1015e7f75783c7ddab3f72aa5e7155a"
+    },
+    {
+      "path": "李悦_OpenKB-Eval工作职责与技术发展总结.md",
+      "sha256": "c6dceb8494bffbd802d2c13bbd1a4a1a4321b11970bfe601ac37f622137fb515"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+# Local S4 integration job. Requires an isolated Linux shell runner tagged below.
+# The main repository's authoritative five gates and approval policy are pending.
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+
+stages: [verify]
+
+verify-s4-v13:
+  stage: verify
+  tags: [s4-linux-shell]
+  resource_group: s4-local-verification
+  timeout: 45m
+  variables:
+    GIT_DEPTH: "0"
+    UV_PROJECT_ENVIRONMENT: "$CI_PROJECT_DIR/.venv"
+    S4_E2E_BROWSER: chromium
+    S4_COVERAGE_BASE: "892cf51"
+  script:
+    - python3.11 scripts/v13_ci.py bootstrap
+    - uv sync --project backend --extra dev --locked
+    - npm ci --prefix frontend
+    - npm ci --prefix tests/e2e
+    - .venv/bin/python scripts/v13_ci.py checks
+  after_script:
+    - python3.11 scripts/v13_ci.py cleanup
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - var/evidence/
+      - var/s4_restore_*/restore-verification.json
