@@ -1,0 +1,976 @@
+{
+  "$defs": {
+    "Context": {
+      "additionalProperties": false,
+      "properties": {
+        "doc_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid From"
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid Until"
+        },
+        "acl_context": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acl Context"
+        }
+      },
+      "required": [
+        "doc_id",
+        "text"
+      ],
+      "title": "Context",
+      "type": "object"
+    },
+    "Effect": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "marker",
+            "target",
+            "behavior"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "marker_string": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Marker String"
+        },
+        "target_string": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target String"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "Effect",
+      "type": "object"
+    },
+    "Entity": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entity Id"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "span": {
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Span",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "span"
+      ],
+      "title": "Entity",
+      "type": "object"
+    },
+    "Gold": {
+      "additionalProperties": false,
+      "properties": {
+        "answer_points": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Answer Points",
+          "type": "array"
+        },
+        "gold_doc_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "type": "string"
+          },
+          "title": "Gold Doc Ids",
+          "type": "array"
+        },
+        "relevance_grades": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]*$": {
+              "maximum": 3,
+              "minimum": 2,
+              "type": "integer"
+            }
+          },
+          "propertyNames": {
+            "maxLength": 160,
+            "minLength": 1
+          },
+          "title": "Relevance Grades",
+          "type": "object"
+        },
+        "ranking_annotations": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]*$": {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "propertyNames": {
+            "maxLength": 160,
+            "minLength": 1
+          },
+          "title": "Ranking Annotations",
+          "type": "object"
+        },
+        "gold_spans": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Gold Spans",
+          "type": "array"
+        },
+        "expected_refusal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Refusal"
+        },
+        "absence_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "库内无答案",
+                "答案已过期",
+                "答案在权限外"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Absence Reason"
+        },
+        "gold_entities": {
+          "items": {
+            "$ref": "#/$defs/Entity"
+          },
+          "title": "Gold Entities",
+          "type": "array"
+        },
+        "gold_relations": {
+          "items": {
+            "$ref": "#/$defs/Relation"
+          },
+          "title": "Gold Relations",
+          "type": "array"
+        }
+      },
+      "title": "Gold",
+      "type": "object"
+    },
+    "Relation": {
+      "additionalProperties": false,
+      "properties": {
+        "head": {
+          "minLength": 1,
+          "title": "Head",
+          "type": "string"
+        },
+        "tail": {
+          "minLength": 1,
+          "title": "Tail",
+          "type": "string"
+        },
+        "type": {
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "head",
+        "tail",
+        "type"
+      ],
+      "title": "Relation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "unit_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+      "title": "Unit Id",
+      "type": "string"
+    },
+    "dataset": {
+      "enum": [
+        "QA-D1",
+        "QA-D2",
+        "QA-D3",
+        "QA-D4",
+        "QA-D4C",
+        "QA-D5",
+        "QA-D6",
+        "QA-D7",
+        "SEC-D1",
+        "SEC-D2",
+        "SEC-D3",
+        "SEC-D4",
+        "SEC-D5"
+      ],
+      "title": "Dataset",
+      "type": "string"
+    },
+    "difficulty": {
+      "enum": [
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "title": "Difficulty",
+      "type": "string"
+    },
+    "contexts": {
+      "items": {
+        "$ref": "#/$defs/Context"
+      },
+      "title": "Contexts",
+      "type": "array"
+    },
+    "question": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Question"
+    },
+    "gold": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Gold"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "source_type": {
+      "anyOf": [
+        {
+          "enum": [
+            "生产流量采样",
+            "BEIR基线",
+            "红队载荷源"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Type"
+    },
+    "seed_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Seed Id"
+    },
+    "domain": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Domain"
+    },
+    "domains": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Domains",
+      "type": "array"
+    },
+    "track": {
+      "default": "PRIVATE",
+      "enum": [
+        "PUBLIC",
+        "PRIVATE"
+      ],
+      "title": "Track",
+      "type": "string"
+    },
+    "version_locked": {
+      "default": false,
+      "title": "Version Locked",
+      "type": "boolean"
+    },
+    "evaluation_k": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Evaluation K"
+    },
+    "time_context": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Time Context"
+    },
+    "scope_context": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Scope Context"
+    },
+    "acl_context": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Acl Context"
+    },
+    "access_context": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Access Context"
+    },
+    "reasoning_chain": {
+      "items": {},
+      "title": "Reasoning Chain",
+      "type": "array"
+    },
+    "key_facts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Key Facts",
+      "type": "array"
+    },
+    "source_case_ids": {
+      "items": {
+        "maxLength": 160,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+        "type": "string"
+      },
+      "title": "Source Case Ids",
+      "type": "array"
+    },
+    "source_dataset": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Dataset"
+    },
+    "resolved_sources": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Resolved Sources",
+      "type": "array"
+    },
+    "same_intent_confirmation": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Same Intent Confirmation"
+    },
+    "source_composition": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Composition"
+    },
+    "pair_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pair Id"
+    },
+    "paired_unit_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Paired Unit Id"
+    },
+    "original_question": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Original Question"
+    },
+    "text": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Text"
+    },
+    "chunk": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Chunk"
+    },
+    "text_digest": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Text Digest"
+    },
+    "corpus_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corpus Id"
+    },
+    "schema_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Schema Version"
+    },
+    "payload": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Payload"
+    },
+    "expected_behavior": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Behavior"
+    },
+    "expected_effect": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Effect"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "attack_type_detail": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Attack Type Detail"
+    },
+    "target_claim": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Claim"
+    },
+    "baseline_answer": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baseline Answer"
+    },
+    "baseline_captured_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baseline Captured At"
+    },
+    "baseline_unpoisoned": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baseline Unpoisoned"
+    },
+    "injection_started_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Injection Started At"
+    },
+    "inject_plan": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Inject Plan"
+    },
+    "detection_signals": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Detection Signals",
+      "type": "array"
+    },
+    "member_doc_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Member Doc Id"
+    },
+    "nonmember_doc_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Nonmember Doc Id"
+    },
+    "pair_controls": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pair Controls"
+    },
+    "top_n": {
+      "default": 10,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Top N",
+      "type": "integer"
+    },
+    "match_field": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Match Field"
+    },
+    "synthetic_pii": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Synthetic Pii"
+    },
+    "synthetic_proof": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Synthetic Proof"
+    }
+  },
+  "required": [
+    "unit_id",
+    "dataset",
+    "difficulty"
+  ],
+  "title": "Unit",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

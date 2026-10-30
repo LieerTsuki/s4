@@ -110,12 +110,16 @@ async def reconcile(db: AsyncSession, settings: Settings, creator_id: str | None
             finding("JOB_LEASE_EXPIRED", "job", job.id, {"attempts": job.attempts})
         elif job.state == "PENDING" and (now() - job.created_at).total_seconds() > settings.operations_pending_warning_seconds:
             finding("JOB_QUEUE_DELAY", "job", job.id, {})
+    from .reconcile_v13 import reconcile_v13
+    v13_report = await reconcile_v13(db, settings)
+    for item in v13_report.pop("findings"):
+        finding(item["kind"], item["object_type"], item["object_id"], item["details"], item["severity"])
     for values in findings:
         db.add(ReconciliationFinding(**values))
     reminders = await remind_overdue(db)
     run.state, run.finished_at = "DONE", now()
     run.summary = {"findings": len(findings), "errors": sum(item["severity"] == "ERROR" for item in findings), "reminders_created": reminders,
-                   "batches_checked": len(batches), "handoffs_checked": len(handoffs)}
+                   "batches_checked": len(batches), "handoffs_checked": len(handoffs), "v13": v13_report}
     return run
 
 
@@ -145,3 +149,6 @@ async def independent_operator(db: AsyncSession, actor: User) -> None:
     """Global findings can expose participating scopes, so deny active or historical annotators."""
     if await db.scalar(select(Assignment.id).where(Assignment.user_id == actor.id).limit(1)):
         raise ApiError(403, "PARTICIPANT_RESTRICTED", "参标人员不能读取跨批次运维信息")
+    from ..models_v13 import V13Assignment
+    if await db.scalar(select(V13Assignment.id).where(V13Assignment.user_id == actor.id).limit(1)):
+        raise ApiError(403, "PARTICIPANT_RESTRICTED", "新版作业参与者不能读取跨来源运维资料")

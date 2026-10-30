@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     login_limit: int = 8
     max_import_bytes: int = 20_000_000
     external_alignment_confirmed: bool = False
+    # Only isolated historical regression environments may create v1 records.
+    legacy_writes_enabled: bool = False
     reconcile_interval_seconds: int = Field(default=300, ge=1)
     worker_heartbeat_seconds: int = Field(default=15, ge=1)
     worker_lease_seconds: int = Field(default=120, ge=5)

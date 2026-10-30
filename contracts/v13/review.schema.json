@@ -1,0 +1,546 @@
+{
+  "$defs": {
+    "Entity": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entity Id"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "span": {
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Span",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "span"
+      ],
+      "title": "Entity",
+      "type": "object"
+    },
+    "EvidenceAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "grade": {
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Grade",
+          "type": "integer"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "locators": {
+          "items": {
+            "$ref": "#/$defs/LocatorV3"
+          },
+          "title": "Locators",
+          "type": "array"
+        },
+        "intent": {
+          "enum": [
+            "KEEP_GOLD",
+            "KEEP_RANKING",
+            "MOVE_TO_GOLD",
+            "MOVE_TO_RANKING",
+            "REMOVE"
+          ],
+          "title": "Intent",
+          "type": "string"
+        }
+      },
+      "required": [
+        "grade",
+        "reason",
+        "intent"
+      ],
+      "title": "EvidenceAssessment",
+      "type": "object"
+    },
+    "EvidenceChangeV3": {
+      "additionalProperties": false,
+      "properties": {
+        "change_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Change Id",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "add",
+            "remove"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "doc_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "locators": {
+          "items": {
+            "$ref": "#/$defs/LocatorV3"
+          },
+          "title": "Locators",
+          "type": "array"
+        }
+      },
+      "required": [
+        "change_id",
+        "action",
+        "doc_id",
+        "reason"
+      ],
+      "title": "EvidenceChangeV3",
+      "type": "object"
+    },
+    "Extraction": {
+      "additionalProperties": false,
+      "properties": {
+        "gold_entities": {
+          "items": {
+            "$ref": "#/$defs/Entity"
+          },
+          "title": "Gold Entities",
+          "type": "array"
+        },
+        "gold_relations": {
+          "items": {
+            "$ref": "#/$defs/Relation"
+          },
+          "title": "Gold Relations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "gold_entities",
+        "gold_relations"
+      ],
+      "title": "Extraction",
+      "type": "object"
+    },
+    "LocatorV3": {
+      "additionalProperties": false,
+      "properties": {
+        "doc_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "context_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Version"
+        },
+        "context_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Sha256"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Span"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote"
+        }
+      },
+      "required": [
+        "doc_id"
+      ],
+      "title": "LocatorV3",
+      "type": "object"
+    },
+    "Relation": {
+      "additionalProperties": false,
+      "properties": {
+        "head": {
+          "minLength": 1,
+          "title": "Head",
+          "type": "string"
+        },
+        "tail": {
+          "minLength": 1,
+          "title": "Tail",
+          "type": "string"
+        },
+        "type": {
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "head",
+        "tail",
+        "type"
+      ],
+      "title": "Relation",
+      "type": "object"
+    },
+    "SpecializedAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "observation": {
+          "enum": [
+            "pass",
+            "issue",
+            "not_applicable"
+          ],
+          "title": "Observation",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/LocatorV3"
+          },
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "observation",
+        "reason"
+      ],
+      "title": "SpecializedAssessment",
+      "type": "object"
+    },
+    "SuggestedPointV3": {
+      "additionalProperties": false,
+      "properties": {
+        "suggestion_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Suggestion Id",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/LocatorV3"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "suggestion_id",
+        "text",
+        "reason",
+        "evidence"
+      ],
+      "title": "SuggestedPointV3",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "review_version": {
+      "const": "openkb.s4-review.v3",
+      "default": "openkb.s4-review.v3",
+      "title": "Review Version",
+      "type": "string"
+    },
+    "workflow_kind": {
+      "enum": [
+        "VERIFICATION",
+        "OBSERVATION"
+      ],
+      "title": "Workflow Kind",
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "VERIFIED",
+        "NEEDS_REVISION",
+        "RETURNED"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    },
+    "point_labels": {
+      "additionalProperties": {
+        "enum": [
+          "correct",
+          "partial",
+          "wrong"
+        ],
+        "type": "string"
+      },
+      "title": "Point Labels",
+      "type": "object"
+    },
+    "point_reasons": {
+      "additionalProperties": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Point Reasons",
+      "type": "object"
+    },
+    "point_evidence": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/LocatorV3"
+        },
+        "type": "array"
+      },
+      "title": "Point Evidence",
+      "type": "object"
+    },
+    "point_search_scope": {
+      "additionalProperties": {
+        "items": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Point Search Scope",
+      "type": "object"
+    },
+    "evidence_assessments": {
+      "patternProperties": {
+        "^[A-Za-z0-9][A-Za-z0-9_.:-]*$": {
+          "$ref": "#/$defs/EvidenceAssessment"
+        }
+      },
+      "propertyNames": {
+        "maxLength": 160,
+        "minLength": 1
+      },
+      "title": "Evidence Assessments",
+      "type": "object"
+    },
+    "expected_refusal": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Refusal"
+    },
+    "absence_reason": {
+      "anyOf": [
+        {
+          "enum": [
+            "库内无答案",
+            "答案已过期",
+            "答案在权限外"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Absence Reason"
+    },
+    "expected_refusal_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Refusal Reason"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason"
+    },
+    "issues": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "suggested_points": {
+      "items": {
+        "$ref": "#/$defs/SuggestedPointV3"
+      },
+      "title": "Suggested Points",
+      "type": "array"
+    },
+    "evidence_changes": {
+      "items": {
+        "$ref": "#/$defs/EvidenceChangeV3"
+      },
+      "title": "Evidence Changes",
+      "type": "array"
+    },
+    "specialized_review": {
+      "additionalProperties": {
+        "$ref": "#/$defs/SpecializedAssessment"
+      },
+      "title": "Specialized Review",
+      "type": "object"
+    },
+    "extraction": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Extraction"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "workflow_kind",
+    "verdict"
+  ],
+  "title": "ReviewV3",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

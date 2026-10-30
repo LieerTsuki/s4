@@ -159,6 +159,8 @@ async def run_once(factory: async_sessionmaker[AsyncSession], settings: Settings
             # heartbeat transaction must be able to renew this lease.
             working = await db.get(Job, job_id)
             assert working is not None
+            if not settings.legacy_writes_enabled and working.kind in {"IMPORT", "AGREEMENT", "EXPORT"}:
+                raise ApiError(409, "LEGACY_READ_ONLY", "历史任务已停止写入，请使用v1.3新流程")
             if working.kind == "IMPORT":
                 result = await import_data(db, working)
             elif working.kind == "AGREEMENT":
@@ -167,6 +169,10 @@ async def run_once(factory: async_sessionmaker[AsyncSession], settings: Settings
                 imported = await source(db, working.payload["import_id"])
                 handoff = await export_snapshot(db, settings, imported)
                 result = {"handoff_id": handoff.id}
+            elif working.kind == "EXPORT_V13":
+                from .services.handoffs_v13 import export_snapshot_v13
+                handoff_v13 = await export_snapshot_v13(db, settings, working.payload["import_id"], working.creator_id)
+                result = {"handoff_id": handoff_v13.id}
             elif working.kind == "RECONCILE":
                 run = await reconcile(db, settings, working.creator_id)
                 result = {"reconciliation_id": run.id, "summary": run.summary}

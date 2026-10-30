@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from openkb_s4.config import get_settings
 from openkb_s4.models import Base
+from openkb_s4 import models_v13, models_handoff_v13  # noqa: F401
 
 load_dotenv("../.env")
 load_dotenv(".env")

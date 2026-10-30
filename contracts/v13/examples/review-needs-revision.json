@@ -1,0 +1,49 @@
+{
+  "review_version": "openkb.s4-review.v3",
+  "workflow_kind": "VERIFICATION",
+  "verdict": "NEEDS_REVISION",
+  "point_labels": {
+    "P001": "correct",
+    "P002": "wrong"
+  },
+  "point_reasons": {
+    "P001": "原文支持",
+    "P002": "已查原文无支持"
+  },
+  "point_evidence": {
+    "P001": [
+      {
+        "doc_id": "doc-0",
+        "start": 0,
+        "end": 2,
+        "context_sha256": "c1be53dc61eb9639e028eb4902b64efe871899de86fe3df8d532459a315e1857",
+        "quote": "合成"
+      }
+    ],
+    "P002": []
+  },
+  "point_search_scope": {
+    "P002": [
+      "doc-0"
+    ]
+  },
+  "evidence_assessments": {
+    "doc-0": {
+      "grade": 3,
+      "reason": "直接支持",
+      "locators": [
+        {
+          "doc_id": "doc-0",
+          "start": 0,
+          "end": 2,
+          "context_sha256": "c1be53dc61eb9639e028eb4902b64efe871899de86fe3df8d532459a315e1857",
+          "quote": "合成"
+        }
+      ],
+      "intent": "KEEP_GOLD"
+    }
+  },
+  "expected_refusal": false,
+  "absence_reason": null,
+  "expected_refusal_reason": "材料足以回答"
+}

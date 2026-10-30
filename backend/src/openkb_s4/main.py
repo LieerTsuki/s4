@@ -17,6 +17,7 @@ from .db import make_sessions
 from .domain.errors import DomainError
 from .models import AuditEvent, Heartbeat, now
 from .security import ApiError
+from .services.content_store import ContentStoreError
 
 logger = logging.getLogger("openkb_s4")
 PREFIX = "/api/s4/v1"
@@ -41,6 +42,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @application.middleware("http")
     async def request_context(request: Request, call_next: Any) -> Any:
         request.state.request_id = str(uuid4())
+        if (not configuration.legacy_writes_enabled
+                and request.method not in {"GET", "HEAD", "OPTIONS"}
+                and request.url.path.startswith(PREFIX + "/")
+                and not request.url.path.startswith((PREFIX + "/auth/", PREFIX + "/users"))):
+            response = error_response(request, 409, "LEGACY_READ_ONLY", "历史流程只读，请使用v1.3核实与观测入口")
+            response.headers["X-Request-ID"] = request.state.request_id
+            response.headers["Cache-Control"] = "no-store"
+            return response
         try:
             response = await call_next(request)
         except Exception:
@@ -51,7 +60,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         response.headers["X-Request-ID"] = request.state.request_id
         response.headers["Cache-Control"] = "no-store"
         response.headers["X-Content-Type-Options"] = "nosniff"
-        if response.status_code in {401, 403, 404} and request.url.path.startswith(PREFIX):
+        if response.status_code in {401, 403, 404} and request.url.path.startswith("/api/s4/"):
             try:
                 async with sessions() as db, db.begin():
                     db.add(AuditEvent(actor_id=getattr(request.state, "actor_id", None), action="ACCESS_DENIED",
@@ -77,22 +86,28 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def domain_error(request: Request, exc: DomainError) -> JSONResponse:
         return error_response(request, 422, exc.code, exc.message)
 
+    @application.exception_handler(ContentStoreError)
+    async def content_error(request: Request, _: ContentStoreError) -> JSONResponse:
+        return error_response(request, 409, "CONTROLLED_OBJECT_INVALID", "受控材料缺失或摘要不一致，请暂停并联系运营")
+
     @application.exception_handler(IntegrityError)
     async def conflict_error(request: Request, _: IntegrityError) -> JSONResponse:
         return error_response(request, 409, "UNIQUE_CONFLICT", "记录已存在或与当前约束冲突")
 
     @application.get(f"{PREFIX}/health/live")
+    @application.get("/api/s4/v2/health/live")
     async def live() -> dict[str, str]:
         return {"status": "alive"}
 
     @application.get(f"{PREFIX}/health/ready")
+    @application.get("/api/s4/v2/health/ready")
     async def ready() -> Any:
         try:
             async with sessions() as db:
                 revision = await db.scalar(text("SELECT version_num FROM alembic_version"))
                 heartbeat = await db.get(Heartbeat, "worker")
                 worker_ready = heartbeat is not None and now() - heartbeat.at < timedelta(seconds=90)
-                db_ready = revision == "0003_s4"
+                db_ready = revision == "0006_v13"
                 data = {"status": "ready" if db_ready and worker_ready else "not_ready", "database": db_ready,
                         "migration": revision, "worker": worker_ready, "external_alignment": "NOT_ALIGNED"}
                 return JSONResponse(status_code=200 if db_ready and worker_ready else 503, content=data)
@@ -103,6 +118,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     from .api import auth, exports, governance, operations, quality, workflow
     for router in (auth.router, workflow.router, quality.router, exports.router, governance.router, operations.router):
         application.include_router(router, prefix=PREFIX)
+    from .api import handoffs_v13, ingress_v13, v13
+    for router in (ingress_v13.router, v13.router, handoffs_v13.router):
+        application.include_router(router, prefix="/api/s4/v2")
     return application
 
 

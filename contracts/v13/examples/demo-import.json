@@ -1,0 +1,380 @@
+{
+  "contract_version": "openkb.s3-s4.v2",
+  "mode": "demo",
+  "batch_id": "V13-DEMO",
+  "source_revision": "r1",
+  "units": [
+    {
+      "unit_id": "QA-D1-0000",
+      "dataset": "QA-D1",
+      "difficulty": "easy",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-0",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-0"
+        ],
+        "relevance_grades": {
+          "doc-0": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0001",
+      "dataset": "QA-D1",
+      "difficulty": "medium",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-1",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-1"
+        ],
+        "relevance_grades": {
+          "doc-1": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0002",
+      "dataset": "QA-D1",
+      "difficulty": "hard",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-2",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-2"
+        ],
+        "relevance_grades": {
+          "doc-2": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0003",
+      "dataset": "QA-D1",
+      "difficulty": "easy",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-3",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-3"
+        ],
+        "relevance_grades": {
+          "doc-3": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0004",
+      "dataset": "QA-D1",
+      "difficulty": "medium",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-4",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-4"
+        ],
+        "relevance_grades": {
+          "doc-4": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0005",
+      "dataset": "QA-D1",
+      "difficulty": "hard",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-5",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-5"
+        ],
+        "relevance_grades": {
+          "doc-5": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0006",
+      "dataset": "QA-D1",
+      "difficulty": "easy",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-6",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-6"
+        ],
+        "relevance_grades": {
+          "doc-6": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0007",
+      "dataset": "QA-D1",
+      "difficulty": "medium",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-7",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-7"
+        ],
+        "relevance_grades": {
+          "doc-7": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0008",
+      "dataset": "QA-D1",
+      "difficulty": "hard",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-8",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-8"
+        ],
+        "relevance_grades": {
+          "doc-8": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0009",
+      "dataset": "QA-D1",
+      "difficulty": "easy",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-9",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-9"
+        ],
+        "relevance_grades": {
+          "doc-9": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0010",
+      "dataset": "QA-D1",
+      "difficulty": "medium",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-10",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-10"
+        ],
+        "relevance_grades": {
+          "doc-10": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    },
+    {
+      "unit_id": "QA-D1-0011",
+      "dataset": "QA-D1",
+      "difficulty": "hard",
+      "question": "合成材料支持什么？",
+      "domain": "synthetic",
+      "contexts": [
+        {
+          "doc_id": "doc-11",
+          "text": "合成😀材料明确支持一个正确要点。"
+        }
+      ],
+      "gold": {
+        "answer_points": [
+          "合成正确要点",
+          "合成错误要点"
+        ],
+        "gold_doc_ids": [
+          "doc-11"
+        ],
+        "relevance_grades": {
+          "doc-11": 3
+        },
+        "ranking_annotations": {},
+        "expected_refusal": false,
+        "absence_reason": null
+      },
+      "metadata": {
+        "generation_model": "synthetic-demo"
+      }
+    }
+  ]
+}

@@ -33,7 +33,8 @@ async def api(tmp_path: Path) -> AsyncIterator[tuple[Any, httpx.AsyncClient]]:
     owner_target, runtime_target = make_url(url), make_url(runtime_url or url)
     if (owner_target.host, owner_target.port, owner_target.database) != (runtime_target.host, runtime_target.port, runtime_target.database):
         raise RuntimeError("Test runtime and owner must target the same dedicated test database")
-    app = create_app(Settings(database_url=runtime_url or url, data_dir=tmp_path, login_limit=3))
+    app = create_app(Settings(database_url=runtime_url or url, data_dir=tmp_path, login_limit=3,
+                              legacy_writes_enabled=True))
     owner_engine = create_async_engine(url)
     async with owner_engine.begin() as connection:
         await connection.execute(text("TRUNCATE users CASCADE"))

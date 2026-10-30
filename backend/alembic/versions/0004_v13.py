@@ -1,0 +1,50 @@
+"""Versioned v1.3 index-only workflow; legacy rows remain unchanged."""
+from alembic import op
+
+revision = "0004_v13"
+down_revision = "0003_s4"
+branch_labels = None
+depends_on = None
+
+
+def upgrade() -> None:
+    op.execute('CREATE TABLE v13_imports (\n\tbatch_id VARCHAR(160) NOT NULL, \n\tsource_revision VARCHAR(160) NOT NULL, \n\tmode VARCHAR(10) NOT NULL, \n\tcontent_hash VARCHAR(64) NOT NULL, \n\tsource_ref JSON NOT NULL, \n\tcreator_id VARCHAR(36) NOT NULL, \n\tstatus VARCHAR(40) NOT NULL, \n\tblockers JSON NOT NULL, \n\tparent_import_id VARCHAR(36), \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tUNIQUE (batch_id, source_revision), \n\tUNIQUE (content_hash), \n\tFOREIGN KEY(creator_id) REFERENCES users (id), \n\tFOREIGN KEY(parent_import_id) REFERENCES v13_imports (id)\n)')
+    op.execute('CREATE TABLE v13_batches (\n\timport_id VARCHAR(36) NOT NULL, \n\tdataset VARCHAR(20) NOT NULL, \n\tworkflow_kind VARCHAR(20) NOT NULL, \n\tstate VARCHAR(40) NOT NULL, \n\tround INTEGER NOT NULL, \n\tselected_ids JSON NOT NULL, \n\tsample_ledger JSON NOT NULL, \n\tprofile_version VARCHAR(100) NOT NULL, \n\tmanual_version VARCHAR(100) NOT NULL, \n\tfrozen_hash VARCHAR(64) NOT NULL, \n\tcreator_id VARCHAR(36) NOT NULL, \n\tquality_ref JSON, \n\tparent_id VARCHAR(36), \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tUNIQUE (import_id, dataset, workflow_kind, round), \n\tFOREIGN KEY(import_id) REFERENCES v13_imports (id), \n\tFOREIGN KEY(creator_id) REFERENCES users (id), \n\tFOREIGN KEY(parent_id) REFERENCES v13_batches (id)\n)')
+    op.execute('CREATE INDEX ix_v13_batches_import_id ON v13_batches (import_id)')
+    op.execute('CREATE TABLE v13_units (\n\timport_id VARCHAR(36) NOT NULL, \n\tunit_id VARCHAR(160) NOT NULL, \n\tdataset VARCHAR(20) NOT NULL, \n\tdifficulty VARCHAR(10) NOT NULL, \n\tcontent_revision VARCHAR(64) NOT NULL, \n\tmaterial_ref JSON NOT NULL, \n\tgold_ref JSON NOT NULL, \n\tsource_ref JSON NOT NULL, \n\tfamily_keys JSON NOT NULL, \n\tfinal_ref JSON, \n\tfinal_revision VARCHAR(64), \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tUNIQUE (import_id, unit_id), \n\tFOREIGN KEY(import_id) REFERENCES v13_imports (id)\n)')
+    op.execute('CREATE INDEX ix_v13_units_import_id ON v13_units (import_id)')
+    op.execute('CREATE TABLE v13_assignments (\n\tbatch_id VARCHAR(36) NOT NULL, \n\tunit_index_id VARCHAR(36) NOT NULL, \n\tuser_id VARCHAR(36) NOT NULL, \n\tseat VARCHAR(1) NOT NULL, \n\tphase VARCHAR(10) NOT NULL, \n\tstatus VARCHAR(30) NOT NULL, \n\tactive BOOLEAN NOT NULL, \n\tcontent_revision VARCHAR(64) NOT NULL, \n\tmaterial_ref JSON NOT NULL, \n\tgold_ref JSON NOT NULL, \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tFOREIGN KEY(batch_id) REFERENCES v13_batches (id), \n\tFOREIGN KEY(unit_index_id) REFERENCES v13_units (id), \n\tFOREIGN KEY(user_id) REFERENCES users (id)\n)')
+    op.execute('CREATE INDEX ix_v13_assignments_batch_id ON v13_assignments (batch_id)')
+    op.execute('CREATE INDEX ix_v13_assignments_user_id ON v13_assignments (user_id)')
+    op.execute('CREATE UNIQUE INDEX uq_v13_assignment_active_seat ON v13_assignments (batch_id, unit_index_id, seat) WHERE active')
+    op.execute('CREATE TABLE v13_issues (\n\timport_id VARCHAR(36) NOT NULL, \n\tunit_index_id VARCHAR(36) NOT NULL, \n\tactor_id VARCHAR(36) NOT NULL, \n\tstatus VARCHAR(20) NOT NULL, \n\trecord_ref JSON NOT NULL, \n\tresolution_ref JSON, \n\tresolver_id VARCHAR(36), \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tFOREIGN KEY(import_id) REFERENCES v13_imports (id), \n\tFOREIGN KEY(unit_index_id) REFERENCES v13_units (id), \n\tFOREIGN KEY(actor_id) REFERENCES users (id), \n\tFOREIGN KEY(resolver_id) REFERENCES users (id)\n)')
+    op.execute('CREATE INDEX ix_v13_issues_import_id ON v13_issues (import_id)')
+    op.execute('CREATE TABLE v13_quality_actions (\n\tbatch_id VARCHAR(36) NOT NULL, \n\tkind VARCHAR(30) NOT NULL, \n\tactor_id VARCHAR(36) NOT NULL, \n\trecord_ref JSON NOT NULL, \n\trelated_batch_id VARCHAR(36), \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tFOREIGN KEY(batch_id) REFERENCES v13_batches (id), \n\tFOREIGN KEY(actor_id) REFERENCES users (id), \n\tFOREIGN KEY(related_batch_id) REFERENCES v13_batches (id)\n)')
+    op.execute('CREATE INDEX ix_v13_quality_actions_batch_id ON v13_quality_actions (batch_id)')
+    op.execute('CREATE TABLE v13_revisions (\n\tunit_index_id VARCHAR(36) NOT NULL, \n\tproposer_id VARCHAR(36) NOT NULL, \n\tverifier_id VARCHAR(36) NOT NULL, \n\tcandidate_ref JSON NOT NULL, \n\trecord_ref JSON NOT NULL, \n\tverification_ref JSON, \n\tsource_revision VARCHAR(64) NOT NULL, \n\tstatus VARCHAR(20) NOT NULL, \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tFOREIGN KEY(unit_index_id) REFERENCES v13_units (id), \n\tFOREIGN KEY(proposer_id) REFERENCES users (id), \n\tFOREIGN KEY(verifier_id) REFERENCES users (id)\n)')
+    op.execute('CREATE INDEX ix_v13_revisions_unit_index_id ON v13_revisions (unit_index_id)')
+    op.execute('CREATE TABLE v13_drafts (\n\tassignment_id VARCHAR(36) NOT NULL, \n\tphase VARCHAR(10) NOT NULL, \n\tversion INTEGER NOT NULL, \n\tpayload_ref JSON NOT NULL, \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tUNIQUE (assignment_id, phase), \n\tFOREIGN KEY(assignment_id) REFERENCES v13_assignments (id)\n)')
+    op.execute('CREATE TABLE v13_exposures (\n\tperson_id VARCHAR(100) NOT NULL, \n\tfamily_key VARCHAR(160) NOT NULL, \n\tassignment_id VARCHAR(36), \n\treason VARCHAR(80) NOT NULL, \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tFOREIGN KEY(assignment_id) REFERENCES v13_assignments (id)\n)')
+    op.execute('CREATE INDEX ix_v13_exposures_family_key ON v13_exposures (family_key)')
+    op.execute('CREATE INDEX ix_v13_exposures_person_id ON v13_exposures (person_id)')
+    op.execute('CREATE TABLE v13_late_submissions (\n\tassignment_id VARCHAR(36) NOT NULL, \n\tactor_id VARCHAR(36) NOT NULL, \n\tpayload_ref JSON NOT NULL, \n\tpayload_hash VARCHAR(64) NOT NULL, \n\tidempotency_key VARCHAR(160) NOT NULL, \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tUNIQUE (assignment_id, idempotency_key), \n\tFOREIGN KEY(assignment_id) REFERENCES v13_assignments (id), \n\tFOREIGN KEY(actor_id) REFERENCES users (id)\n)')
+    op.execute('CREATE TABLE v13_submissions (\n\tassignment_id VARCHAR(36) NOT NULL, \n\tphase VARCHAR(10) NOT NULL, \n\tpayload_ref JSON NOT NULL, \n\tpayload_hash VARCHAR(64) NOT NULL, \n\tidempotency_key VARCHAR(160) NOT NULL, \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tUNIQUE (assignment_id, phase), \n\tFOREIGN KEY(assignment_id) REFERENCES v13_assignments (id)\n)')
+    op.execute('CREATE INDEX ix_v13_submissions_assignment_id ON v13_submissions (assignment_id)')
+    op.execute('CREATE TABLE v13_verifications (\n\timport_id VARCHAR(36) NOT NULL, \n\tunit_index_id VARCHAR(36) NOT NULL, \n\tassignment_id VARCHAR(36), \n\tactor_id VARCHAR(36) NOT NULL, \n\tcontent_revision VARCHAR(64) NOT NULL, \n\tverdict VARCHAR(30) NOT NULL, \n\trecord_ref JSON NOT NULL, \n\tid VARCHAR(36) NOT NULL, \n\tcreated_at TIMESTAMP WITH TIME ZONE NOT NULL, \n\tPRIMARY KEY (id), \n\tUNIQUE (unit_index_id, content_revision), \n\tFOREIGN KEY(import_id) REFERENCES v13_imports (id), \n\tFOREIGN KEY(unit_index_id) REFERENCES v13_units (id), \n\tFOREIGN KEY(assignment_id) REFERENCES v13_assignments (id), \n\tFOREIGN KEY(actor_id) REFERENCES users (id)\n)')
+    op.execute('CREATE INDEX ix_v13_verifications_import_id ON v13_verifications (import_id)')
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT,UPDATE,DELETE ON v13_imports TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT,UPDATE,DELETE ON v13_batches TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT,UPDATE,DELETE ON v13_units TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT,UPDATE,DELETE ON v13_assignments TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT,UPDATE,DELETE ON v13_issues TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT ON v13_quality_actions TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT,UPDATE,DELETE ON v13_revisions TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT,UPDATE,DELETE ON v13_drafts TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT ON v13_exposures TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT ON v13_late_submissions TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT ON v13_submissions TO s4_app; END IF; END $$;")
+    op.execute("DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='s4_app') THEN GRANT SELECT,INSERT ON v13_verifications TO s4_app; END IF; END $$;")
+
+
+def downgrade() -> None:
+    raise RuntimeError("Restore a verified pre-upgrade backup; v1.3 sealed history is immutable")
