@@ -2001,10 +2001,34 @@ td strong {
 .review-workspace {
   min-width: 0;
 }
+.v13-progress, .v13-plan-grid, .v13-specialized-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 18px;
+}
+.v13-progress > div {
+  border: 1px solid #dfe8ea;
+  border-radius: 8px;
+  padding: 18px;
+  overflow-wrap: anywhere;
+}
+.v13-progress p { margin-bottom: 6px; }
+.v13-workflow { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.v13-workflow span { padding: 12px; background: #eff6f3; border-radius: 6px; }
+.v13-review .review-columns { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.v13-review .review-column, .v13-conclusion, .v13-extraction { min-width: 0; }
+.v13-review fieldset { min-width: 0; overflow-wrap: anywhere; }
+.v13-review legend { max-width: 100%; }
+.v13-conclusion { padding-top: 20px; }
+.v13-key-values { display: grid; grid-template-columns: 150px 1fr; gap: 10px; }
+.v13-key-values dd { margin: 0; overflow-wrap: anywhere; }
+.v13-safe-material { white-space: pre-wrap; overflow-wrap: anywhere; }
+.v13-extraction textarea { user-select: text; }
 .task-review-grid .review-columns {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 @media (max-width: 650px) {
+  .v13-review .review-columns { grid-template-columns: 1fr; }
   .task-review-grid .review-columns {
     grid-template-columns: 1fr;
   }
@@ -2012,3 +2036,4 @@ td strong {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+.legacy-readonly { border: 0; margin: 0; padding: 0; min-width: 0; }

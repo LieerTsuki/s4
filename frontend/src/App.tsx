@@ -1,4 +1,8 @@
 import { GovernancePage } from "./pages/Governance";
+import { V13Overview, V13Imports, V13ImportDetail, V13Batches, V13BatchDetail, V13Tasks, V13Profiles } from "./v13/Pages";
+import { V13TaskPage } from "./v13/Workspace";
+import { V13Handoffs } from "./v13/Handoffs";
+import { V13Governance } from "./v13/Governance";
 
 import { NotificationsPage } from "./pages/CompletionOperations";
 
@@ -6,7 +10,7 @@ import { useEffect, useState } from "react";
 
 import type { ReactNode } from "react";
 
-import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
+import { NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -64,59 +68,65 @@ const roleNames: Record<Role, string> = {
 
 const navigation = [
   { to: "/", label: "工作概览", icon: LayoutDashboard, roles: [] },
+  { to: "/v13/imports", label: "新版候选接入", icon: FileInput, roles: ["lead", "auditor"] },
+  { to: "/v13/batches", label: "全量核实与观测", icon: Layers3, roles: ["lead", "auditor"] },
+  { to: "/v13/tasks", label: "我的核实任务", icon: ClipboardCheck, roles: ["annotator"] },
+  { to: "/v13/handoffs", label: "新版过程交接", icon: FileOutput, roles: ["lead", "auditor"] },
+  { to: "/v13/governance", label: "新版材料与复验", icon: ShieldCheck, roles: ["lead", "auditor", "annotator", "verifier", "arbitrator"] },
+  { to: "/v13/profiles", label: "当前任务配置", icon: Settings2, roles: [] },
 
   {
     to: "/imports",
-    label: "候选接入",
+    label: "历史候选接入",
     icon: FileInput,
     roles: ["lead", "auditor"],
   },
 
   {
     to: "/batches",
-    label: "批次与排班",
+    label: "历史双标批次",
     icon: Layers3,
     roles: ["lead", "auditor", "arbitrator"],
   },
 
   {
     to: "/tasks",
-    label: "我的任务",
+    label: "历史标注任务",
     icon: ClipboardCheck,
     roles: ["annotator"],
   },
 
   {
     to: "/quality",
-    label: "质量与定稿",
+    label: "历史质量与定稿",
     icon: BookOpenCheck,
     roles: ["lead", "auditor", "arbitrator"],
   },
 
   {
     to: "/arbitrations",
-    label: "人工仲裁",
+    label: "历史人工仲裁",
     icon: Scale,
     roles: ["lead", "auditor", "arbitrator"],
   },
 
   {
     to: "/handoffs",
-    label: "导出与交接",
+    label: "历史导出与交接",
     icon: FileOutput,
     roles: ["lead", "auditor"],
   },
 
   {
     to: "/governance",
-    label: "材料与复验",
+    label: "历史材料与复验",
     icon: ShieldCheck,
     roles: ["lead", "auditor", "verifier"],
   },
 
   { to: "/notifications", label: "站内提醒", icon: Activity, roles: [] },
 
-  { to: "/profiles", label: "任务配置", icon: Settings2, roles: [] },
+  { to: "/profiles", label: "历史任务配置", icon: Settings2, roles: [] },
 
   { to: "/users", label: "账号与角色", icon: UsersRound, roles: ["admin"] },
 
@@ -128,6 +138,8 @@ const navigation = [
 export function App() {
   const client = useQueryClient();
   const navigate = useNavigate();
+  const location = useLocation();
+  const legacy = /^\/(?:legacy|imports|batches|tasks|quality|arbitrations|handoffs|governance|profiles)(?:\/|$)/.test(location.pathname);
 
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -232,21 +244,21 @@ export function App() {
               可信交付。
             </h1>
             <p>
-              连接原文、标注与质量闭环，
+              连接原文、全量核实与质量观测，
               <br />
               让每个评测单元都有清晰的依据。
             </p>
             <div className="login-principles">
-              <span>双盲作业</span>
+              <span>全量人工核实</span>
               <span>原始记录封存</span>
-              <span>可复算一致性</span>
+              <span>独立双人观测</span>
             </div>
           </div>
-          <footer>OpenKB-Eval · Independent Annotation Workspace</footer>
+          <footer>OpenKB-Eval · Verification and Observation Workspace</footer>
         </section>
         <section className="login-card">
           <div className="section-eyebrow">WELCOME TO YOUR WORKSPACE</div>
-          <h2>登录标注工作台</h2>
+          <h2>登录核实工作台</h2>
           <p className="muted">使用项目个人账号进入你的工作空间。</p>
           <ErrorNotice error={error} />
           <LoginForm onLogin={login} />
@@ -283,7 +295,7 @@ export function App() {
           </span>
         </NavLink>
         <div className="workspace-label">
-          标注质量工作空间 <span>V1.0</span>
+          人工核实与质量观测 <span>v1.3</span>
         </div>
         <nav aria-label="主导航">
           {navigation
@@ -315,7 +327,7 @@ export function App() {
       <div className="main-layout">
         <header className="topbar">
           <div className="breadcrumb">
-            评测作业 <span>/</span> <strong>S4 双盲标注</strong>
+            评测作业 <span>/</span> <strong>S4 人工核实与质量观测</strong>
           </div>
           <div className="user-menu">
             <div className="user-avatar">{user.display_name.slice(0, 1)}</div>
@@ -337,8 +349,20 @@ export function App() {
         </header>
         <main id="main-content" className="main-content">
           <ErrorNotice error={error} />
+          {legacy && <p className="notice warm">历史只读：此处保留旧字段、原始封存与旧规则的记录。新任务请使用v1.3核实与观测入口。</p>}
+          <fieldset className="legacy-readonly" disabled={legacy}>
           <Routes>
-            <Route path="/" element={<Dashboard user={user} />} />
+            <Route path="/" element={<V13Overview user={user} />} />
+            <Route path="/legacy" element={<Dashboard user={user} />} />
+            <Route path="/v13/imports" element={guard(["lead", "auditor"], <V13Imports canWrite={has("lead")} />)} />
+            <Route path="/v13/imports/:id" element={guard(["lead", "auditor"], <V13ImportDetail canWrite={has("lead")} />)} />
+            <Route path="/v13/batches" element={guard(["lead", "auditor"], <V13Batches />)} />
+            <Route path="/v13/batches/:id" element={guard(["lead", "auditor"], <V13BatchDetail canWrite={has("lead")} />)} />
+            <Route path="/v13/tasks" element={guard(["annotator"], <V13Tasks />)} />
+            <Route path="/v13/tasks/:id" element={guard(["annotator"], <V13TaskPage />)} />
+            <Route path="/v13/handoffs" element={guard(["lead", "auditor"], <V13Handoffs canWrite={has("lead")} />)} />
+            <Route path="/v13/governance" element={guard(["lead", "auditor", "annotator", "verifier", "arbitrator"], <V13Governance user={user} />)} />
+            <Route path="/v13/profiles" element={<V13Profiles />} />
             <Route path="/users" element={guard(["admin"], <UsersPage />)} />
             <Route path="/profiles" element={<ProfilesPage />} />
             <Route
@@ -412,6 +436,7 @@ export function App() {
               }
             />
           </Routes>
+          </fieldset>
           <footer className="page-footer">
             <span>OpenKB-Eval / S4</span>
             <span>服务端 UTC · 界面 Asia/Shanghai</span>

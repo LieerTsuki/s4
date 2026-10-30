@@ -23,6 +23,7 @@ export async function api<T>(
     body?: unknown;
     headers?: HeadersInit;
     signal?: AbortSignal;
+    version?: "v1" | "v2";
   } = {},
 ): Promise<T> {
   const method = options.method ?? "GET";
@@ -34,7 +35,7 @@ export async function api<T>(
     headers.set("X-CSRF-Token", csrfToken);
   let response: Response;
   try {
-    response = await fetch(`${API_ROOT}${path}`, {
+    response = await fetch(`${options.version === "v2" ? "/api/s4/v2" : API_ROOT}${path}`, {
       method,
       credentials: "include",
       headers,
@@ -83,7 +84,9 @@ export async function api<T>(
         typeof error.details === "object" &&
         !Array.isArray(error.details)
         ? (error.details as Record<string, unknown>)
-        : undefined,
+        : error.validation_report && typeof error.validation_report === "object" && !Array.isArray(error.validation_report)
+          ? { validation_report: error.validation_report }
+          : undefined,
     );
   }
   return data as T;
