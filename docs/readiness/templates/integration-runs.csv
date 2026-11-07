@@ -1,0 +1,11 @@
+﻿case_id,actual_run_id,producer_actual_person_role,receiver_actual_person_role,actual_time,environment_commit,protocol_capabilities_ref_hash,source_batch_revision_hash,final_batch_revision_hash,N_received,N_final,n_selected,n_paired,package_manifest_ref_hash,actual_request_response_ref,sent_evidence_ref,receiver_ack_nack_ref_hash,idempotency_key_ref,seven_layer_result_refs,correction_round_lineage,remaining_issues,actual_reviewer,status
+INT-01,,,,,,,,,,,,,,,,,,,,,,NOT_EXECUTED
+INT-02,,,,,,,,,,,,,,,,,,,,,,NOT_EXECUTED
+INT-03,,,,,,,,,,,,,,,,,,,,,,NOT_EXECUTED
+INT-04,,,,,,,,,,,,,,,,,,,,,,NOT_EXECUTED
+INT-05,,,,,,,,,,,,,,,,,,,,,,NOT_EXECUTED
+INT-06,,,,,,,,,,,,,,,,,,,,,,NOT_EXECUTED
+INT-07,,,,,,,,,,,,,,,,,,,,,,NOT_EXECUTED
+INT-08,,,,,,,,,,,,,,,,,,,,,,NOT_EXECUTED
+INT-09,,,,,,,,,,,,,,,,,,,,,,NOT_EXECUTED
+INT-10,,,,,,,,,,,,,,,,,,,,,,NOT_EXECUTED

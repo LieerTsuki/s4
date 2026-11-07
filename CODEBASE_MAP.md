@@ -8,12 +8,16 @@
 | api/v13.py、schemas_v13.py、services/workflow_v13.py | 全量/观测双轨、阶段屏障、传递材料族隔离、版本/补派/新轮、工单/独立复验 |
 | api/ingress_v13.py、services/ingress_v13.py | JSON预检、逐行错误、原始JSONL字节及其摘要 |
 | models_v13.py、models_handoff_v13.py、0004—0006 | 运营索引、引用、追加签名和发送历史 |
+| api/profiles_v13.py、domain/profiles_v13.py、0007_v13_profiles | 新版配置独立审批/反自批、受控快照、退休和冻结引用；本地批准不启用formal |
+| frontend/src/v13/ProfileLifecycle.tsx、相关profile tests | 配置创建/评审/只读内容/独立批准/退休、建队绑定和本人冻结指南 |
 | services/content_store.py、content_inventory.py | 原子内容封存、摘要核验、嵌套引用与原始上传归档图 |
 | api/handoffs_v13.py、services/handoffs_v13.py | N/n过程包、当前签名/快照、独立worker、发送前状态与幂等 |
 | services/reconcile_v13.py、services/operations.py | 定期新版文件/发布包对账、只记录不删除 |
 | frontend/src/v13、相关tests | 新版运营、任务、三栏、专项、治理、预检和交接界面 |
 | tests/e2e/prepare_v13.py、v13.spec.js、load_v13.py | 隔离合成浏览器流程及2300单元/11会话容量检查 |
 | scripts/backup_restore.py、v13_*、.gitlab-ci.yml | 一致性备份恢复、迁移演练、只读对账和本地GitLab runner入口 |
+
+当前文档入口为[STATUS](docs/STATUS.md)；11/8阶段报告、问题整改、待审手册增补与部署对接说明分别位于docs/reports、docs/manuals、docs/releases、docs/readiness。实际验证见当日audits，不用历史测试数替代本轮证据。
 
 ## 历史兼容模块
 

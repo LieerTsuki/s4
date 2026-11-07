@@ -1,0 +1,7 @@
+﻿record_id,person_id,display_name_ref,account_ids,actual_role,qualified_datasets,manual_version,profile_version_hash,training_record_ref,qualification_expires,availability_hours,privileged_access,actual_reviewer,identity_evidence_ref,status
+PER-REG-001,,,,,,,,,,,,,,NOT_CONFIRMED
+PER-REG-002,,,,,,,,,,,,,,NOT_CONFIRMED
+PER-REG-003,,,,,,,,,,,,,,NOT_CONFIRMED
+PER-REG-004,,,,,,,,,,,,,,NOT_CONFIRMED
+PER-REG-005,,,,,,,,,,,,,,NOT_CONFIRMED
+PER-REG-006,,,,,,,,,,,,,,NOT_CONFIRMED

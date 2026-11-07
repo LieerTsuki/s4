@@ -1,5 +1,26 @@
 # v1.3 local operations and recovery
 
+## 2026-11-08 closure and candidate handoff
+
+Read [current status](STATUS.md), [candidate/cloud handoff](releases/2026-11-08-0007候选版与麦芽升级交接.md) and [fresh closure evidence](audits/2026-11-08-可独立补欠交付与验证.md) before using historical instructions. The candidate includes read-only approval inspection and publishes restore success proof only after the completion audit succeeds. During restore, `--database` selects the existing management audit database, while the restore destination is always a new `s4_restore_*` database. Ensure that management database has the audit schema. A failed operation's retained artifacts are not a successful restore proof.
+
+## 2026-11-05 local source update (not an automatic rollout)
+
+The current source expects `0007_v13_profiles`. This adds two index-only profile/event tables and nullable frozen profile/manual/vocabulary references to new batches. Existing 0006 batches retain their baseline hash and original semantics. The running 8084/Maiya environments were not upgraded by this work. Rebuild and migrate only through the maintenance procedure below after reviewing actual environment backups and configuration; do not point the new API at an unmigrated 0006 database.
+
+Approved local profiles still have `formal_enabled=false`; they cannot authorize missing specialist vocabulary or external S3/S5 acceptance. Retired profiles cannot be selected for new plans/rounds; already frozen work keeps its original rules. A core Schema/scale change rejects incompatible frozen work instead of silently applying new rules. Profile snapshots, manuals, approval evidence and events are controlled files, with all `v13_*` JSON `*_ref` columns included in backup/reconciliation discovery and handoff evidence.
+
+On Windows, use the bundled uv resolver without adding it to the global PATH:
+
+```powershell
+Set-Location D:\openkb-eval\liyue\s4
+.\scripts\dev.ps1 contracts
+```
+
+This runs JSON Schema checks in an isolated tool environment with jsonschema. A bare `.venv\Scripts\python.exe scripts/check_contracts.py` is not the configured entry unless jsonschema was independently installed there. `dev.ps1 test` guards the dedicated `s4_test` database and includes backend/frontend/static/contract/coverage checks; it does not run a production migration or replace browser/restore checks. The 11/5 validation used a separate Compose DB project `s4-backlog-test`, not the active `openkb-s4` database.
+
+The paragraphs below describe the original 10/31 v1.3 rollout and its retained evidence; their 0006 references are historical, not the new source's migration head.
+
 Current business requirements come from `liyue/document/00_v1.3执行入口与文档索引.md`, with 01/07/08/09 at their 2026-10-30 revisions. Historical 0003/REVIEW v2 evidence does not validate this version. Current implementation uses new 0004/0005 tables, the additive 0006 verification-round constraint and `/api/s4/v2`; session authentication and user administration retain the existing v1 endpoints.
 
 ## Current work flow

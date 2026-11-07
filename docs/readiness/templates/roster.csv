@@ -1,0 +1,9 @@
+﻿record_id,activity_id,actual_person_id,role,dataset,unit_kind,scope_ref_hash,workflow_kind,observation_pair_id,round,planned_start,planned_end,planned_active_minutes,actual_start,actual_end,actual_active_minutes,waiting_minutes,qualification_ref,exposure_check_ref,accepted_by_person,accepted_at,status
+ROS-REG-001,,,,,,,,,,,,,,,,,,,,,NOT_CONFIRMED
+ROS-REG-002,,,,,,,,,,,,,,,,,,,,,NOT_CONFIRMED
+ROS-REG-003,,,,,,,,,,,,,,,,,,,,,NOT_CONFIRMED
+ROS-REG-004,,,,,,,,,,,,,,,,,,,,,NOT_CONFIRMED
+ROS-REG-005,,,,,,,,,,,,,,,,,,,,,NOT_CONFIRMED
+ROS-REG-006,,,,,,,,,,,,,,,,,,,,,NOT_CONFIRMED
+ROS-REG-007,,,,,,,,,,,,,,,,,,,,,NOT_CONFIRMED
+ROS-REG-008,,,,,,,,,,,,,,,,,,,,,NOT_CONFIRMED

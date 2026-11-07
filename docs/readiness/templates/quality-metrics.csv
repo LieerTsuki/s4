@@ -1,0 +1,14 @@
+﻿report_id,period_start,period_end,cutoff_timezone,production_batch,dataset,unit_kind,manual_profile_stat_version,source_set_ref_hash,final_set_ref_hash,original_checked,original_pass,N_received,N_final,current_assigned_units,verification_sealed_units,verified_units,blocked_units,open_material_issue_count,needs_revision_units,pending_independent_revision_count,n_required,n_selected,n_paired,observation_pair_round,label_m,po,pe,raw_kappa,null_reason,action,main_active_hours,main_p50_minutes,main_p90_minutes,observation_active_hours,waiting_hours,main_units_per_active_hour,evidence_query_ref_hash,actual_prepared_by,actual_reviewer,status
+,,,,,QA-D1,题,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,QA-D2,题,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,QA-D3,题,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,QA-D4,题,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,QA-D4C,题,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,QA-D5,题,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,QA-D6,片段,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,QA-D7,题,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,SEC-D1,题,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,SEC-D2,条,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,SEC-D3,组,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,SEC-D4,对,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA
+,,,,,SEC-D5,条,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,NO_ACTUAL_DATA

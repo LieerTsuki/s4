@@ -1,0 +1,6 @@
+﻿record_id,planned_activity,actual_activity_id,actual_date_start_end,actual_person_id,actual_role,attendance_evidence_ref,manual_profile_hash,case_ids,original_answers_ref_hash,score_rule_frozen_ref,actual_score,feedback_issue_ids,decision_text_ref,actual_owner_acceptance,due_at,retraining_ref,independent_review_signature_ref,status
+ACT-REG-001,培训,,,,,,,,,,,,,,,,,NOT_EXECUTED
+ACT-REG-002,校准会议,,,,,,,,,,,,,,,,,NOT_EXECUTED
+ACT-REG-003,独立复算,,,,,,,,,,,,,,,,,NOT_EXECUTED
+ACT-REG-004,30题真实demo,,,,,,,,,,,,,,,,,NOT_EXECUTED
+ACT-REG-005,防作弊金丝雀,,,,,,,,,,,,,,,,,NOT_EXECUTED
