@@ -362,7 +362,7 @@ export function App() {
             <Route path="/v13/tasks/:id" element={guard(["annotator"], <V13TaskPage />)} />
             <Route path="/v13/handoffs" element={guard(["lead", "auditor"], <V13Handoffs canWrite={has("lead")} />)} />
             <Route path="/v13/governance" element={guard(["lead", "auditor", "annotator", "verifier", "arbitrator"], <V13Governance user={user} />)} />
-            <Route path="/v13/profiles" element={<V13Profiles />} />
+            <Route path="/v13/profiles" element={<V13Profiles user={user} />} />
             <Route path="/users" element={guard(["admin"], <UsersPage />)} />
             <Route path="/profiles" element={<ProfilesPage />} />
             <Route

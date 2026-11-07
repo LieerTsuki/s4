@@ -32,7 +32,7 @@ test('v1.3 full N verification and separate n observation preserve three columns
  const doc=source.units.find(u=>u.unit_id===target.unit_id).contexts[0].doc_id;
  await page.getByLabel(`${doc} 理由`,{exact:true}).fill('直接含答案');await page.getByLabel(`${doc} 证据定位 起点`,{exact:true}).fill('0');await page.getByLabel(`${doc} 证据定位 终点`,{exact:true}).fill('7');await page.getByRole('button',{name:`加入${doc} 证据定位`,exact:true}).click();await page.getByLabel('预期拒答',{exact:true}).selectOption('false');await page.getByLabel('预期拒答判断理由',{exact:true}).fill('原文可答');await page.getByLabel('核实说明',{exact:true}).fill('本条核对完成');
  await page.getByRole('button',{name:'提交并封存核实',exact:true}).click();await expect(page.getByRole('button',{name:'提交并封存核实',exact:true})).toBeDisabled();
- let report=await value(await actors.lead.api.get(P+`/imports/${imported.id}/report`));expect(report.verification_completed).toBe(1);expect(report.verification_remaining).toBe(11);
+ let report;await expect.poll(async()=>{report=await value(await actors.lead.api.get(P+`/imports/${imported.id}/report`));return report.verification_completed;},{timeout:15000}).toBe(1);expect(report.verification_remaining).toBe(11);
  for(const t of own.slice(1)){await seal(actors.v,t,{answer:'独立答案',reason:'核对原文'});const detail=await value(await actors.v.api.get(P+`/assignments/${t.id}`));await seal(actors.v,detail,review(detail));}
  for(const name of ['a','b'])for(const t of(await tasks(actors[name])).filter(t=>t.batch_id===obs.id))await seal(actors[name],t,{answer:'独立答案',reason:'原文核对'});
  await post(actors.lead,`/observation-batches/${obs.id}/release-review`,{});

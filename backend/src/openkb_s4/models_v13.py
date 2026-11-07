@@ -50,6 +50,12 @@ class V13Batch(Record):
     profile_version: Mapped[str] = mapped_column(String(100))
     manual_version: Mapped[str] = mapped_column(String(100))
     frozen_hash: Mapped[str] = mapped_column(String(64))
+    profile_revision_id: Mapped[str | None] = mapped_column(ForeignKey("v13_profile_revisions.id"))
+    profile_hash: Mapped[str | None] = mapped_column(String(64))
+    profile_snapshot_ref: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    profile_approval_ref: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    manual_ref: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    vocabulary_ref: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     creator_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
     quality_ref: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     parent_id: Mapped[str | None] = mapped_column(ForeignKey("v13_batches.id"))
@@ -151,3 +157,31 @@ class V13Revision(Record):
     verification_ref: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     source_revision: Mapped[str] = mapped_column(String(64))
     status: Mapped[str] = mapped_column(String(20), default="PENDING")
+
+
+class V13ProfileRevision(Record):
+    __tablename__ = "v13_profile_revisions"
+    dataset: Mapped[str] = mapped_column(String(20))
+    version: Mapped[str] = mapped_column(String(100))
+    manual_version: Mapped[str] = mapped_column(String(100))
+    state: Mapped[str] = mapped_column(String(20), default="DRAFT")
+    revision: Mapped[int] = mapped_column(Integer, default=1)
+    canonical_hash: Mapped[str] = mapped_column(String(64))
+    snapshot_ref: Mapped[dict[str, Any]] = mapped_column(JSON)
+    manual_ref: Mapped[dict[str, Any]] = mapped_column(JSON)
+    vocabulary_ref: Mapped[dict[str, Any]] = mapped_column(JSON)
+    approval_ref: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    creator_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    contributor_person_ids: Mapped[list[str]] = mapped_column(JSON)
+    approver_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    __table_args__ = (UniqueConstraint("dataset", "version"),)
+
+
+class V13ProfileEvent(Record):
+    __tablename__ = "v13_profile_events"
+    profile_revision_id: Mapped[str] = mapped_column(ForeignKey("v13_profile_revisions.id"), index=True)
+    revision: Mapped[int] = mapped_column(Integer)
+    action: Mapped[str] = mapped_column(String(20))
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    record_ref: Mapped[dict[str, Any]] = mapped_column(JSON)
+    __table_args__ = (UniqueConstraint("profile_revision_id", "revision"),)

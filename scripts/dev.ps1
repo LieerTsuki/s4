@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('setup', 'migrate', 'api', 'worker', 'web', 'test', 'bootstrap', 'status')]
+    [ValidateSet('setup', 'migrate', 'api', 'worker', 'web', 'test', 'contracts', 'bootstrap', 'status')]
     [string]$Action = 'status',
     [string]$Username = '',
     [string]$DisplayName = '',
@@ -64,6 +64,10 @@ try {
             try { & npm.cmd run dev -- --host 127.0.0.1 --port 5174 }
             finally { Pop-Location }
         }
+        contracts {
+            & $taskUv run --no-project --python (Join-Path $taskRoot '.venv\Scripts\python.exe') --with jsonschema python scripts/check_contracts.py
+            if ($LASTEXITCODE -ne 0) { throw 'Contract verification failed.' }
+        }
         test {
             if (-not $env:S4_TEST_DATABASE_URL -or ($env:S4_TEST_DATABASE_URL -notmatch '/s4_test(?:\?.*)?$')) {
                 throw 'Tests require the isolated s4_test database in S4_TEST_DATABASE_URL.'
@@ -89,7 +93,9 @@ try {
                 & npm.cmd run lint; if ($LASTEXITCODE -ne 0) { throw 'Frontend lint failed.' }
             }
             finally { Pop-Location }
-            & '.\.venv\Scripts\python.exe' scripts/coverage_gate.py --base 00ef5c1
+            & $taskUv run --no-project --python (Join-Path $taskRoot '.venv\Scripts\python.exe') --with jsonschema python scripts/check_contracts.py
+            if ($LASTEXITCODE -ne 0) { throw 'Contract verification failed.' }
+            & '.\.venv\Scripts\python.exe' scripts/coverage_gate.py --base f92ff82
             if ($LASTEXITCODE -ne 0) { throw 'Incremental coverage failed.' }
         }
         bootstrap {

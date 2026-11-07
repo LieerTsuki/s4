@@ -15,6 +15,7 @@ class VerificationBatchCreate(StrictModel):
     assignee_ids: list[str] = Field(min_length=1)
     manual_version: str = Field(default="manual-v1.3", min_length=1, max_length=100)
     profile_version: str = Field(default="s4-v1.3", min_length=1, max_length=100)
+    profile_revision_id: str | None = None
 
 
 class ObservationBatchCreate(StrictModel):
@@ -25,6 +26,7 @@ class ObservationBatchCreate(StrictModel):
     seed: int = 42
     manual_version: str = Field(default="manual-v1.3", min_length=1, max_length=100)
     profile_version: str = Field(default="s4-v1.3", min_length=1, max_length=100)
+    profile_revision_id: str | None = None
     parent_id: str | None = None
     expanded_count: int | None = Field(default=None, ge=1)
 

@@ -3,7 +3,9 @@ import hashlib
 import json
 import runpy
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -70,3 +72,44 @@ def test_malformed_raw_import_audit_cannot_be_silently_skipped(tmp_path: Path) -
         module["raw_import_manifest"]([{"details": []}])
     with pytest.raises(TypeError, match="controlled"):
         module["verify_raw_import_files"](tmp_path, [])
+
+
+@pytest.mark.parametrize("audit_fails", [True, False])
+@pytest.mark.asyncio
+async def test_restore_proof_is_published_only_after_completion_audit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, audit_fails: bool,
+) -> None:
+    module = backup_module()
+    scope = module["run"].__globals__
+    archive = tmp_path / "backup"
+    (archive / "artifacts").mkdir(parents=True)
+    dump = b"synthetic restore fixture; external processes are isolated"
+    (archive / "database.dump").write_bytes(dump)
+    (archive / "backup-manifest.json").write_text(json.dumps({
+        "files": {"database.dump": hashlib.sha256(dump).hexdigest()}, "row_counts": {},
+    }), encoding="utf-8")
+    connection = SimpleNamespace(execute=AsyncMock(), fetch=AsyncMock(return_value=[]),
+                                 fetchval=AsyncMock(return_value=None), close=AsyncMock())
+    event = AsyncMock(side_effect=RuntimeError("audit unavailable") if audit_fails else None)
+    monkeypatch.setitem(scope, "ROOT", tmp_path)
+    monkeypatch.setitem(scope, "dotenv_values", lambda _: {
+        "S4_MIGRATION_DATABASE_URL": "postgresql+asyncpg://owner@127.0.0.1/s4_test",
+    })
+    monkeypatch.setattr(scope["asyncpg"], "connect", AsyncMock(return_value=connection))
+    monkeypatch.setitem(scope, "docker", lambda *_: None)
+    monkeypatch.setitem(scope, "counts", AsyncMock(return_value={}))
+    monkeypatch.setitem(scope, "operation_event", event)
+    args = SimpleNamespace(action="restore", env_file=tmp_path / "config", database="s4_test",
+                           container="isolated-test-db", backup=archive)
+    if audit_fails:
+        with pytest.raises(RuntimeError, match="audit unavailable"):
+            await module["run"](args)
+    else:
+        await module["run"](args)
+    restored = list((tmp_path / "var").glob("s4_restore_*"))
+    assert len(restored) == 1  # Retain restored artifacts even when the audit fails.
+    proof = restored[0] / "restore-verification.json"
+    assert proof.exists() is not audit_fails
+    if not audit_fails:
+        assert json.loads(proof.read_text(encoding="utf-8"))["operations_audit_recorded"] is True
+    event.assert_awaited_once()

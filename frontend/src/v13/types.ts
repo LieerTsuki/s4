@@ -59,6 +59,7 @@ export interface V13Task {
   paused?: boolean; vocabulary?: Vocabulary | null;
   active?: boolean;
   unit_index_id?: string;
+  profile_guidance?: {title:string;instructions:string;manual_version:string;manual_text:string;snapshot_sha256:string};
 }
 export interface V13Report {
   N?: number; n?: number; verified_count?: number; verification_completed?: number; observation_pairs?: number;

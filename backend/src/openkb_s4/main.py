@@ -107,7 +107,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 revision = await db.scalar(text("SELECT version_num FROM alembic_version"))
                 heartbeat = await db.get(Heartbeat, "worker")
                 worker_ready = heartbeat is not None and now() - heartbeat.at < timedelta(seconds=90)
-                db_ready = revision == "0006_v13"
+                db_ready = revision == "0007_v13_profiles"
                 data = {"status": "ready" if db_ready and worker_ready else "not_ready", "database": db_ready,
                         "migration": revision, "worker": worker_ready, "external_alignment": "NOT_ALIGNED"}
                 return JSONResponse(status_code=200 if db_ready and worker_ready else 503, content=data)
@@ -118,8 +118,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     from .api import auth, exports, governance, operations, quality, workflow
     for router in (auth.router, workflow.router, quality.router, exports.router, governance.router, operations.router):
         application.include_router(router, prefix=PREFIX)
-    from .api import handoffs_v13, ingress_v13, v13
-    for router in (ingress_v13.router, v13.router, handoffs_v13.router):
+    from .api import handoffs_v13, ingress_v13, profiles_v13, v13
+    for router in (ingress_v13.router, v13.router, handoffs_v13.router, profiles_v13.router):
         application.include_router(router, prefix="/api/s4/v2")
     return application
 

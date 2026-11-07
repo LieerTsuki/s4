@@ -297,10 +297,10 @@ async def run(args: argparse.Namespace) -> None:
                 'verified_controlled_objects': controlled_count, 'verified_v13_snapshots': len(v13_snapshots),
                 'verified_at': datetime.now(UTC).isoformat(), 'live_business_data_modified': False,
                 'operations_audit_recorded': True}
-    (restored_dir / 'restore-verification.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')
     await operation_event(target_url.render_as_string(hide_password=False), 'RESTORE_COMPLETED', restored_name,
                           {'verified_snapshots': verified, 'verified_raw_import_files': len(restored_raw_files), 'source_manifest_sha256': hashlib.sha256((folder / 'backup-manifest.json').read_bytes()).hexdigest(),
                            'live_business_data_modified': False})
+    (restored_dir / 'restore-verification.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')
     print('Isolated restore verified:', restored_dir / 'restore-verification.json')
 
 

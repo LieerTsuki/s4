@@ -41,15 +41,18 @@ from ..security import Actor, ApiError, Db, require_role
 from ..services.common import audit
 from ..services.workflow_v13 import (
     annotator,
+    approved_profile,
     assert_assignment_compatible,
     assert_frozen_profile,
     assert_review_visible,
     assert_task_writable,
     assert_unexposed,
     batch_view,
+    bind_profile,
     business_access,
     family_keys,
     frozen_hash,
+    frozen_profile_snapshot,
     get_batch,
     get_import,
     hidden_import_ids,
@@ -57,6 +60,7 @@ from ..services.workflow_v13 import (
     main_release,
     mark_exposure,
     own_task,
+    profile_binding,
     read_draft,
     require_primary_review,
     split_unit,
@@ -172,7 +176,7 @@ async def import_detail(import_id: str, request: Request, actor: Actor, db: Db) 
 async def prepare_batch(db: Db, body: VerificationBatchCreate | ObservationBatchCreate,
                          actor: User, request: Request, kind: str) -> V13Batch:
     require_role(actor, "lead")
-    if body.profile_version != "s4-v1.3" or body.manual_version != "manual-v1.3":
+    if not body.profile_revision_id and (body.profile_version != "s4-v1.3" or body.manual_version != "manual-v1.3"):
         raise ApiError(422, "PROFILE_NOT_REGISTERED", "只允许已登记的v1.3本地有限表单与手册版本；正式批准仍待外部确认")
     imported = await get_import(db, body.import_id, lock=True)
     await business_access(db, actor, imported.id)
@@ -186,6 +190,10 @@ async def prepare_batch(db: Db, body: VerificationBatchCreate | ObservationBatch
     if old and (not isinstance(body, ObservationBatchCreate) or not body.parent_id):
         raise ApiError(409, "BATCH_EXISTS", "该来源数据集已有此类计划，不能重复分发覆盖历史")
     store = store_for(request)
+    profile = await approved_profile(db, body.profile_revision_id, body.dataset, store) if body.profile_revision_id else None
+    binding = bind_profile(profile) if profile else {}
+    profile_version = profile.version if profile else body.profile_version
+    manual_version = profile.manual_version if profile else body.manual_version
     selected = units
     ledger: dict[str, Any] = {"required_count": len(units), "actual_count": len(units), "shortfall": 0}
     parent = None
@@ -215,8 +223,8 @@ async def prepare_batch(db: Db, body: VerificationBatchCreate | ObservationBatch
         await assert_assignment_compatible(db, user, selected, kind)
     batch = V13Batch(import_id=imported.id, dataset=body.dataset, workflow_kind=kind,
                      selected_ids=sorted(unit.unit_id for unit in selected), sample_ledger=ledger,
-                     profile_version=body.profile_version, manual_version=body.manual_version,
-                     frozen_hash=frozen_hash(selected, body.profile_version, body.manual_version),
+                     profile_version=profile_version, manual_version=manual_version, **binding,
+                     frozen_hash=frozen_hash(selected, profile_version, manual_version, binding=binding or None),
                      creator_id=actor.id, round=old.round + 1 if old else 1, parent_id=parent.id if parent else None)
     db.add(batch)
     await db.flush()
@@ -286,7 +294,9 @@ async def new_round(batch_id: str, body: NewRoundInput, request: Request, actor:
     await business_access(db, actor, imported.id)
     if imported.status == "RETURNED_TO_S2" or previous.state in {"SUPERSEDED", "CANCELLED", "RETURNED_TO_S2", "OBSERVED", "VERIFICATION_SEALED"}:
         raise ApiError(409, "NEW_ROUND_NOT_ALLOWED", "已终止、完成或退回批次不能借换人清除历史质量结论")
-    await assert_frozen_profile(db, previous)
+    await assert_frozen_profile(db, previous, store_for(request))
+    if previous.profile_revision_id:
+        await approved_profile(db, previous.profile_revision_id, previous.dataset, store_for(request))
     if not body.reason.strip():
         raise ApiError(422, "REASON_REQUIRED", "须记录完整新轮原因")
     if previous.workflow_kind == "OBSERVATION":
@@ -329,7 +339,8 @@ async def new_round(batch_id: str, body: NewRoundInput, request: Request, actor:
                        "replaces_batch_id": previous.id,
                        "revision_map": revision_map},
         profile_version=previous.profile_version, manual_version=previous.manual_version,
-        frozen_hash=frozen_hash(units, previous.profile_version, previous.manual_version, revision_map),
+        **(profile_binding(previous) or {}),
+        frozen_hash=frozen_hash(units, previous.profile_version, previous.manual_version, revision_map, profile_binding(previous)),
         creator_id=actor.id, round=(last_round or 0) + 1,
         parent_id=previous.id)
     db.add(fresh)
@@ -375,6 +386,11 @@ async def task_detail(assignment_id: str, request: Request, actor: Actor, db: Db
     assignment, batch, unit = await own_task(db, actor, assignment_id)
     store = store_for(request)
     result = await task_view(db, assignment, batch, unit)
+    if batch.profile_revision_id:
+        await assert_frozen_profile(db, batch, store)
+        snapshot = frozen_profile_snapshot(batch, store)
+        result["profile_guidance"] = {key: snapshot[key] for key in ("title", "instructions", "manual_version", "manual_text")}
+        result["profile_guidance"]["snapshot_sha256"] = batch.profile_hash
     result["material"] = store.read_json(assignment.material_ref)
     result["draft"] = await read_draft(db, store, assignment.id, assignment.phase)
     blind = await db.scalar(select(V13Submission).where(V13Submission.assignment_id == assignment.id, V13Submission.phase == "BLIND"))
@@ -396,7 +412,7 @@ async def task_detail(assignment_id: str, request: Request, actor: Actor, db: Db
 @router.patch("/assignments/{assignment_id}/draft")
 async def save_draft(assignment_id: str, body: DraftInput, request: Request, actor: Actor, db: Db) -> dict[str, Any]:
     assignment, batch, unit = await own_task(db, actor, assignment_id, lock=True)
-    await assert_task_writable(db, assignment, batch, unit, body.phase)
+    await assert_task_writable(db, assignment, batch, unit, body.phase, store_for(request))
     draft = await db.scalar(select(V13Draft).where(V13Draft.assignment_id == assignment.id, V13Draft.phase == body.phase))
     if (draft.version if draft else 0) != body.version:
         raise ApiError(409, "DRAFT_VERSION_CONFLICT", "服务器草稿版本已变化，请刷新后合并")
@@ -433,7 +449,7 @@ async def submit(assignment_id: str, body: SubmitInput, request: Request, actor:
             await db.flush()
         return JSONResponse(status_code=409, content={"error_code": "ASSIGNMENT_REPLACED", "history_id": late.id,
                                                        "message": "迟到提交已作为无效历史保存，不计当前完成", "request_id": request.state.request_id})
-    await assert_task_writable(db, assignment, batch, unit, body.phase)
+    await assert_task_writable(db, assignment, batch, unit, body.phase, store)
     if body.content_revision != assignment.content_revision or body.profile_version != batch.profile_version:
         raise ApiError(409, "FROZEN_VERSION_CONFLICT", "提交内容或规则版本与冻结任务不符")
     if body.phase == "BLIND":
@@ -470,7 +486,7 @@ async def release_review(batch_id: str, request: Request, actor: Actor, db: Db) 
     require_role(actor, "lead")
     batch = await get_batch(db, batch_id, lock=True)
     await business_access(db, actor, batch.import_id)
-    await assert_frozen_profile(db, batch)
+    await assert_frozen_profile(db, batch, store_for(request))
     if batch.workflow_kind != "OBSERVATION":
         raise ApiError(422, "OBSERVATION_REQUIRED", "统一屏障仅属于观测支路")
     if batch.state == "REVIEW_OPEN":
@@ -496,7 +512,7 @@ async def observe(batch_id: str, request: Request, actor: Actor, db: Db) -> dict
     require_role(actor, "lead")
     batch = await get_batch(db, batch_id, lock=True)
     await business_access(db, actor, batch.import_id)
-    await assert_frozen_profile(db, batch)
+    await assert_frozen_profile(db, batch, store_for(request))
     store = store_for(request)
     if batch.quality_ref:
         existing: dict[str, Any] = store.read_json(batch.quality_ref)

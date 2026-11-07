@@ -9,6 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db import lock_scope
 from ..domain.contracts import canonical_sha256
+from ..domain.errors import DomainError
+from ..domain.profiles_v13 import validate_snapshot
 from ..models import Exposure, User, now
 from ..models_v13 import (
     V13Assignment,
@@ -17,6 +19,7 @@ from ..models_v13 import (
     V13Exposure,
     V13Import,
     V13Issue,
+    V13ProfileRevision,
     V13QualityAction,
     V13Revision,
     V13Submission,
@@ -187,7 +190,8 @@ async def own_task(db: AsyncSession, actor: User, assignment_id: str,
 
 
 async def assert_task_writable(db: AsyncSession, assignment: V13Assignment,
-                               batch: V13Batch, unit: V13Unit, phase: str) -> None:
+                               batch: V13Batch, unit: V13Unit, phase: str,
+                               store: ContentStore | None = None) -> None:
     imported = await get_import(db, batch.import_id)
     if imported.status == "RETURNED_TO_S2" or batch.state in {"RETURNED_TO_S2", "CANCELLED", "SUPERSEDED"}:
         raise ApiError(409, "BATCH_CLOSED", "原批已退回或终止，必须保留原记录并新建有效流程")
@@ -195,18 +199,86 @@ async def assert_task_writable(db: AsyncSession, assignment: V13Assignment,
         raise ApiError(409, "ASSIGNMENT_REPLACED", "分配已失效；原始封存保留")
     if assignment.phase != phase or assignment.status != "OPEN":
         raise ApiError(409, "PHASE_CONFLICT", "当前阶段不允许提交，请刷新任务")
-    await assert_frozen_profile(db, batch)
+    await assert_frozen_profile(db, batch, store)
     if await db.scalar(select(V13Issue.id).where(V13Issue.unit_index_id == unit.id,
                         V13Issue.status == "OPEN").limit(1)):
         raise ApiError(409, "MATERIAL_BLOCKED", "材料工单未解决，任务暂停")
 
 
-async def assert_frozen_profile(db: AsyncSession, batch: V13Batch) -> None:
+async def assert_frozen_profile(db: AsyncSession, batch: V13Batch,
+                                store: ContentStore | None = None) -> None:
     units = list((await db.scalars(select(V13Unit).where(V13Unit.import_id == batch.import_id,
                                              V13Unit.unit_id.in_(batch.selected_ids)))).all())
     if batch.frozen_hash != frozen_hash(units, batch.profile_version, batch.manual_version,
-                                        batch.sample_ledger.get("revision_map")):
+                                        batch.sample_ledger.get("revision_map"), profile_binding(batch)):
         raise ApiError(409, "FROZEN_PROFILE_CONFLICT", "冻结内容或表单定义已变化，须保留原轮并明确升级规则")
+    if batch.profile_revision_id:
+        profile = await db.get(V13ProfileRevision, batch.profile_revision_id)
+        # Retirement only removes future selection. Existing work keeps its signed rules.
+        if (profile is None or profile.canonical_hash != batch.profile_hash
+                or profile.snapshot_ref != batch.profile_snapshot_ref
+                or profile.approval_ref != batch.profile_approval_ref
+                or profile.manual_ref != batch.manual_ref or profile.vocabulary_ref != batch.vocabulary_ref):
+            raise ApiError(409, "FROZEN_PROFILE_CONFLICT", "原批批准快照引用不一致")
+        if store:
+            frozen_profile_snapshot(batch, store)
+
+
+def frozen_profile_snapshot(batch: V13Batch, store: ContentStore) -> dict[str, Any]:
+    if not all((batch.profile_snapshot_ref, batch.profile_approval_ref, batch.manual_ref, batch.vocabulary_ref)):
+        raise ApiError(409, "FROZEN_PROFILE_CONFLICT", "原批批准快照引用缺失")
+    snapshot: dict[str, Any] = store.read_json(batch.profile_snapshot_ref or {})
+    # A signed old snapshot cannot silently run against newly deployed core rules.
+    # Retirement alone does not change these rules and remains valid for old work.
+    try:
+        validate_snapshot(batch.dataset, snapshot)
+    except DomainError as exc:
+        raise ApiError(409, "FROZEN_PROFILE_CONFLICT", "运行中的核心规则与冻结批准快照不同，须保留原轮并明确升级规则") from exc
+    approval = store.read_json(batch.profile_approval_ref or {})
+    manual = store.read_json(batch.manual_ref or {})
+    vocabulary = store.read_json(batch.vocabulary_ref or {})
+    if (canonical_sha256(snapshot) != batch.profile_hash or approval.get("canonical_hash") != batch.profile_hash
+            or approval.get("snapshot_ref") != batch.profile_snapshot_ref
+            or snapshot.get("version") != batch.profile_version or snapshot.get("manual_version") != batch.manual_version
+            or manual != {"version": batch.manual_version, "text": snapshot.get("manual_text")}
+            or vocabulary != snapshot.get("vocabulary")):
+        raise ApiError(409, "FROZEN_PROFILE_CONFLICT", "冻结配置、批准或手册词表摘要不一致")
+    return snapshot
+
+
+def profile_binding(batch: V13Batch) -> dict[str, Any] | None:
+    if not batch.profile_revision_id:
+        return None
+    return {key: getattr(batch, key) for key in ("profile_revision_id", "profile_hash",
+            "profile_snapshot_ref", "profile_approval_ref", "manual_ref", "vocabulary_ref")}
+
+
+async def approved_profile(db: AsyncSession, profile_id: str, dataset: str,
+                           store: ContentStore) -> V13ProfileRevision:
+    await lock_scope(db, "v13-profile:" + profile_id)
+    profile = await db.scalar(select(V13ProfileRevision).where(V13ProfileRevision.id == profile_id).with_for_update())
+    if profile is None or profile.dataset != dataset or profile.state != "APPROVED" or not profile.approval_ref:
+        raise ApiError(409, "PROFILE_NOT_APPROVED", "新批次或新轮须选择本数据集尚未退休的独立批准配置")
+    snapshot = store.read_json(profile.snapshot_ref)
+    validate_snapshot(dataset, snapshot)
+    approval = store.read_json(profile.approval_ref)
+    if (canonical_sha256(snapshot) != profile.canonical_hash
+            or approval.get("canonical_hash") != profile.canonical_hash
+            or approval.get("snapshot_ref") != profile.snapshot_ref
+            or approval.get("person_id") in profile.contributor_person_ids
+            or approval.get("actor_id") != profile.approver_id
+            or not approval.get("signature") or not approval.get("evidence")
+            or snapshot["version"] != profile.version or snapshot["manual_version"] != profile.manual_version
+            or store.read_json(profile.manual_ref) != {"version": profile.manual_version, "text": snapshot["manual_text"]}
+            or store.read_json(profile.vocabulary_ref) != snapshot["vocabulary"]):
+        raise ApiError(409, "FROZEN_PROFILE_CONFLICT", "配置批准或手册、词表引用不完整")
+    return profile
+
+
+def bind_profile(profile: V13ProfileRevision) -> dict[str, Any]:
+    return {"profile_revision_id": profile.id, "profile_hash": profile.canonical_hash,
+            "profile_snapshot_ref": dict(profile.snapshot_ref), "profile_approval_ref": dict(profile.approval_ref or {}),
+            "manual_ref": dict(profile.manual_ref), "vocabulary_ref": dict(profile.vocabulary_ref)}
 
 
 async def assert_review_visible(db: AsyncSession, actor: User, unit: V13Unit) -> None:
@@ -276,6 +348,7 @@ async def batch_view(db: AsyncSession, batch: V13Batch, store: ContentStore) -> 
             "N": total, "sample_count": len(batch.selected_ids), "selected_ids": batch.selected_ids,
             "sample_ledger": batch.sample_ledger, "profile_version": batch.profile_version,
             "manual_version": batch.manual_version, "frozen_hash": batch.frozen_hash,
+            "profile_revision_id": batch.profile_revision_id, "profile_hash": batch.profile_hash,
             "blind_submitted": sum(row.phase == "BLIND" for row in submissions),
             "review_submitted": sum(row.phase == "REVIEW" for row in submissions),
             "verification_completed": len(passed),
@@ -438,8 +511,13 @@ async def read_draft(db: AsyncSession, store: ContentStore, assignment_id: str,
 
 
 def frozen_hash(units: list[V13Unit], profile_version: str, manual_version: str,
-                revision_map: dict[str, str] | None = None) -> str:
+                revision_map: dict[str, str] | None = None,
+                binding: dict[str, Any] | None = None) -> str:
     from ..domain.v13 import QUOTAS, SPECIALIZED_FIELDS, ReviewV3
+    if binding:
+        return canonical_sha256({"units": sorted((unit.unit_id, (revision_map or {}).get(unit.unit_id, unit.content_revision)) for unit in units),
+                                 "profile_version": profile_version, "manual_version": manual_version,
+                                 "approved_profile": binding})
     return canonical_sha256({"units": sorted((unit.unit_id, (revision_map or {}).get(unit.unit_id, unit.content_revision)) for unit in units),
                              "profile_version": profile_version, "manual_version": manual_version,
                              "review_version": "openkb.s4-review.v3", "review_schema": ReviewV3.model_json_schema(),

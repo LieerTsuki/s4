@@ -149,8 +149,14 @@ async def export_snapshot_v13(db: Any, settings: Any, import_id: str, actor_id: 
         V13Unit,
     )
     from ..security import ApiError
+    from .content_inventory import references_in, verify_controlled_graph
     from .content_store import ContentStore
-    from .workflow_v13 import current_verification_records, import_report
+    from .workflow_v13 import (
+        assert_frozen_profile,
+        current_verification_records,
+        import_report,
+        profile_binding,
+    )
 
     await lock_scope(db, "v13-handoff:" + import_id)
     imported = await db.scalar(select(V13Import).where(V13Import.id == import_id).with_for_update())
@@ -177,8 +183,17 @@ async def export_snapshot_v13(db: Any, settings: Any, import_id: str, actor_id: 
     iaa: list[dict[str, Any]] = []
     actions: list[dict[str, Any]] = []
     raw: list[dict[str, Any]] = []
+    profiles: list[dict[str, Any]] = []
     by_id = {unit.unit_id: unit for unit in units}
     for batch in batches:
+        binding = profile_binding(batch)
+        if binding:
+            await assert_frozen_profile(db, batch, store)
+            verify_controlled_graph(store, references_in(binding))
+            profiles.append({"batch_id": batch.id, "dataset": batch.dataset,
+                             "workflow_kind": batch.workflow_kind, "frozen_hash": batch.frozen_hash,
+                             "profile_version": batch.profile_version, "manual_version": batch.manual_version,
+                             **binding})
         batch_actions = (await db.scalars(select(V13QualityAction).where(V13QualityAction.batch_id == batch.id).order_by(V13QualityAction.created_at, V13QualityAction.id))).all()
         actions.extend(store.read_json(action.record_ref) for action in batch_actions)
         assignments = (await db.scalars(select(V13Assignment).where(V13Assignment.batch_id == batch.id).order_by(V13Assignment.id))).all()
@@ -212,8 +227,11 @@ async def export_snapshot_v13(db: Any, settings: Any, import_id: str, actor_id: 
     for key in ("quality", "expansions"):
         if isinstance(report.get(key), list):
             report[key] = sorted(report[key], key=canonical_sha256)
+    if profiles:
+        report["profile_evidence"] = profiles
     report["raw_evidence_ref"] = store.put_json({"contract_version": "openkb.s4-evidence.v3", "submissions": raw,
-                                                 "source_ref": imported.source_ref})
+                                                 "source_ref": imported.source_ref,
+                                                 **({"profile_evidence": profiles} if profiles else {})})
     report["source_sha256"] = imported.content_hash
     snapshot_hash = canonical_sha256({"units": final_units, "verified": verified, "observed": observed,
                                       "iaa": iaa, "actions": actions, "report": report})

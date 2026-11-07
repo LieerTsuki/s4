@@ -44,7 +44,8 @@ async def prepare() -> None:
     try:
         async with sessions() as db, db.begin():
             for name, roles in {"lead": ["lead"], "v": ["annotator"], "a": ["annotator"],
-                                "b": ["annotator"], "other": ["annotator"], "verifier": ["verifier"]}.items():
+                                "b": ["annotator"], "other": ["annotator"], "verifier": ["verifier"],
+                                "auditor": ["auditor"]}.items():
                 username = "v13-e2e-" + name
                 existing = await db.scalar(select(User).where(User.username == username))
                 if existing is None:
