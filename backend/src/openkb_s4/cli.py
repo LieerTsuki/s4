@@ -20,11 +20,13 @@ async def bootstrap(username: str, display_name: str, person_id: str, password: 
     """Create the first administrator only; later users use authenticated API."""
     if len(password) < 12:
         raise ValueError("管理员密码至少12位")
-    engine, factory = make_sessions(get_settings().database_url)
+    settings = get_settings()
+    engine, factory = make_sessions(settings.database_url)
     try:
         async with factory() as db, db.begin():
             # Row locks cannot protect the absence of the first user.
-            await db.execute(text("SELECT pg_advisory_xact_lock(64341001)"))
+            if not settings.database_url.startswith("sqlite"):
+                await db.execute(text("SELECT pg_advisory_xact_lock(64341001)"))
             if await db.scalar(select(User.id).limit(1)):
                 raise ValueError("已有账号，禁止重复bootstrap；请用管理员账号管理用户")
             db.add(User(username=username, display_name=display_name, person_id=person_id,

@@ -2,7 +2,7 @@
 from typing import Any
 
 from sqlalchemy import select
-from sqlalchemy.dialects.postgresql import insert
+from ..db_compat import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import Job

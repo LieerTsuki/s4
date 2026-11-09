@@ -7,7 +7,7 @@ from datetime import timedelta
 from typing import Any
 
 from sqlalchemy import or_, select, update
-from sqlalchemy.dialects.postgresql import insert
+from .db_compat import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from .config import Settings, get_settings

@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any
 
 from sqlalchemy import func, select
-from sqlalchemy.dialects.postgresql import insert
+from ..db_compat import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config import Settings

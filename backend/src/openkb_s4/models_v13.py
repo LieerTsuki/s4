@@ -74,7 +74,7 @@ class V13Assignment(Record):
     content_revision: Mapped[str] = mapped_column(String(64))
     material_ref: Mapped[dict[str, Any]] = mapped_column(JSON)
     gold_ref: Mapped[dict[str, Any]] = mapped_column(JSON)
-    __table_args__ = (Index("uq_v13_assignment_active_seat", "batch_id", "unit_index_id", "seat", unique=True, postgresql_where=text("active")),)
+    __table_args__ = (Index("uq_v13_assignment_active_seat", "batch_id", "unit_index_id", "seat", unique=True, postgresql_where=text("active"), sqlite_where=text("active")),)
 
 
 class V13Draft(Record):

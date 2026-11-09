@@ -14,6 +14,10 @@ from sqlalchemy.ext.asyncio import (
 
 def make_sessions(url: str) -> tuple[AsyncEngine, async_sessionmaker[AsyncSession]]:
     """Return an async engine and per-unit-of-work session factory."""
+    if url.startswith("sqlite"):
+        # SQLite single-process deployment: widen busy timeout for WAL writers.
+        engine = create_async_engine(url, connect_args={"timeout": 30})
+        return engine, async_sessionmaker(engine, expire_on_commit=False)
     engine = create_async_engine(url, pool_pre_ping=True)
     return engine, async_sessionmaker(engine, expire_on_commit=False)
 
@@ -32,5 +36,8 @@ async def lock_scope(session: AsyncSession, scope: str) -> None:
     only serializes unrelated transactions; it cannot bypass the protected check.
     The lock is released automatically at transaction commit or rollback.
     """
+    if session.bind is not None and session.bind.dialect.name == "sqlite":
+        # SQLite runs in a single process; advisory locks are PostgreSQL-only.
+        return
     key = int.from_bytes(sha256(scope.encode("utf-8")).digest()[:8], "big", signed=True)
     await session.execute(text("SELECT pg_advisory_xact_lock(:key)"), {"key": key})

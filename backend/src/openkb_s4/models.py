@@ -1,4 +1,5 @@
 """Transactional S4 operational records, separate from evaluated knowledge stores."""
+import os
 from datetime import UTC, datetime
 from typing import Any
 from uuid import uuid4
@@ -24,6 +25,9 @@ def new_id() -> str:
 
 
 def now() -> datetime:
+    if os.environ.get("S4_DATABASE_URL", "").startswith("sqlite"):
+        # SQLite stores naive UTC timestamps; Postgres keeps timezone-aware values.
+        return datetime.now(UTC).replace(tzinfo=None)
     return datetime.now(UTC)
 
 
@@ -117,7 +121,7 @@ class Assignment(Record):
     unit_revision_id: Mapped[str | None] = mapped_column(ForeignKey("unit_revisions.id"))
     gold_revision_id: Mapped[str | None] = mapped_column(ForeignKey("gold_revisions.id"))
     content_revision: Mapped[str] = mapped_column(String(64))
-    __table_args__ = (Index("uq_assignment_active_seat", "batch_id", "unit_id", "seat", unique=True, postgresql_where=text("active")),)
+    __table_args__ = (Index("uq_assignment_active_seat", "batch_id", "unit_id", "seat", unique=True, postgresql_where=text("active"), sqlite_where=text("active")),)
 
 
 class WorkingDraft(Record):
