@@ -22,6 +22,7 @@
 | DEP-PROFILE / 08§6.3 | 新版manual/profile/字典正式生命周期审批 | 本地baseline及旧v1审批不等于新版正式批准；冻结快照与反自批须验 | 李悦、郑松屹、独立批准人（待指定） | WAITING_APPROVAL；draft/review/独立approval/retired全链证据 |
 | DEP-DEPLOY / 11/03 M01—M05 | Secure Cookie修复、实际代码提交/构建、持久化/恢复/容量/正式入口 | 11/03仅QA subset；不签13集或重启恢复完成 | 平台/运维负责人（待指定）、郑松屹 | WAITING_VERIFICATION；具体证据转B12环境包 |
 | DEP-RELEASE / 01§9、08§10 | 13repo权限/许可、版本策略、归属/销毁声明 | 仅QA-D2审批后可PUBLIC，其余12 PRIVATE；S4不代发HF | 蔡俊杰、发布/许可负责人 | WAITING_SOURCE；正式批准与签署/执行状态分开 |
+| DEP-D3D4-DEMO / 2026-11-16祖堃回复 | D3/D4 离线 demo 5 条，提交 `75b8636`；难度未知占位值、D3 文档等级、改写保留和 `metadata.review_control` 隐藏 | 仅作离线映射和语义预审。正式 unit 仍须合法 difficulty、D3 跳链路/字段、revision/provenance 和独立隐藏回归 | 祖堃、黄缨淇、李悦、郑松屹 | PARTIAL；demo 已收到，四项口径待书面确认和回归证据 |
 
 处理一项时使用以下记录，不在“确认方”栏先填拟定人名：
 
