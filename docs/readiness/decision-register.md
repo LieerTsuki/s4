@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | DEP-J1 / 09 J1 | v1.3人工全量核实与规范双标κ门的适用裁决 | 设计全量N+观测n；正式批次不能把默认A案当甲方批准 | 林业森协调甲方/规范负责人，李悦 | WAITING_CONFIRMATION；取得签发原文、版本、适用集/批、有效期 |
 | DEP-C1 / 09 C1 | κ不作入库门与§6.4完成判据冲突；灰区/null出口 | ≥0.7仅NORMAL；[0.6,0.7)扩样+校准；<0.6整批退S2；null不填1；灰区/null不擅自正式放行 | 林业森、李悦、蔡俊杰、邓文俊 | WAITING_POLICY；保留原κ；书面规则绑定批次 |
-| DEP-C2-HR / 09 C2、职责§3 | 全量人员投入、开发/运维岗位、真实排期 | 400/500周量仅主核实粗需6/7名全周人员；观测/返工另算 | 林业森、李悦、郑松屹、各岗位负责人 | WAITING_RESOURCE；实际人名/person_id、可用工时、职责和受理确认 |
+| DEP-C2-HR / 09 C2、职责§3 | 全量人员投入、开发/运维岗位、真实排期 | 400/500周量仅主核实粗需6/7名全周人员；观测/返工另算 | 李悦统一确认并向林业森取得裁决；郑松屹提供协作信息；各岗位负责人补充实际工时 | WAITING_RESOURCE；实际人名/person_id、可用工时、职责和受理确认 |
 | DEP-T0 / 09 C3 | T0 D4无D4C：补充批或受控例外；是否抵扣正式2300 | 原60题分布保留；D4/D4C缺侧两指标N/A；不暗增/减配额 | 林业森、蔡俊杰、李悦 | WAITING_POLICY；书面范围+T0至正式unit映射，不能凭日期核销 |
 | DEP-D7 / 09 C4 | D7“放大”残文与max(source K)统一确认 | 按max源K设计；人工同意图/源血缘不可缺 | 指标负责人、蔡俊杰 | WAITING_CONFIRMATION；修订原件和真实样例 |
 | DEP-D6 / 09 C5 | 规范v1.7 §3.6完整实体表及§3.6.2关系表原件 | 缺词表不签D6内容通过；不从旧字典推造；OTHER统计口径需明确 | 数据集/规范负责人、陈宇、郑松屹 | WAITING_SOURCE；签发版、文件hash、映射及正式profile快照 |
@@ -19,7 +19,7 @@
 | DEP-S3 / 09 C8、08§9 | 真实v2正反例、原始checked/pass/fail、逐条PASS、模型分数语义/阈值校准、递补血缘 | 默认原始通过率≥90%；不删失败洗分母；NLI不得LLM兜底 | 黄缨淇 | WAITING_SAMPLE；受控输入包/报告、源摘要和确认 |
 | DEP-SEC-D4 / 09 C9 | 排名口径及W7“AUC”残文处理 | 按返回位置、未入榜top_n+1；忽略score旧字段并留告警 | SEC/指标负责人、朱文彬 | WAITING_CONFIRMATION；原件、同分布配对/排名样例 |
 | DEP-S5 / 08§10 | 三类契约能力协商、真实S5拒收/接受、七层条款与DS映射、修正≤2轮计数边界 | 下载≠发送≠接收；最终仍六文件；跨新批/轮不能清零退回计数 | 蔡俊杰、邓文俊 | WAITING_INTEGRATION；接收方生成原始回执+快照hash |
-| DEP-PROFILE / 08§6.3 | 新版manual/profile/字典正式生命周期审批 | 本地baseline及旧v1审批不等于新版正式批准；冻结快照与反自批须验 | 李悦、郑松屹、独立批准人（待指定） | WAITING_APPROVAL；draft/review/独立approval/retired全链证据 |
+| DEP-PROFILE / 08§6.3 | 新版manual/profile/字典正式生命周期审批 | 本地baseline及旧v1审批不等于新版正式批准；冻结快照与反自批须验 | 李悦统一收集和确认；郑松屹提供评审意见；独立批准人（待指定）完成正式批准 | WAITING_APPROVAL；draft/review/独立approval/retired全链证据 |
 | DEP-DEPLOY / 11/03 M01—M05 | Secure Cookie修复、实际代码提交/构建、持久化/恢复/容量/正式入口 | 11/03仅QA subset；不签13集或重启恢复完成 | 平台/运维负责人（待指定）、郑松屹 | WAITING_VERIFICATION；具体证据转B12环境包 |
 | DEP-RELEASE / 01§9、08§10 | 13repo权限/许可、版本策略、归属/销毁声明 | 仅QA-D2审批后可PUBLIC，其余12 PRIVATE；S4不代发HF | 蔡俊杰、发布/许可负责人 | WAITING_SOURCE；正式批准与签署/执行状态分开 |
 | DEP-D3D4-DEMO / 2026-11-16祖堃回复 | D3/D4 离线 demo 5 条，提交 `75b8636`；难度未知占位值、D3 文档等级、改写保留和 `metadata.review_control` 隐藏 | 仅作离线映射和语义预审。正式 unit 仍须合法 difficulty、D3 跳链路/字段、revision/provenance 和独立隐藏回归 | 祖堃、黄缨淇、李悦、郑松屹 | PARTIAL；demo 已收到，四项口径待书面确认和回归证据 |
