@@ -18,7 +18,7 @@
 | DEP-CLI-CI / 09 C7、08§13 | builder/typer实际入口、GitLab仓库/五门配置、甲方评审原件 | 本地runner/检查不是主仓门禁；分支≤5工作日规则需主仓执行证据 | 主仓维护者、邓文俊、蔡俊杰 | WAITING_SOURCE；真实配置/提交/运行URL、门禁名称及评审身份 |
 | DEP-S3 / 09 C8、08§9 | 真实v2正反例、原始checked/pass/fail、逐条PASS、模型分数语义/阈值校准、递补血缘 | 默认原始通过率≥90%；不删失败洗分母；NLI不得LLM兜底 | 黄缨淇 | WAITING_SAMPLE；受控输入包/报告、源摘要和确认 |
 | DEP-SEC-D4 / 09 C9 | 排名口径及W7“AUC”残文处理 | 按返回位置、未入榜top_n+1；忽略score旧字段并留告警 | SEC/指标负责人、朱文彬 | WAITING_CONFIRMATION；原件、同分布配对/排名样例 |
-| DEP-S5 / 08§10 | 三类契约能力协商、真实S5拒收/接受、七层条款与DS映射、修正≤2轮计数边界 | 下载≠发送≠接收；最终仍六文件；跨新批/轮不能清零退回计数 | 蔡俊杰、邓文俊 | WAITING_INTEGRATION；接收方生成原始回执+快照hash |
+| DEP-S5 / 08§10 | 三类契约能力协商、真实S5拒收/接受、七层条款与DS映射、修正≤2轮计数边界 | 蔡俊杰已回复可先接入 QA-D1 r2 过程记录，待剩余复核后补冻结版统计、逐题提交/封存和缺额/κ处理；仍未形成正式 ACK/NACK | 李悦登记；蔡俊杰提供接收方回执 | PARTIAL；接收方原始回执、快照hash、逐题材料和七层结论待补 |
 | DEP-PROFILE / 08§6.3 | 新版manual/profile/字典正式生命周期审批 | 本地baseline及旧v1审批不等于新版正式批准；冻结快照与反自批须验 | 李悦自行确认；林业森和郑松屹本轮不承担确认或执行 | WAITING_APPROVAL；由李悦登记 draft/review/approval/retired 全链证据 |
 | DEP-DEPLOY / 11/03 M01—M05 | Secure Cookie修复、实际代码提交/构建、持久化/恢复/容量/正式入口 | 11/03仅QA subset；不签13集或重启恢复完成 | 平台/运维负责人（待指定）、郑松屹 | WAITING_VERIFICATION；具体证据转B12环境包 |
 | DEP-RELEASE / 01§9、08§10 | 13repo权限/许可、版本策略、归属/销毁声明 | 仅QA-D2审批后可PUBLIC，其余12 PRIVATE；S4不代发HF | 蔡俊杰、发布/许可负责人 | WAITING_SOURCE；正式批准与签署/执行状态分开 |
