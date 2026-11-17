@@ -1,0 +1,72 @@
+{
+  "freeze_id": "FREEZE-20261117-S4",
+  "frozen_at": "2026-11-17",
+  "timezone": "Asia/Shanghai",
+  "owner": "李悦",
+  "scope": {
+    "QA-D1": {
+      "status": "DEMO_BASELINE_FROZEN_FORMAL_NOT_RELEASED",
+      "batch_id": "B-2026-11-02",
+      "import_id": "b5715a91-06c2-4e29-ad5d-a04ccce00ae4",
+      "source_revision": "feat/dataset_pipeline_s2@ecc4441:run3_20261103+run4_r1+r2@725c882",
+      "mode": "demo",
+      "contract_version": "openkb.s3-s4.v2",
+      "N": 7,
+      "unit_ids": ["QAD1-0015", "QAD1-0016", "QAD1-0017", "QAD1-0018", "QAD1-0019", "QAD1-0020", "QAD1-0021"],
+      "manual_version": "manual-v1.3",
+      "profile_version": "s4-v1.3",
+      "frozen_hash": "f606cf52279aef9440a83862616a618b921e99686b6e47cafe2af96e9d3b3e48",
+      "observation_batch_id": "764f2d5e-069c-4230-b5d9-df22cee92f37",
+      "observation_required": 8,
+      "observation_selected": 7,
+      "observation_shortfall": 1,
+      "blind_submitted": 14,
+      "review_submitted": 14,
+      "verification_completed": 7,
+      "quality": {
+        "algorithm_version": "cohen-original-points.v13",
+        "po": 1,
+        "pe": 1,
+        "kappa": null,
+        "action": "UNDEFINED",
+        "null_reason": "UNDEFINED_KAPPA_PE_ONE"
+      },
+      "open_blockers": ["OBSERVATION_SAMPLE_SHORTFALL:QA-D1", "POLICY_J1_C1_PENDING", "QUALITY_POLICY_PENDING:QA-D1", "EXTERNAL_ALIGNMENT_NOT_CONFIRMED"]
+    },
+    "T0": {
+      "status": "PLANNING_BASELINE_FROZEN_NO_FORMAL_CANDIDATES",
+      "plan_revision": "T0-PLAN-20261117-r1",
+      "scope": {"QA-D1": 20, "QA-D2": 10, "QA-D4": 10, "QA-D5": 10, "SEC-D1": 10},
+      "N": 60,
+      "n_per_dataset": 8,
+      "n_total": 40,
+      "manual_version": "manual-v1.3",
+      "profile_version": "s4-v1.3",
+      "candidate_manifest_sha256": null,
+      "formal_deliverable_count": 0
+    },
+    "W5": {
+      "status": "PLANNING_BASELINE_FROZEN_NO_FORMAL_CANDIDATES",
+      "plan_revision": "W5-PLAN-20261117-r1",
+      "scope": {"QA-D2": 200, "QA-D3": 100, "QA-D4": 100, "QA-D4C": 100},
+      "N": 500,
+      "candidate_manifest_sha256": null,
+      "formal_deliverable_count": 0
+    }
+  },
+  "rules": {
+    "sampling_algorithm": "v13-stratified-largest-remainder.v1",
+    "sampling_seed": 42,
+    "quality_algorithm": "cohen-original-points.v13",
+    "s3_formal_gate": "original_checked/pass/fail and final per-unit PASS required; default original pass rate >= 90%; no LLM fallback",
+    "d4_d4c_missing_side": "N/A until paired-side policy is approved",
+    "j1_c1_policy_state": "PENDING_WRITTEN_POLICY",
+    "kappa_null_policy_state": "PENDING_WRITTEN_POLICY",
+    "quota_state": "NO_FORMAL_CREDIT_UNTIL_SCOPE_AND_MAPPING_APPROVED"
+  },
+  "evidence_refs": [
+    "var/evidence/maiya-double-blind-20261116/readback.json",
+    "docs/audits/2026-11-17-QA-D1-r3补件接收核验.md",
+    "docs/readiness/2026-11-17-启动授权与执行清单.md"
+  ]
+}

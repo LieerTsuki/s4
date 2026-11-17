@@ -1,0 +1,1449 @@
+{
+  "checked_at": "2026-11-16T09:55:17.490Z",
+  "preview": "https://maiya.myaifast.com/api/dev/environment/server/preview/264/?_pv=1794829056.eceb6219a93b38710d3c7586f7349c68",
+  "calls": [
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/health/ready",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/imports?limit=500",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/observation-batches?limit=100",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/imports/b5715a91-06c2-4e29-ad5d-a04ccce00ae4/report",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/batches/764f2d5e-069c-4230-b5d9-df22cee92f37",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/auth/logout",
+      "status": 200
+    }
+  ],
+  "entry": 200,
+  "health": {
+    "status": "ready",
+    "database": true,
+    "migration": "0007_v13_profiles",
+    "worker": true,
+    "external_alignment": "NOT_ALIGNED"
+  },
+  "imports": {
+    "items": [
+      {
+        "id": "b5715a91-06c2-4e29-ad5d-a04ccce00ae4",
+        "batch_id": "B-2026-11-02",
+        "source_revision": "feat/dataset_pipeline_s2@ecc4441:run3_20261103+run4_r1+r2@725c882",
+        "mode": "demo",
+        "status": "WAITING_VERIFICATION",
+        "unit_count": 7,
+        "N": 7,
+        "blocked_reasons": [],
+        "created_at": "2026-11-09T09:07:38.896939",
+        "contract_version": "openkb.s3-s4.v2"
+      },
+      {
+        "id": "c0654052-7d0c-43ba-b204-028f3c4c20d4",
+        "batch_id": "B-2026-11-02",
+        "source_revision": "feat/dataset_pipeline_s2@ecc4441:run3_20261103+run4_r1",
+        "mode": "demo",
+        "status": "WAITING_VERIFICATION",
+        "unit_count": 7,
+        "N": 7,
+        "blocked_reasons": [],
+        "created_at": "2026-11-07T16:01:36.348065",
+        "contract_version": "openkb.s3-s4.v2"
+      },
+      {
+        "id": "ce32ce4b-2a2e-4005-a44e-dc91a278e478",
+        "batch_id": "MAIYA-OBS-20261103-A",
+        "source_revision": "r1",
+        "mode": "demo",
+        "status": "WAITING_VERIFICATION",
+        "unit_count": 8,
+        "N": 8,
+        "blocked_reasons": [],
+        "created_at": "2026-11-03T09:08:12.309450",
+        "contract_version": "openkb.s3-s4.v2"
+      },
+      {
+        "id": "a484d68e-f6f5-42c9-b263-77bff9b0d99f",
+        "batch_id": "MAIYA-ADAPT-20261103-A",
+        "source_revision": "r1",
+        "mode": "demo",
+        "status": "WAITING_VERIFICATION",
+        "unit_count": 2,
+        "N": 2,
+        "blocked_reasons": [],
+        "created_at": "2026-11-03T09:06:35.025832",
+        "contract_version": "openkb.s3-s4.v2"
+      }
+    ],
+    "total": 4
+  },
+  "observations": {
+    "items": [
+      {
+        "id": "764f2d5e-069c-4230-b5d9-df22cee92f37",
+        "import_id": "b5715a91-06c2-4e29-ad5d-a04ccce00ae4",
+        "dataset": "QA-D1",
+        "workflow_kind": "OBSERVATION",
+        "state": "OBSERVED",
+        "round": 1,
+        "N": 7,
+        "sample_count": 7,
+        "selected_ids": [
+          "QAD1-0015",
+          "QAD1-0016",
+          "QAD1-0017",
+          "QAD1-0018",
+          "QAD1-0019",
+          "QAD1-0020",
+          "QAD1-0021"
+        ],
+        "sample_ledger": {
+          "algorithm_version": "v13-stratified-largest-remainder.v1",
+          "seed": 42,
+          "selected_ids": [
+            "QAD1-0015",
+            "QAD1-0016",
+            "QAD1-0017",
+            "QAD1-0018",
+            "QAD1-0019",
+            "QAD1-0020",
+            "QAD1-0021"
+          ],
+          "population_count": 7,
+          "required_count": 8,
+          "actual_count": 7,
+          "shortfall": 1,
+          "strata": [
+            {
+              "dataset": "QA-D1",
+              "difficulty": "easy",
+              "population": 7,
+              "sample_count": 7,
+              "selected_ids": [
+                "QAD1-0015",
+                "QAD1-0016",
+                "QAD1-0017",
+                "QAD1-0018",
+                "QAD1-0019",
+                "QAD1-0020",
+                "QAD1-0021"
+              ]
+            }
+          ]
+        },
+        "profile_version": "s4-v1.3",
+        "manual_version": "manual-v1.3",
+        "frozen_hash": "f606cf52279aef9440a83862616a618b921e99686b6e47cafe2af96e9d3b3e48",
+        "profile_revision_id": null,
+        "profile_hash": null,
+        "blind_submitted": 14,
+        "review_submitted": 14,
+        "verification_completed": 7,
+        "quality": {
+          "action": "UNDEFINED",
+          "algorithm_version": "cohen-original-points.v13",
+          "batch_id": "764f2d5e-069c-4230-b5d9-df22cee92f37",
+          "frozen_hash": "f606cf52279aef9440a83862616a618b921e99686b6e47cafe2af96e9d3b3e48",
+          "kappa": null,
+          "manual_version": "manual-v1.3",
+          "n": 17,
+          "observed_at": "2026-11-14T21:05:51.312858",
+          "pair_count": 7,
+          "pairs": [
+            {
+              "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+              "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+              "content_revision": "a31189da5ebe8ec952e260aa33506f820e3b45643bc320699f0012ab09ea9fd4",
+              "point_keys": [
+                "P001",
+                "P002",
+                "P003",
+                "P004"
+              ],
+              "submission_a": {
+                "object_key": "objects/9a/9a38b9fd017db363d7d5a68de9e5c39f6afbd19440c4db8992ea4d92f2475ea6.json",
+                "sha256": "9a38b9fd017db363d7d5a68de9e5c39f6afbd19440c4db8992ea4d92f2475ea6"
+              },
+              "submission_b": {
+                "object_key": "objects/47/47a02516934a249f93fec4f09b50426db35d2aef9ec083749a5858735f580f4c.json",
+                "sha256": "47a02516934a249f93fec4f09b50426db35d2aef9ec083749a5858735f580f4c"
+              },
+              "unit_id": "QAD1-0015"
+            },
+            {
+              "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+              "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+              "content_revision": "d3d0c9b313cff4c9e97c1a5b350a2398c90f3cfa4366d42b53850159146435b8",
+              "point_keys": [
+                "P001",
+                "P002"
+              ],
+              "submission_a": {
+                "object_key": "objects/ad/ade83d985e6f919c95cafc6e5dea94c0d0565fb0f9c4ea44d2a0a15415d36a96.json",
+                "sha256": "ade83d985e6f919c95cafc6e5dea94c0d0565fb0f9c4ea44d2a0a15415d36a96"
+              },
+              "submission_b": {
+                "object_key": "objects/d7/d79deb5a0c44eefb2de863d739099d1df13c2202307615742c85d0033f4985f6.json",
+                "sha256": "d79deb5a0c44eefb2de863d739099d1df13c2202307615742c85d0033f4985f6"
+              },
+              "unit_id": "QAD1-0016"
+            },
+            {
+              "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+              "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+              "content_revision": "3eb4dc6f7191d4874b26078f156981fd7b40f757157179b40300e8d9af507a4a",
+              "point_keys": [
+                "P001",
+                "P002"
+              ],
+              "submission_a": {
+                "object_key": "objects/f3/f35a0ac9c26500c6e92aa33c2852c11fb4f56e4d83a6108a51f08d9f7834f467.json",
+                "sha256": "f35a0ac9c26500c6e92aa33c2852c11fb4f56e4d83a6108a51f08d9f7834f467"
+              },
+              "submission_b": {
+                "object_key": "objects/b5/b5b98897190533f967d43b646422763164a49dbf12d565e4d744176cabea5b37.json",
+                "sha256": "b5b98897190533f967d43b646422763164a49dbf12d565e4d744176cabea5b37"
+              },
+              "unit_id": "QAD1-0017"
+            },
+            {
+              "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+              "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+              "content_revision": "aecaa37830868bf33fcaddd2e2090ffc0bc0ff47cf44960d5e1b28027f4df5fc",
+              "point_keys": [
+                "P001",
+                "P002"
+              ],
+              "submission_a": {
+                "object_key": "objects/f6/f6b73b346d38f477de7d741040ede7812eb2436ceeee7a3387d57d8cf1ba1a2b.json",
+                "sha256": "f6b73b346d38f477de7d741040ede7812eb2436ceeee7a3387d57d8cf1ba1a2b"
+              },
+              "submission_b": {
+                "object_key": "objects/d6/d671ac7d368dc48dd2b2b429e9089660aff8e93f6f53666d36b718b60f6fc750.json",
+                "sha256": "d671ac7d368dc48dd2b2b429e9089660aff8e93f6f53666d36b718b60f6fc750"
+              },
+              "unit_id": "QAD1-0018"
+            },
+            {
+              "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+              "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+              "content_revision": "c0df255b83308e39160ae5cb4ec21990995f9340c32bfe69e86ac5ca06f0bd72",
+              "point_keys": [
+                "P001",
+                "P002",
+                "P003"
+              ],
+              "submission_a": {
+                "object_key": "objects/77/777b178509a46079d2afef434c8b2bec116d8e406fb74e37c3714f7c25b7cbc7.json",
+                "sha256": "777b178509a46079d2afef434c8b2bec116d8e406fb74e37c3714f7c25b7cbc7"
+              },
+              "submission_b": {
+                "object_key": "objects/55/55cd173d088ad0446f13a62ee2d4f6626fc5ed5488737584b3c99be0aa40f9d0.json",
+                "sha256": "55cd173d088ad0446f13a62ee2d4f6626fc5ed5488737584b3c99be0aa40f9d0"
+              },
+              "unit_id": "QAD1-0019"
+            },
+            {
+              "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+              "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+              "content_revision": "b6d23f7d9c25c4acff9917b5cbce11aa66b7802a11aaa8c286d61dd288798c58",
+              "point_keys": [
+                "P001",
+                "P002"
+              ],
+              "submission_a": {
+                "object_key": "objects/25/25e304a9d3fc9eee8e5ed78a7d7488ae1e0e8d5a9b888714e0985dcb9afd3c4d.json",
+                "sha256": "25e304a9d3fc9eee8e5ed78a7d7488ae1e0e8d5a9b888714e0985dcb9afd3c4d"
+              },
+              "submission_b": {
+                "object_key": "objects/32/32450f9714a9c83d8b0a56d89d90f8eecd0e3f69e2b6713c3b1f3a72407e27c5.json",
+                "sha256": "32450f9714a9c83d8b0a56d89d90f8eecd0e3f69e2b6713c3b1f3a72407e27c5"
+              },
+              "unit_id": "QAD1-0020"
+            },
+            {
+              "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+              "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+              "content_revision": "10bddb6366f6fa0a3ead6180f81dfb3c320e75b525134d392bef37e07fb286ec",
+              "point_keys": [
+                "P001",
+                "P002"
+              ],
+              "submission_a": {
+                "object_key": "objects/ae/ae37917bd9dcb27bb3186383b40e373f2831dff5d3c57670277d98411888b7b3.json",
+                "sha256": "ae37917bd9dcb27bb3186383b40e373f2831dff5d3c57670277d98411888b7b3"
+              },
+              "submission_b": {
+                "object_key": "objects/70/70b1b43676a00080493dc96f0ff52c85f8d4785f8e5b5c7eb6029646ae24b5b8.json",
+                "sha256": "70b1b43676a00080493dc96f0ff52c85f8d4785f8e5b5c7eb6029646ae24b5b8"
+              },
+              "unit_id": "QAD1-0021"
+            }
+          ],
+          "pe": 1,
+          "po": 1,
+          "profile_version": "s4-v1.3",
+          "reason": "UNDEFINED_KAPPA_PE_ONE",
+          "sampled_at": "2026-11-09T16:39:08.117287",
+          "vectors": {
+            "a": [
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct"
+            ],
+            "b": [
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct"
+            ]
+          }
+        },
+        "parent_id": null,
+        "assignments": [
+          {
+            "id": "786780b2-e2cf-4ea8-bd58-57aad9f7e9da",
+            "unit_index_id": "1071f8e5-c199-4916-9de8-b07392fefaf7",
+            "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "f0ecd5ea-d3c2-4339-99c0-3c39d24d4eeb",
+            "unit_index_id": "1071f8e5-c199-4916-9de8-b07392fefaf7",
+            "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "6c7698fc-ba1a-4ba6-8a94-a2296edd3607",
+            "unit_index_id": "98881582-c2d7-4593-bc87-d07dff4b25ec",
+            "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "64ad31f1-05a8-47e4-bacb-5b4f6cc2b02c",
+            "unit_index_id": "98881582-c2d7-4593-bc87-d07dff4b25ec",
+            "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "03d08974-5a0a-448a-8720-414b1e2fc123",
+            "unit_index_id": "a1f3229a-53df-4815-9a13-b9642b90e0db",
+            "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "538654d6-a966-46ba-a45d-d00a2dfe5334",
+            "unit_index_id": "a1f3229a-53df-4815-9a13-b9642b90e0db",
+            "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "a03966eb-1098-4afc-b987-0e2050fc8afa",
+            "unit_index_id": "f7155780-ec0d-44d5-b93c-1debe0f89ecd",
+            "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "e7330b59-b16a-4104-88db-58149e9af2f4",
+            "unit_index_id": "f7155780-ec0d-44d5-b93c-1debe0f89ecd",
+            "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "b019fc32-0d71-4c86-a504-1a64c48e152b",
+            "unit_index_id": "adb1ddf1-6577-40c0-9c5d-00a9c6fc6f49",
+            "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "b6fd5da6-7a41-46a6-a486-407a06d829c3",
+            "unit_index_id": "adb1ddf1-6577-40c0-9c5d-00a9c6fc6f49",
+            "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "7c33df64-cf8a-462e-b8cb-5def49e15da8",
+            "unit_index_id": "09525e52-e46d-4544-80b7-fc4c1177850f",
+            "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "5af5fb02-87d2-434e-86aa-af436bc9f7ef",
+            "unit_index_id": "09525e52-e46d-4544-80b7-fc4c1177850f",
+            "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "0dd11d45-2ed2-49cd-9fb7-449ef1c1c2ab",
+            "unit_index_id": "913f88a0-44f8-4413-94cd-a73e20668c82",
+            "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "4d817600-6edb-4c9b-82d3-2ac7c6d13bf7",
+            "unit_index_id": "913f88a0-44f8-4413-94cd-a73e20668c82",
+            "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          }
+        ]
+      },
+      {
+        "id": "c6b4f7bf-e09b-4383-a0d0-2a27bb10e383",
+        "import_id": "ce32ce4b-2a2e-4005-a44e-dc91a278e478",
+        "dataset": "QA-D1",
+        "workflow_kind": "OBSERVATION",
+        "state": "OBSERVED",
+        "round": 1,
+        "N": 8,
+        "sample_count": 8,
+        "selected_ids": [
+          "QA-D1-MAIYA-OBS-20261103-1",
+          "QA-D1-MAIYA-OBS-20261103-2",
+          "QA-D1-MAIYA-OBS-20261103-3",
+          "QA-D1-MAIYA-OBS-20261103-4",
+          "QA-D1-MAIYA-OBS-20261103-5",
+          "QA-D1-MAIYA-OBS-20261103-6",
+          "QA-D1-MAIYA-OBS-20261103-7",
+          "QA-D1-MAIYA-OBS-20261103-8"
+        ],
+        "sample_ledger": {
+          "algorithm_version": "v13-stratified-largest-remainder.v1",
+          "seed": 42,
+          "selected_ids": [
+            "QA-D1-MAIYA-OBS-20261103-1",
+            "QA-D1-MAIYA-OBS-20261103-4",
+            "QA-D1-MAIYA-OBS-20261103-7",
+            "QA-D1-MAIYA-OBS-20261103-3",
+            "QA-D1-MAIYA-OBS-20261103-6",
+            "QA-D1-MAIYA-OBS-20261103-2",
+            "QA-D1-MAIYA-OBS-20261103-5",
+            "QA-D1-MAIYA-OBS-20261103-8"
+          ],
+          "population_count": 8,
+          "required_count": 8,
+          "actual_count": 8,
+          "shortfall": 0,
+          "strata": [
+            {
+              "dataset": "QA-D1",
+              "difficulty": "easy",
+              "population": 3,
+              "sample_count": 3,
+              "selected_ids": [
+                "QA-D1-MAIYA-OBS-20261103-1",
+                "QA-D1-MAIYA-OBS-20261103-4",
+                "QA-D1-MAIYA-OBS-20261103-7"
+              ]
+            },
+            {
+              "dataset": "QA-D1",
+              "difficulty": "hard",
+              "population": 2,
+              "sample_count": 2,
+              "selected_ids": [
+                "QA-D1-MAIYA-OBS-20261103-3",
+                "QA-D1-MAIYA-OBS-20261103-6"
+              ]
+            },
+            {
+              "dataset": "QA-D1",
+              "difficulty": "medium",
+              "population": 3,
+              "sample_count": 3,
+              "selected_ids": [
+                "QA-D1-MAIYA-OBS-20261103-2",
+                "QA-D1-MAIYA-OBS-20261103-5",
+                "QA-D1-MAIYA-OBS-20261103-8"
+              ]
+            }
+          ]
+        },
+        "profile_version": "s4-v1.3",
+        "manual_version": "manual-v1.3",
+        "frozen_hash": "7d7cd4e2feda02232d75193c8b68a9958ed47cae3fffa1b418b4161fb6a7cae1",
+        "profile_revision_id": null,
+        "profile_hash": null,
+        "blind_submitted": 16,
+        "review_submitted": 16,
+        "verification_completed": 0,
+        "quality": {
+          "action": "UNDEFINED",
+          "algorithm_version": "cohen-original-points.v13",
+          "batch_id": "c6b4f7bf-e09b-4383-a0d0-2a27bb10e383",
+          "frozen_hash": "7d7cd4e2feda02232d75193c8b68a9958ed47cae3fffa1b418b4161fb6a7cae1",
+          "kappa": null,
+          "manual_version": "manual-v1.3",
+          "n": 8,
+          "observed_at": "2026-11-03T09:08:19.698744",
+          "pair_count": 8,
+          "pairs": [
+            {
+              "annotator_a": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+              "annotator_b": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+              "content_revision": "aca4f8a1b38de814db1d1e58677c3cb1a7bfeb0878dda7abf66bcd8003955df0",
+              "point_keys": [
+                "P001"
+              ],
+              "submission_a": {
+                "object_key": "objects/c2/c2fe4f9d42f2ee0d6089fa0a1ebf4a34fa0a7a1b2e98606ddd428dccdb50a079.json",
+                "sha256": "c2fe4f9d42f2ee0d6089fa0a1ebf4a34fa0a7a1b2e98606ddd428dccdb50a079"
+              },
+              "submission_b": {
+                "object_key": "objects/c2/c2fe4f9d42f2ee0d6089fa0a1ebf4a34fa0a7a1b2e98606ddd428dccdb50a079.json",
+                "sha256": "c2fe4f9d42f2ee0d6089fa0a1ebf4a34fa0a7a1b2e98606ddd428dccdb50a079"
+              },
+              "unit_id": "QA-D1-MAIYA-OBS-20261103-1"
+            },
+            {
+              "annotator_a": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+              "annotator_b": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+              "content_revision": "3bcac25096578865e154511bf7774d09273452435acf9426fe662e716b0dccfe",
+              "point_keys": [
+                "P001"
+              ],
+              "submission_a": {
+                "object_key": "objects/59/596666c7639da72938c45967a9ff018b3eac49b93467adc8b5f5d676e6033c7b.json",
+                "sha256": "596666c7639da72938c45967a9ff018b3eac49b93467adc8b5f5d676e6033c7b"
+              },
+              "submission_b": {
+                "object_key": "objects/59/596666c7639da72938c45967a9ff018b3eac49b93467adc8b5f5d676e6033c7b.json",
+                "sha256": "596666c7639da72938c45967a9ff018b3eac49b93467adc8b5f5d676e6033c7b"
+              },
+              "unit_id": "QA-D1-MAIYA-OBS-20261103-2"
+            },
+            {
+              "annotator_a": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+              "annotator_b": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+              "content_revision": "0ca87aab61576d7d64de366ff06167802693dbfc26ad22036825508da0aad123",
+              "point_keys": [
+                "P001"
+              ],
+              "submission_a": {
+                "object_key": "objects/fa/fa579eaa5ed0d93a7e18c807f2790c55e2c6da39514f7ba858eec0e8990537dc.json",
+                "sha256": "fa579eaa5ed0d93a7e18c807f2790c55e2c6da39514f7ba858eec0e8990537dc"
+              },
+              "submission_b": {
+                "object_key": "objects/fa/fa579eaa5ed0d93a7e18c807f2790c55e2c6da39514f7ba858eec0e8990537dc.json",
+                "sha256": "fa579eaa5ed0d93a7e18c807f2790c55e2c6da39514f7ba858eec0e8990537dc"
+              },
+              "unit_id": "QA-D1-MAIYA-OBS-20261103-3"
+            },
+            {
+              "annotator_a": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+              "annotator_b": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+              "content_revision": "714fc24600325e353b53f2b9961d4104b34d14e624f4e0b984a7c66b7e55d0b2",
+              "point_keys": [
+                "P001"
+              ],
+              "submission_a": {
+                "object_key": "objects/ed/ed51cf191fdad863c1e171ad316b61cbda5b76b795d0002bbc713d888ab322fc.json",
+                "sha256": "ed51cf191fdad863c1e171ad316b61cbda5b76b795d0002bbc713d888ab322fc"
+              },
+              "submission_b": {
+                "object_key": "objects/ed/ed51cf191fdad863c1e171ad316b61cbda5b76b795d0002bbc713d888ab322fc.json",
+                "sha256": "ed51cf191fdad863c1e171ad316b61cbda5b76b795d0002bbc713d888ab322fc"
+              },
+              "unit_id": "QA-D1-MAIYA-OBS-20261103-4"
+            },
+            {
+              "annotator_a": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+              "annotator_b": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+              "content_revision": "875a224b6189e86e19516afdeb17872e85613105f3eb1c483ab24052c32ec140",
+              "point_keys": [
+                "P001"
+              ],
+              "submission_a": {
+                "object_key": "objects/ab/abaa7eed23bc0935a3deca0531c125532cf63942c1ffc4794708957c93e9481c.json",
+                "sha256": "abaa7eed23bc0935a3deca0531c125532cf63942c1ffc4794708957c93e9481c"
+              },
+              "submission_b": {
+                "object_key": "objects/ab/abaa7eed23bc0935a3deca0531c125532cf63942c1ffc4794708957c93e9481c.json",
+                "sha256": "abaa7eed23bc0935a3deca0531c125532cf63942c1ffc4794708957c93e9481c"
+              },
+              "unit_id": "QA-D1-MAIYA-OBS-20261103-5"
+            },
+            {
+              "annotator_a": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+              "annotator_b": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+              "content_revision": "eac71de95ee8b13adee8064d9b1181fdace8d6640964aadad18142762a200fd6",
+              "point_keys": [
+                "P001"
+              ],
+              "submission_a": {
+                "object_key": "objects/f7/f78f9f2d46f929eb9a027e4b94fc1c13840f0c6aa5947fe30902ba783d36a327.json",
+                "sha256": "f78f9f2d46f929eb9a027e4b94fc1c13840f0c6aa5947fe30902ba783d36a327"
+              },
+              "submission_b": {
+                "object_key": "objects/f7/f78f9f2d46f929eb9a027e4b94fc1c13840f0c6aa5947fe30902ba783d36a327.json",
+                "sha256": "f78f9f2d46f929eb9a027e4b94fc1c13840f0c6aa5947fe30902ba783d36a327"
+              },
+              "unit_id": "QA-D1-MAIYA-OBS-20261103-6"
+            },
+            {
+              "annotator_a": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+              "annotator_b": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+              "content_revision": "0f7327a5e433ce239ba4f9a33a93511d7bf3ec28b00f63738e34d976407cc7d8",
+              "point_keys": [
+                "P001"
+              ],
+              "submission_a": {
+                "object_key": "objects/8d/8d5e982c7bc65aa3d6e431202e9299905d596130fcfb6e9756874afea591709c.json",
+                "sha256": "8d5e982c7bc65aa3d6e431202e9299905d596130fcfb6e9756874afea591709c"
+              },
+              "submission_b": {
+                "object_key": "objects/8d/8d5e982c7bc65aa3d6e431202e9299905d596130fcfb6e9756874afea591709c.json",
+                "sha256": "8d5e982c7bc65aa3d6e431202e9299905d596130fcfb6e9756874afea591709c"
+              },
+              "unit_id": "QA-D1-MAIYA-OBS-20261103-7"
+            },
+            {
+              "annotator_a": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+              "annotator_b": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+              "content_revision": "587bd43359b32c4e25cd99629c71e9534b2005e7500f5ce37de853823d8876a7",
+              "point_keys": [
+                "P001"
+              ],
+              "submission_a": {
+                "object_key": "objects/18/18d04edb68fd8d1cdcbe71d25d94c3e65406f8e5b90a07ac1b6f9d2039ce85ec.json",
+                "sha256": "18d04edb68fd8d1cdcbe71d25d94c3e65406f8e5b90a07ac1b6f9d2039ce85ec"
+              },
+              "submission_b": {
+                "object_key": "objects/18/18d04edb68fd8d1cdcbe71d25d94c3e65406f8e5b90a07ac1b6f9d2039ce85ec.json",
+                "sha256": "18d04edb68fd8d1cdcbe71d25d94c3e65406f8e5b90a07ac1b6f9d2039ce85ec"
+              },
+              "unit_id": "QA-D1-MAIYA-OBS-20261103-8"
+            }
+          ],
+          "pe": 1,
+          "po": 1,
+          "profile_version": "s4-v1.3",
+          "reason": "UNDEFINED_KAPPA_PE_ONE",
+          "sampled_at": "2026-11-03T09:08:12.615069",
+          "vectors": {
+            "a": [
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct"
+            ],
+            "b": [
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct",
+              "correct"
+            ]
+          }
+        },
+        "parent_id": null,
+        "assignments": [
+          {
+            "id": "4f8c54ad-39da-4208-9e6c-a7048ea011d5",
+            "unit_index_id": "38b1012b-ed60-4741-9c9e-2c23d8fa1ba0",
+            "user_id": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "0890df6c-acd0-491e-889e-64b8aecde64f",
+            "unit_index_id": "38b1012b-ed60-4741-9c9e-2c23d8fa1ba0",
+            "user_id": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "f8a1f672-8534-470d-beb6-0a728d182af3",
+            "unit_index_id": "104b21ec-146e-41d9-9cc4-23b9a37e68cb",
+            "user_id": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "8cbc75bf-8d9a-4b46-819c-a4d2ae8a2143",
+            "unit_index_id": "104b21ec-146e-41d9-9cc4-23b9a37e68cb",
+            "user_id": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "3a3d5e59-9998-4f08-b266-1f4e82620bd8",
+            "unit_index_id": "f79599b5-7550-4975-a845-763501891d66",
+            "user_id": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "1332e6cd-d771-4a2b-8c84-954532db17b3",
+            "unit_index_id": "f79599b5-7550-4975-a845-763501891d66",
+            "user_id": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "9d82ff19-2caf-4415-9515-3e50917d8857",
+            "unit_index_id": "3d84ea92-c979-4ad4-a22e-57174511bc30",
+            "user_id": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "9605bcdf-a7d5-4ea9-b056-09edd90d1a75",
+            "unit_index_id": "3d84ea92-c979-4ad4-a22e-57174511bc30",
+            "user_id": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "708f7c42-1a9f-4c75-ae72-73278af77080",
+            "unit_index_id": "6b7567e8-61ef-4aa3-a0a8-27142e69ca41",
+            "user_id": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "2c6f8b6e-4d97-4ff9-a631-c76b935b2f3d",
+            "unit_index_id": "6b7567e8-61ef-4aa3-a0a8-27142e69ca41",
+            "user_id": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "5aed557b-0303-4fa0-aa2d-1502b3fe609b",
+            "unit_index_id": "61e41c60-6f31-485e-aa19-3a0d138c677d",
+            "user_id": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "1e9e9571-2c92-4f8c-878a-fdd7a025d38e",
+            "unit_index_id": "61e41c60-6f31-485e-aa19-3a0d138c677d",
+            "user_id": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "bfb7d470-e574-48bd-b868-6a207ba63320",
+            "unit_index_id": "51d06ec2-a566-4fee-a734-abeec957b5dc",
+            "user_id": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "af2d4b87-d96d-4f77-9871-089c22fc11ee",
+            "unit_index_id": "51d06ec2-a566-4fee-a734-abeec957b5dc",
+            "user_id": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "fe74b957-2272-4107-b845-2ca90c95a13f",
+            "unit_index_id": "6bcc97f7-b58b-4b76-b745-c4818b4ddc59",
+            "user_id": "20d159cd-b8b2-471d-b93a-585c4bd561c9",
+            "seat": "A",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          },
+          {
+            "id": "4d51fc07-ab18-4be2-a2af-403a0e75d975",
+            "unit_index_id": "6bcc97f7-b58b-4b76-b745-c4818b4ddc59",
+            "user_id": "356daaf9-b407-4508-9fc8-af3645a4c2fd",
+            "seat": "B",
+            "phase": "REVIEW",
+            "status": "SEALED"
+          }
+        ]
+      }
+    ],
+    "total": 2
+  },
+  "import_id": "b5715a91-06c2-4e29-ad5d-a04ccce00ae4",
+  "report": {
+    "import_id": "b5715a91-06c2-4e29-ad5d-a04ccce00ae4",
+    "N": 7,
+    "n": 7,
+    "verification_completed": 7,
+    "observation_completed": 7,
+    "expanded_observation_count": 0,
+    "expanded_observation_completed": 0,
+    "observation_scope_count": 7,
+    "expansions": [],
+    "verification_remaining": 0,
+    "readiness": "WAITING_EVIDENCE",
+    "content_ready": false,
+    "demo_ready": false,
+    "blockers": [
+      "EXTERNAL_ALIGNMENT_NOT_CONFIRMED",
+      "OBSERVATION_SAMPLE_SHORTFALL:QA-D1",
+      "POLICY_J1_C1_PENDING",
+      "QUALITY_POLICY_PENDING:QA-D1"
+    ],
+    "content_blockers": [
+      "OBSERVATION_SAMPLE_SHORTFALL:QA-D1"
+    ],
+    "policy_blockers": [
+      "EXTERNAL_ALIGNMENT_NOT_CONFIRMED",
+      "POLICY_J1_C1_PENDING",
+      "QUALITY_POLICY_PENDING:QA-D1"
+    ],
+    "quality": [
+      {
+        "batch_id": "764f2d5e-069c-4230-b5d9-df22cee92f37",
+        "dataset": "QA-D1",
+        "quality_ref": {
+          "object_key": "objects/79/792e4f4150fafdcd721fdfd883d7bd3d20c4bcca24400787fe53a076d3339dfa.json",
+          "sha256": "792e4f4150fafdcd721fdfd883d7bd3d20c4bcca24400787fe53a076d3339dfa"
+        },
+        "scope_kind": "INITIAL",
+        "action": "UNDEFINED",
+        "algorithm_version": "cohen-original-points.v13",
+        "frozen_hash": "f606cf52279aef9440a83862616a618b921e99686b6e47cafe2af96e9d3b3e48",
+        "kappa": null,
+        "manual_version": "manual-v1.3",
+        "n": 17,
+        "observed_at": "2026-11-14T21:05:51.312858",
+        "pair_count": 7,
+        "pairs": [
+          {
+            "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "content_revision": "a31189da5ebe8ec952e260aa33506f820e3b45643bc320699f0012ab09ea9fd4",
+            "point_keys": [
+              "P001",
+              "P002",
+              "P003",
+              "P004"
+            ],
+            "submission_a": {
+              "object_key": "objects/9a/9a38b9fd017db363d7d5a68de9e5c39f6afbd19440c4db8992ea4d92f2475ea6.json",
+              "sha256": "9a38b9fd017db363d7d5a68de9e5c39f6afbd19440c4db8992ea4d92f2475ea6"
+            },
+            "submission_b": {
+              "object_key": "objects/47/47a02516934a249f93fec4f09b50426db35d2aef9ec083749a5858735f580f4c.json",
+              "sha256": "47a02516934a249f93fec4f09b50426db35d2aef9ec083749a5858735f580f4c"
+            },
+            "unit_id": "QAD1-0015"
+          },
+          {
+            "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "content_revision": "d3d0c9b313cff4c9e97c1a5b350a2398c90f3cfa4366d42b53850159146435b8",
+            "point_keys": [
+              "P001",
+              "P002"
+            ],
+            "submission_a": {
+              "object_key": "objects/ad/ade83d985e6f919c95cafc6e5dea94c0d0565fb0f9c4ea44d2a0a15415d36a96.json",
+              "sha256": "ade83d985e6f919c95cafc6e5dea94c0d0565fb0f9c4ea44d2a0a15415d36a96"
+            },
+            "submission_b": {
+              "object_key": "objects/d7/d79deb5a0c44eefb2de863d739099d1df13c2202307615742c85d0033f4985f6.json",
+              "sha256": "d79deb5a0c44eefb2de863d739099d1df13c2202307615742c85d0033f4985f6"
+            },
+            "unit_id": "QAD1-0016"
+          },
+          {
+            "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "content_revision": "3eb4dc6f7191d4874b26078f156981fd7b40f757157179b40300e8d9af507a4a",
+            "point_keys": [
+              "P001",
+              "P002"
+            ],
+            "submission_a": {
+              "object_key": "objects/f3/f35a0ac9c26500c6e92aa33c2852c11fb4f56e4d83a6108a51f08d9f7834f467.json",
+              "sha256": "f35a0ac9c26500c6e92aa33c2852c11fb4f56e4d83a6108a51f08d9f7834f467"
+            },
+            "submission_b": {
+              "object_key": "objects/b5/b5b98897190533f967d43b646422763164a49dbf12d565e4d744176cabea5b37.json",
+              "sha256": "b5b98897190533f967d43b646422763164a49dbf12d565e4d744176cabea5b37"
+            },
+            "unit_id": "QAD1-0017"
+          },
+          {
+            "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "content_revision": "aecaa37830868bf33fcaddd2e2090ffc0bc0ff47cf44960d5e1b28027f4df5fc",
+            "point_keys": [
+              "P001",
+              "P002"
+            ],
+            "submission_a": {
+              "object_key": "objects/f6/f6b73b346d38f477de7d741040ede7812eb2436ceeee7a3387d57d8cf1ba1a2b.json",
+              "sha256": "f6b73b346d38f477de7d741040ede7812eb2436ceeee7a3387d57d8cf1ba1a2b"
+            },
+            "submission_b": {
+              "object_key": "objects/d6/d671ac7d368dc48dd2b2b429e9089660aff8e93f6f53666d36b718b60f6fc750.json",
+              "sha256": "d671ac7d368dc48dd2b2b429e9089660aff8e93f6f53666d36b718b60f6fc750"
+            },
+            "unit_id": "QAD1-0018"
+          },
+          {
+            "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "content_revision": "c0df255b83308e39160ae5cb4ec21990995f9340c32bfe69e86ac5ca06f0bd72",
+            "point_keys": [
+              "P001",
+              "P002",
+              "P003"
+            ],
+            "submission_a": {
+              "object_key": "objects/77/777b178509a46079d2afef434c8b2bec116d8e406fb74e37c3714f7c25b7cbc7.json",
+              "sha256": "777b178509a46079d2afef434c8b2bec116d8e406fb74e37c3714f7c25b7cbc7"
+            },
+            "submission_b": {
+              "object_key": "objects/55/55cd173d088ad0446f13a62ee2d4f6626fc5ed5488737584b3c99be0aa40f9d0.json",
+              "sha256": "55cd173d088ad0446f13a62ee2d4f6626fc5ed5488737584b3c99be0aa40f9d0"
+            },
+            "unit_id": "QAD1-0019"
+          },
+          {
+            "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "content_revision": "b6d23f7d9c25c4acff9917b5cbce11aa66b7802a11aaa8c286d61dd288798c58",
+            "point_keys": [
+              "P001",
+              "P002"
+            ],
+            "submission_a": {
+              "object_key": "objects/25/25e304a9d3fc9eee8e5ed78a7d7488ae1e0e8d5a9b888714e0985dcb9afd3c4d.json",
+              "sha256": "25e304a9d3fc9eee8e5ed78a7d7488ae1e0e8d5a9b888714e0985dcb9afd3c4d"
+            },
+            "submission_b": {
+              "object_key": "objects/32/32450f9714a9c83d8b0a56d89d90f8eecd0e3f69e2b6713c3b1f3a72407e27c5.json",
+              "sha256": "32450f9714a9c83d8b0a56d89d90f8eecd0e3f69e2b6713c3b1f3a72407e27c5"
+            },
+            "unit_id": "QAD1-0020"
+          },
+          {
+            "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+            "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+            "content_revision": "10bddb6366f6fa0a3ead6180f81dfb3c320e75b525134d392bef37e07fb286ec",
+            "point_keys": [
+              "P001",
+              "P002"
+            ],
+            "submission_a": {
+              "object_key": "objects/ae/ae37917bd9dcb27bb3186383b40e373f2831dff5d3c57670277d98411888b7b3.json",
+              "sha256": "ae37917bd9dcb27bb3186383b40e373f2831dff5d3c57670277d98411888b7b3"
+            },
+            "submission_b": {
+              "object_key": "objects/70/70b1b43676a00080493dc96f0ff52c85f8d4785f8e5b5c7eb6029646ae24b5b8.json",
+              "sha256": "70b1b43676a00080493dc96f0ff52c85f8d4785f8e5b5c7eb6029646ae24b5b8"
+            },
+            "unit_id": "QAD1-0021"
+          }
+        ],
+        "pe": 1,
+        "po": 1,
+        "profile_version": "s4-v1.3",
+        "reason": "UNDEFINED_KAPPA_PE_ONE",
+        "sampled_at": "2026-11-09T16:39:08.117287",
+        "vectors": {
+          "a": [
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct"
+          ],
+          "b": [
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct",
+            "correct"
+          ]
+        }
+      }
+    ],
+    "mode": "demo",
+    "external_alignment": "NOT_ALIGNED",
+    "contract_version": "openkb.s4-s5.v2"
+  },
+  "observation_id": "764f2d5e-069c-4230-b5d9-df22cee92f37",
+  "observation_batch": {
+    "id": "764f2d5e-069c-4230-b5d9-df22cee92f37",
+    "import_id": "b5715a91-06c2-4e29-ad5d-a04ccce00ae4",
+    "dataset": "QA-D1",
+    "workflow_kind": "OBSERVATION",
+    "state": "OBSERVED",
+    "round": 1,
+    "N": 7,
+    "sample_count": 7,
+    "selected_ids": [
+      "QAD1-0015",
+      "QAD1-0016",
+      "QAD1-0017",
+      "QAD1-0018",
+      "QAD1-0019",
+      "QAD1-0020",
+      "QAD1-0021"
+    ],
+    "sample_ledger": {
+      "algorithm_version": "v13-stratified-largest-remainder.v1",
+      "seed": 42,
+      "selected_ids": [
+        "QAD1-0015",
+        "QAD1-0016",
+        "QAD1-0017",
+        "QAD1-0018",
+        "QAD1-0019",
+        "QAD1-0020",
+        "QAD1-0021"
+      ],
+      "population_count": 7,
+      "required_count": 8,
+      "actual_count": 7,
+      "shortfall": 1,
+      "strata": [
+        {
+          "dataset": "QA-D1",
+          "difficulty": "easy",
+          "population": 7,
+          "sample_count": 7,
+          "selected_ids": [
+            "QAD1-0015",
+            "QAD1-0016",
+            "QAD1-0017",
+            "QAD1-0018",
+            "QAD1-0019",
+            "QAD1-0020",
+            "QAD1-0021"
+          ]
+        }
+      ]
+    },
+    "profile_version": "s4-v1.3",
+    "manual_version": "manual-v1.3",
+    "frozen_hash": "f606cf52279aef9440a83862616a618b921e99686b6e47cafe2af96e9d3b3e48",
+    "profile_revision_id": null,
+    "profile_hash": null,
+    "blind_submitted": 14,
+    "review_submitted": 14,
+    "verification_completed": 7,
+    "quality": {
+      "action": "UNDEFINED",
+      "algorithm_version": "cohen-original-points.v13",
+      "batch_id": "764f2d5e-069c-4230-b5d9-df22cee92f37",
+      "frozen_hash": "f606cf52279aef9440a83862616a618b921e99686b6e47cafe2af96e9d3b3e48",
+      "kappa": null,
+      "manual_version": "manual-v1.3",
+      "n": 17,
+      "observed_at": "2026-11-14T21:05:51.312858",
+      "pair_count": 7,
+      "pairs": [
+        {
+          "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+          "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+          "content_revision": "a31189da5ebe8ec952e260aa33506f820e3b45643bc320699f0012ab09ea9fd4",
+          "point_keys": [
+            "P001",
+            "P002",
+            "P003",
+            "P004"
+          ],
+          "submission_a": {
+            "object_key": "objects/9a/9a38b9fd017db363d7d5a68de9e5c39f6afbd19440c4db8992ea4d92f2475ea6.json",
+            "sha256": "9a38b9fd017db363d7d5a68de9e5c39f6afbd19440c4db8992ea4d92f2475ea6"
+          },
+          "submission_b": {
+            "object_key": "objects/47/47a02516934a249f93fec4f09b50426db35d2aef9ec083749a5858735f580f4c.json",
+            "sha256": "47a02516934a249f93fec4f09b50426db35d2aef9ec083749a5858735f580f4c"
+          },
+          "unit_id": "QAD1-0015"
+        },
+        {
+          "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+          "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+          "content_revision": "d3d0c9b313cff4c9e97c1a5b350a2398c90f3cfa4366d42b53850159146435b8",
+          "point_keys": [
+            "P001",
+            "P002"
+          ],
+          "submission_a": {
+            "object_key": "objects/ad/ade83d985e6f919c95cafc6e5dea94c0d0565fb0f9c4ea44d2a0a15415d36a96.json",
+            "sha256": "ade83d985e6f919c95cafc6e5dea94c0d0565fb0f9c4ea44d2a0a15415d36a96"
+          },
+          "submission_b": {
+            "object_key": "objects/d7/d79deb5a0c44eefb2de863d739099d1df13c2202307615742c85d0033f4985f6.json",
+            "sha256": "d79deb5a0c44eefb2de863d739099d1df13c2202307615742c85d0033f4985f6"
+          },
+          "unit_id": "QAD1-0016"
+        },
+        {
+          "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+          "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+          "content_revision": "3eb4dc6f7191d4874b26078f156981fd7b40f757157179b40300e8d9af507a4a",
+          "point_keys": [
+            "P001",
+            "P002"
+          ],
+          "submission_a": {
+            "object_key": "objects/f3/f35a0ac9c26500c6e92aa33c2852c11fb4f56e4d83a6108a51f08d9f7834f467.json",
+            "sha256": "f35a0ac9c26500c6e92aa33c2852c11fb4f56e4d83a6108a51f08d9f7834f467"
+          },
+          "submission_b": {
+            "object_key": "objects/b5/b5b98897190533f967d43b646422763164a49dbf12d565e4d744176cabea5b37.json",
+            "sha256": "b5b98897190533f967d43b646422763164a49dbf12d565e4d744176cabea5b37"
+          },
+          "unit_id": "QAD1-0017"
+        },
+        {
+          "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+          "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+          "content_revision": "aecaa37830868bf33fcaddd2e2090ffc0bc0ff47cf44960d5e1b28027f4df5fc",
+          "point_keys": [
+            "P001",
+            "P002"
+          ],
+          "submission_a": {
+            "object_key": "objects/f6/f6b73b346d38f477de7d741040ede7812eb2436ceeee7a3387d57d8cf1ba1a2b.json",
+            "sha256": "f6b73b346d38f477de7d741040ede7812eb2436ceeee7a3387d57d8cf1ba1a2b"
+          },
+          "submission_b": {
+            "object_key": "objects/d6/d671ac7d368dc48dd2b2b429e9089660aff8e93f6f53666d36b718b60f6fc750.json",
+            "sha256": "d671ac7d368dc48dd2b2b429e9089660aff8e93f6f53666d36b718b60f6fc750"
+          },
+          "unit_id": "QAD1-0018"
+        },
+        {
+          "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+          "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+          "content_revision": "c0df255b83308e39160ae5cb4ec21990995f9340c32bfe69e86ac5ca06f0bd72",
+          "point_keys": [
+            "P001",
+            "P002",
+            "P003"
+          ],
+          "submission_a": {
+            "object_key": "objects/77/777b178509a46079d2afef434c8b2bec116d8e406fb74e37c3714f7c25b7cbc7.json",
+            "sha256": "777b178509a46079d2afef434c8b2bec116d8e406fb74e37c3714f7c25b7cbc7"
+          },
+          "submission_b": {
+            "object_key": "objects/55/55cd173d088ad0446f13a62ee2d4f6626fc5ed5488737584b3c99be0aa40f9d0.json",
+            "sha256": "55cd173d088ad0446f13a62ee2d4f6626fc5ed5488737584b3c99be0aa40f9d0"
+          },
+          "unit_id": "QAD1-0019"
+        },
+        {
+          "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+          "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+          "content_revision": "b6d23f7d9c25c4acff9917b5cbce11aa66b7802a11aaa8c286d61dd288798c58",
+          "point_keys": [
+            "P001",
+            "P002"
+          ],
+          "submission_a": {
+            "object_key": "objects/25/25e304a9d3fc9eee8e5ed78a7d7488ae1e0e8d5a9b888714e0985dcb9afd3c4d.json",
+            "sha256": "25e304a9d3fc9eee8e5ed78a7d7488ae1e0e8d5a9b888714e0985dcb9afd3c4d"
+          },
+          "submission_b": {
+            "object_key": "objects/32/32450f9714a9c83d8b0a56d89d90f8eecd0e3f69e2b6713c3b1f3a72407e27c5.json",
+            "sha256": "32450f9714a9c83d8b0a56d89d90f8eecd0e3f69e2b6713c3b1f3a72407e27c5"
+          },
+          "unit_id": "QAD1-0020"
+        },
+        {
+          "annotator_a": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+          "annotator_b": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+          "content_revision": "10bddb6366f6fa0a3ead6180f81dfb3c320e75b525134d392bef37e07fb286ec",
+          "point_keys": [
+            "P001",
+            "P002"
+          ],
+          "submission_a": {
+            "object_key": "objects/ae/ae37917bd9dcb27bb3186383b40e373f2831dff5d3c57670277d98411888b7b3.json",
+            "sha256": "ae37917bd9dcb27bb3186383b40e373f2831dff5d3c57670277d98411888b7b3"
+          },
+          "submission_b": {
+            "object_key": "objects/70/70b1b43676a00080493dc96f0ff52c85f8d4785f8e5b5c7eb6029646ae24b5b8.json",
+            "sha256": "70b1b43676a00080493dc96f0ff52c85f8d4785f8e5b5c7eb6029646ae24b5b8"
+          },
+          "unit_id": "QAD1-0021"
+        }
+      ],
+      "pe": 1,
+      "po": 1,
+      "profile_version": "s4-v1.3",
+      "reason": "UNDEFINED_KAPPA_PE_ONE",
+      "sampled_at": "2026-11-09T16:39:08.117287",
+      "vectors": {
+        "a": [
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct"
+        ],
+        "b": [
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct",
+          "correct"
+        ]
+      }
+    },
+    "parent_id": null,
+    "assignments": [
+      {
+        "id": "786780b2-e2cf-4ea8-bd58-57aad9f7e9da",
+        "unit_index_id": "1071f8e5-c199-4916-9de8-b07392fefaf7",
+        "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+        "seat": "A",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "f0ecd5ea-d3c2-4339-99c0-3c39d24d4eeb",
+        "unit_index_id": "1071f8e5-c199-4916-9de8-b07392fefaf7",
+        "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+        "seat": "B",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "6c7698fc-ba1a-4ba6-8a94-a2296edd3607",
+        "unit_index_id": "98881582-c2d7-4593-bc87-d07dff4b25ec",
+        "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+        "seat": "A",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "64ad31f1-05a8-47e4-bacb-5b4f6cc2b02c",
+        "unit_index_id": "98881582-c2d7-4593-bc87-d07dff4b25ec",
+        "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+        "seat": "B",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "03d08974-5a0a-448a-8720-414b1e2fc123",
+        "unit_index_id": "a1f3229a-53df-4815-9a13-b9642b90e0db",
+        "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+        "seat": "A",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "538654d6-a966-46ba-a45d-d00a2dfe5334",
+        "unit_index_id": "a1f3229a-53df-4815-9a13-b9642b90e0db",
+        "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+        "seat": "B",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "a03966eb-1098-4afc-b987-0e2050fc8afa",
+        "unit_index_id": "f7155780-ec0d-44d5-b93c-1debe0f89ecd",
+        "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+        "seat": "A",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "e7330b59-b16a-4104-88db-58149e9af2f4",
+        "unit_index_id": "f7155780-ec0d-44d5-b93c-1debe0f89ecd",
+        "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+        "seat": "B",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "b019fc32-0d71-4c86-a504-1a64c48e152b",
+        "unit_index_id": "adb1ddf1-6577-40c0-9c5d-00a9c6fc6f49",
+        "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+        "seat": "A",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "b6fd5da6-7a41-46a6-a486-407a06d829c3",
+        "unit_index_id": "adb1ddf1-6577-40c0-9c5d-00a9c6fc6f49",
+        "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+        "seat": "B",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "7c33df64-cf8a-462e-b8cb-5def49e15da8",
+        "unit_index_id": "09525e52-e46d-4544-80b7-fc4c1177850f",
+        "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+        "seat": "A",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "5af5fb02-87d2-434e-86aa-af436bc9f7ef",
+        "unit_index_id": "09525e52-e46d-4544-80b7-fc4c1177850f",
+        "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+        "seat": "B",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "0dd11d45-2ed2-49cd-9fb7-449ef1c1c2ab",
+        "unit_index_id": "913f88a0-44f8-4413-94cd-a73e20668c82",
+        "user_id": "e7bd27a6-8e15-4806-a035-8918abb2ea64",
+        "seat": "A",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      },
+      {
+        "id": "4d817600-6edb-4c9b-82d3-2ac7c6d13bf7",
+        "unit_index_id": "913f88a0-44f8-4413-94cd-a73e20668c82",
+        "user_id": "5c7aa2e5-fee9-4c85-9ba2-e59b38338112",
+        "seat": "B",
+        "phase": "REVIEW",
+        "status": "SEALED"
+      }
+    ]
+  }
+}
