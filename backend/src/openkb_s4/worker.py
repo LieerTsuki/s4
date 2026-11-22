@@ -7,11 +7,11 @@ from datetime import timedelta
 from typing import Any
 
 from sqlalchemy import or_, select, update
-from .db_compat import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from .config import Settings, get_settings
 from .db import make_sessions
+from .db_compat import insert
 from .domain.contracts import canonical_sha256
 from .domain.errors import DomainError
 from .domain.profiles import get_profile

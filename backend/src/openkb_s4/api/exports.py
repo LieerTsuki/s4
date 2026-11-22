@@ -8,8 +8,8 @@ from fastapi import APIRouter, Header, Query, Request
 from fastapi.responses import FileResponse
 from pydantic import Field, field_validator
 from sqlalchemy import func, select
-from ..db_compat import insert
 
+from ..db_compat import insert
 from ..domain.contracts import canonical_sha256
 from ..models import AnnotationBatch, AuditEvent, Handoff, HandoffSent
 from ..schemas import HandoffInput, ReceiptInput, StrictModel

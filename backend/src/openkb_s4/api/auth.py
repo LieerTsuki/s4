@@ -6,8 +6,8 @@ from typing import Any
 
 from fastapi import APIRouter, Query, Request, Response
 from sqlalchemy import func, select, update
-from ..db_compat import insert
 
+from ..db_compat import insert
 from ..models import LoginRate, Session, User, now
 from ..schemas import Login, UserCreate, UserUpdate
 from ..security import (

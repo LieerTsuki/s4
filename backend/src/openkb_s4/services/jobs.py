@@ -2,9 +2,9 @@
 from typing import Any
 
 from sqlalchemy import select
-from ..db_compat import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..db_compat import insert
 from ..models import Job
 
 
