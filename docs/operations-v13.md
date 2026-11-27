@@ -1,5 +1,9 @@
 # v1.3 local operations and recovery
 
+## 2026-11-26 Maiya delivery receipt
+
+Maiya reported that the `s4-development@8f5a8b7` GitHub API tarball was unpacked as an isolated 323-file snapshot under `.upstream/s4-development/`. The receipt records the existing service on port 30112 as left in place. The controlled handoff archive passed all 14 listed checks. See the [delivery and intake ledger](readiness/external-handoff.md). Runtime version, deployment acceptance, and restore evidence are tracked separately.
+
 ## 2026-11-08 closure and candidate handoff
 
 Read [current status](STATUS.md), [candidate/cloud handoff](releases/2026-11-08-0007候选版与麦芽升级交接.md) and [fresh closure evidence](audits/2026-11-08-可独立补欠交付与验证.md) before using historical instructions. The candidate includes read-only approval inspection and publishes restore success proof only after the completion audit succeeds. During restore, `--database` selects the existing management audit database, while the restore destination is always a new `s4_restore_*` database. Ensure that management database has the audit schema. A failed operation's retained artifacts are not a successful restore proof.
